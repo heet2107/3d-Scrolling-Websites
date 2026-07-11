@@ -168,9 +168,9 @@
     engTl.fromTo('#eng-title', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1 }, 0.3)
       .to('#eng-title', { opacity: 0, y: -40, duration: 1 }, 2.6);
     gsap.utils.toArray('#engineering [data-spec]').forEach((el, i) => {
-      engTl.fromTo(el, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.8 }, 3.6 + i * 1.1);
+      engTl.fromTo(el, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.8 }, 3.2 + i * 0.95);
     });
-    engTl.fromTo('#stats', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9 }, 8.6)
+    engTl.fromTo('#stats', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9 }, 9.4)
       .to({}, { duration: 0.6 });
 
     /* SIGNATURE — ambient ping-pong playback while on screen

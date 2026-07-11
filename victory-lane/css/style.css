@@ -133,11 +133,13 @@ body {
   text-shadow: 0 1px 16px rgba(0,0,0,.9);
 }
 .spec h4 { font-size: 1.3rem; }
-.sp-1 { left: 6vw;  top: 22vh; }
-.sp-2 { right: 6vw; top: 22vh; text-align: right; }
-.sp-3 { left: 6vw;  top: 62vh; }
-.sp-4 { right: 6vw; top: 62vh; text-align: right; }
-.sp-2 .co-rule, .sp-4 .co-rule { margin-left: auto; }
+.sp-1 { left: 6vw;  top: 18vh; }
+.sp-2 { right: 6vw; top: 18vh; text-align: right; }
+.sp-3 { left: 6vw;  top: 42vh; }
+.sp-4 { right: 6vw; top: 42vh; text-align: right; }
+.sp-5 { left: 6vw;  top: 66vh; }
+.sp-6 { right: 6vw; top: 66vh; text-align: right; }
+.sp-2 .co-rule, .sp-4 .co-rule, .sp-6 .co-rule { margin-left: auto; }
 .stats {
   position: absolute; z-index: 5; left: 50%; bottom: 6vh; transform: translateX(-50%);
   display: flex; gap: clamp(2rem, 7vw, 6rem); opacity: 0;

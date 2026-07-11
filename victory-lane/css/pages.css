@@ -1,0 +1,138 @@
+/* Shared styles for the inner pages (about / services / contact) */
+
+.nav-links { display: flex; align-items: center; gap: 2.2rem; }
+.nav-links a {
+  color: var(--ivory); text-decoration: none; font-size: .68rem;
+  letter-spacing: .3em; text-transform: uppercase; opacity: .8;
+  transition: opacity .3s, color .3s;
+}
+.nav-links a:hover, .nav-links a[aria-current="page"] { opacity: 1; color: var(--gold); }
+@media (max-width: 860px) { .nav-links { gap: 1.2rem; } .nav-links a { font-size: .6rem; letter-spacing: .2em; } }
+
+/* page hero with ambient canvas */
+.page-hero { position: relative; height: 64vh; min-height: 420px; overflow: hidden; display: grid; place-items: end start; }
+.page-hero .seq { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ph-scrim {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(rgba(6,5,4,.35), rgba(6,5,4,.2) 45%, var(--bg) 98%);
+}
+.ph-copy { position: relative; z-index: 3; padding: 0 clamp(1.4rem, 6vw, 6rem) 6vh; }
+.ph-copy h1 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(2.6rem, 7vw, 6rem); line-height: 1.02; margin-top: 1.2rem;
+  text-shadow: 0 2px 30px rgba(0,0,0,.8);
+}
+
+/* content blocks */
+.page-main { max-width: 1060px; margin: 0 auto; padding: 10vh clamp(1.4rem, 5vw, 3rem) 4vh; }
+.block { margin-bottom: 11vh; }
+.block h2 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(1.9rem, 3.6vw, 3rem); line-height: 1.15; margin-bottom: 1.6rem;
+}
+.block h2 em { color: var(--gold); font-style: italic; }
+.block p.lead {
+  font-family: var(--serif); font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+  line-height: 1.6; color: var(--ivory); max-width: 58ch;
+}
+.block p.body {
+  font-size: .95rem; line-height: 1.9; color: #b5af9f; max-width: 62ch; margin-top: 1.2rem;
+  font-weight: 300; letter-spacing: .02em;
+}
+.gold-rule { width: 64px; height: 1px; background: var(--gold); margin-bottom: 1.6rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+@media (max-width: 780px) { .two-col { grid-template-columns: 1fr; } }
+
+/* stat band (about) */
+.stat-band { display: flex; gap: clamp(2rem, 8vw, 7rem); flex-wrap: wrap; padding: 4vh 0; border-top: 1px solid #1c1a15; border-bottom: 1px solid #1c1a15; }
+.stat-band strong { display: block; font-family: var(--serif); font-weight: 500; font-size: clamp(1.8rem, 3.4vw, 3rem); color: var(--gold); }
+.stat-band span { font-size: .64rem; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
+
+/* service cards (services overview) */
+.svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.6rem; }
+.svc-card {
+  position: relative; display: block; text-decoration: none;
+  border: 1px solid #201d16; padding: 2.6rem 2.2rem 2.4rem;
+  background: linear-gradient(160deg, #100e0b 0%, #0a0908 70%);
+  transition: border-color .5s, transform .5s;
+}
+.svc-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+.svc-card h3 { font-family: var(--serif); font-weight: 500; font-size: 1.7rem; color: var(--ivory); margin: 1.2rem 0 .8rem; }
+.svc-card p { font-size: .86rem; line-height: 1.7; color: #a29b8a; font-weight: 300; }
+.svc-card .svc-go { display: inline-block; margin-top: 1.6rem; font-size: .62rem; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); }
+.svc-num { font-family: var(--serif); font-style: italic; color: var(--gold-dim); font-size: 1rem; }
+
+/* finish list (wrap page) */
+.finish-row { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+.finish-chip {
+  border: 1px solid #2a2619; color: var(--ivory); padding: .7rem 1.4rem;
+  font-size: .68rem; letter-spacing: .3em; text-transform: uppercase;
+}
+.finish-chip em { color: var(--gold); font-style: normal; }
+
+/* contact */
+.contact-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(2rem, 6vw, 5rem); }
+@media (max-width: 780px) { .contact-grid { grid-template-columns: 1fr; } }
+.contact-item { margin-bottom: 2.4rem; }
+.contact-item h4 { font-size: .64rem; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-bottom: .7rem; font-weight: 400; }
+.contact-item p, .contact-item a { font-family: var(--serif); font-size: 1.3rem; color: var(--ivory); text-decoration: none; line-height: 1.5; }
+
+/* prev/next footer nav on service pages */
+.svc-nav { display: flex; justify-content: space-between; gap: 1rem; border-top: 1px solid #1c1a15; padding-top: 3vh; margin-top: 4vh; }
+.svc-nav a { text-decoration: none; color: var(--muted); font-size: .68rem; letter-spacing: .3em; text-transform: uppercase; transition: color .3s; }
+.svc-nav a:hover { color: var(--gold); }
+
+/* reveal animation for pages (IntersectionObserver adds .in) */
+[data-reveal] { opacity: 0; transform: translateY(42px); transition: opacity 1.1s cubic-bezier(.22,1,.36,1), transform 1.1s cubic-bezier(.22,1,.36,1); }
+[data-reveal].in { opacity: 1; transform: none; }
+[data-reveal].d1 { transition-delay: .12s; } [data-reveal].d2 { transition-delay: .24s; } [data-reveal].d3 { transition-delay: .36s; }
+
+.page-cta { text-align: center; padding: 8vh 0 12vh; }
+.page-cta a.btn {
+  display: inline-block; margin-top: 2rem; background: transparent; color: var(--gold);
+  border: 1px solid var(--gold-dim); padding: 1.1rem 3rem; text-decoration: none;
+  font-size: .72rem; letter-spacing: .4em; text-transform: uppercase;
+  transition: background .4s, color .4s;
+}
+.page-cta a.btn:hover { background: var(--gold); color: #0a0908; }
+
+/* generic form (contact / career) */
+.vl-form { display: flex; flex-direction: column; gap: 1.4rem; }
+.vl-form input, .vl-form textarea {
+  background: transparent; border: 0; border-bottom: 1px solid #2c2921;
+  color: var(--ivory); font-family: var(--sans); font-weight: 300;
+  font-size: .95rem; letter-spacing: .06em; padding: .8rem .2rem;
+  outline: none; transition: border-color .4s; resize: vertical;
+}
+.vl-form input:focus, .vl-form textarea:focus { border-color: var(--gold); }
+.vl-form input::placeholder, .vl-form textarea::placeholder { color: var(--muted); letter-spacing: .18em; text-transform: uppercase; font-size: .72rem; }
+.vl-form button {
+  margin-top: 1.4rem; background: transparent; color: var(--gold);
+  border: 1px solid var(--gold-dim); padding: 1.1rem 2rem;
+  font-family: var(--sans); font-size: .72rem; letter-spacing: .4em; text-transform: uppercase;
+  cursor: pointer; transition: background .4s, color .4s;
+}
+.vl-form button:hover { background: var(--gold); color: #0a0908; }
+
+/* portfolio */
+.pf-chips { display: flex; flex-wrap: wrap; gap: .7rem; margin: 2.4rem 0 4vh; }
+.pf-chip {
+  border: 1px solid #2a2619; background: transparent; color: var(--ivory);
+  padding: .65rem 1.3rem; cursor: pointer; font-family: var(--sans);
+  font-size: .64rem; letter-spacing: .28em; text-transform: uppercase;
+  transition: border-color .3s, color .3s;
+}
+.pf-chip em { color: var(--gold-dim); font-style: normal; margin-left: .4em; }
+.pf-chip:hover { border-color: var(--gold-dim); }
+.pf-chip.active { border-color: var(--gold); color: var(--gold); }
+.pf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.4rem; }
+.pf-card {
+  border: 1px solid #201d16; padding: 2.4rem 2rem;
+  background: linear-gradient(165deg, #100e0b 0%, #0a0908 75%);
+  transition: border-color .5s, transform .4s;
+}
+.pf-card:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
+.pf-card.hide { display: none; }
+.pf-card h3 { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; color: var(--ivory); margin-bottom: .6rem; }
+.pf-card span { font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }

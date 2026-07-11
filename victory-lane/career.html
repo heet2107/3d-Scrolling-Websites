@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Career — Victory Lane</title>
+<meta name="description" content="Careers at Victory Lane, Ahmedabad — we're hiring. Send your resume to career@victorylane.in.">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-brand">
+    <a href="index.html"><img class="nav-logo" src="assets/logo.webp" alt="Victory Lane emblem"></a>
+    <span class="nav-mark">VICTORY&nbsp;LANE</span>
+  </div>
+  <nav class="nav-links">
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="career.html" aria-current="page">Career</a>
+    <a href="contact.html">Contact</a>
+    <a class="nav-cta" href="contact.html#reserve-form">Reserve</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <canvas class="seq" data-seq="workshop" aria-hidden="true"></canvas>
+  <div class="ph-scrim"></div>
+  <div class="ph-copy">
+    <p class="eyebrow" data-reveal>Victory Lane</p>
+    <h1 data-reveal class="d1">Interested?<br>We're Hiring.</h1>
+  </div>
+</section>
+
+<main class="page-main">
+  <div class="block two-col">
+    <div data-reveal>
+      <span class="gold-rule"></span>
+      <h2>New energy.<br><em>Diverse skillsets.</em></h2>
+    </div>
+    <div>
+      <p class="lead" data-reveal>We value diverse skillsets and new energy — and offer rich,
+      practical field experience alongside industry experts.</p>
+      <p class="body" data-reveal>Interested candidates should send a detailed resume to
+      <a href="mailto:career@victorylane.in" style="color:var(--gold);text-decoration:none;">career@victorylane.in</a>
+      — or use the form below.</p>
+    </div>
+  </div>
+
+  <div class="block two-col">
+    <div data-reveal>
+      <span class="gold-rule"></span>
+      <h2>Send details.</h2>
+    </div>
+    <form class="vl-form" id="career-form" data-reveal autocomplete="off">
+      <input type="text" name="name" placeholder="Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="tel" name="phone" placeholder="Phone" required>
+      <textarea name="message" rows="4" placeholder="Tell us about yourself"></textarea>
+      <button type="submit">Send details</button>
+      <p class="form-done" id="form-done">Received. Also send your resume to career@victorylane.in.</p>
+    </form>
+  </div>
+</main>
+
+<footer>
+  <span>Victory Lane · Sindhu Bhavan Road, Thaltej, Ahmedabad – 380059</span>
+  <span>+91 95127 33322 · inquiry@victorylane.in</span>
+  <span>@victorylane.in</span>
+</footer>
+
+<script src="vendor/lenis.min.js"></script>
+<script src="js/pages.js"></script>
+<script>
+document.getElementById('career-form').addEventListener('submit', e => {
+  e.preventDefault();
+  e.target.querySelectorAll('input, textarea, button').forEach(el => (el.style.display = 'none'));
+  document.getElementById('form-done').style.display = 'block';
+});
+</script>
+</body>
+</html>

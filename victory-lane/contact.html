@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Us — Victory Lane</title>
+<meta name="description" content="Contact Victory Lane — Sindhu Bhavan Road, Thaltej, Ahmedabad. +91 95127 33322 · inquiry@victorylane.in · Mon–Sat 9:30am–7pm.">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-brand">
+    <a href="index.html"><img class="nav-logo" src="assets/logo.webp" alt="Victory Lane emblem"></a>
+    <span class="nav-mark">VICTORY&nbsp;LANE</span>
+  </div>
+  <nav class="nav-links">
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="career.html">Career</a>
+    <a href="contact.html" aria-current="page">Contact</a>
+    <a class="nav-cta" href="#reserve-form">Reserve</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <canvas class="seq" data-seq="workshop" aria-hidden="true"></canvas>
+  <div class="ph-scrim"></div>
+  <div class="ph-copy">
+    <p class="eyebrow" data-reveal>Victory Lane</p>
+    <h1 data-reveal class="d1">Contact Us</h1>
+  </div>
+</section>
+
+<main class="page-main">
+  <div class="block contact-grid">
+    <div>
+      <div class="contact-item" data-reveal>
+        <h4>Workshop</h4>
+        <p>Sindhu Bhavan Road, Thaltej,<br>Ahmedabad – 380059<br>
+        <small style="font-family:var(--sans);font-size:.72rem;letter-spacing:.15em;color:var(--muted);">Near Bhavin School · Opp. N.K. Farm</small></p>
+      </div>
+      <div class="contact-item" data-reveal>
+        <h4>Phone</h4>
+        <a href="tel:+919512733322">+91 95127 33322</a>
+      </div>
+      <div class="contact-item" data-reveal>
+        <h4>Email</h4>
+        <a href="mailto:inquiry@victorylane.in">inquiry@victorylane.in</a>
+      </div>
+      <div class="contact-item" data-reveal>
+        <h4>Business hours</h4>
+        <p>Monday to Saturday<br>9:30 am – 7:00 pm</p>
+      </div>
+      <div class="contact-item" data-reveal>
+        <h4>Instagram</h4>
+        <a href="https://www.instagram.com/victorylane.in/" target="_blank" rel="noopener">@victorylane.in</a>
+      </div>
+    </div>
+    <div data-reveal>
+      <span class="gold-rule"></span>
+      <h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(1.9rem,3.6vw,3rem);margin-bottom:2rem;">Write to us.</h2>
+      <form class="vl-form" id="reserve-form" autocomplete="off">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="tel" name="phone" placeholder="Phone" required>
+        <input type="text" name="subject" placeholder="Subject" required>
+        <textarea name="message" rows="4" placeholder="Message"></textarea>
+        <button type="submit">Send message</button>
+        <p class="form-done" id="form-done">Received. We'll call you.</p>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>Victory Lane · Sindhu Bhavan Road, Thaltej, Ahmedabad – 380059</span>
+  <span>+91 95127 33322 · inquiry@victorylane.in</span>
+  <span>@victorylane.in</span>
+</footer>
+
+<script src="vendor/lenis.min.js"></script>
+<script src="js/pages.js"></script>
+<script>
+document.getElementById('reserve-form').addEventListener('submit', e => {
+  e.preventDefault();
+  e.target.querySelectorAll('input, textarea, button').forEach(el => (el.style.display = 'none'));
+  document.getElementById('form-done').style.display = 'block';
+});
+</script>
+</body>
+</html>
