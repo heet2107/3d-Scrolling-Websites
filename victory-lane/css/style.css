@@ -205,9 +205,31 @@ footer {
 [data-reveal] { opacity: 0; transform: translateY(40px); }
 
 @media (max-width: 720px) {
-  .nav { padding: 1.2rem 1.4rem; }
-  .callout, .spec { max-width: 200px; }
-  .co-left, .sp-1, .sp-3 { left: 5vw; }
-  .co-right, .sp-2, .sp-4 { right: 5vw; }
-  .callout h3 { font-size: 1.15rem; }
+  .nav { padding: .8rem 1rem; }
+  .nav-mark { display: none; }
+  .nav-logo { height: 34px; }
+  .hero-title { white-space: normal; font-size: clamp(2.6rem, 16vw, 4.5rem); }
+  .hero-copy { padding: 0 1rem 6vh; }
+  .callout { max-width: 62vw; padding: 1rem 1.1rem; }
+  .callout h3 { font-size: 1.1rem; }
+  .callout p, .spec p { font-size: .58rem; letter-spacing: .16em; }
+  .co-left { left: 5vw; top: 24vh; }
+  .co-right { right: 5vw; top: 22vh; }
+  .co-low { top: 58vh; }
+  .spec { max-width: 42vw; padding: .8rem .9rem; }
+  .spec h4 { font-size: .95rem; }
+  .spec .co-rule, .callout .co-rule { width: 40px; margin-bottom: .7rem; }
+  .sp-1 { left: 4vw;  top: 15vh; }
+  .sp-2 { right: 4vw; top: 15vh; }
+  .sp-3 { left: 4vw;  top: 38vh; }
+  .sp-4 { right: 4vw; top: 38vh; }
+  .sp-5 { left: 4vw;  top: 61vh; }
+  .sp-6 { right: 4vw; top: 61vh; }
+  .eng-title { top: 6vh; padding: 0 1rem; }
+  .stats { bottom: 2.5vh; gap: 1.4rem; width: 100%; justify-content: center; }
+  .stats strong { font-size: 1.25rem; }
+  .stats span { font-size: .5rem; letter-spacing: .18em; }
+  .sig-copy { padding: 2.5rem 1.2rem; }
+  .scroll-cue span { height: 36px; }
+  footer { padding: 1.8rem 1.2rem; font-size: .56rem; letter-spacing: .18em; gap: .6rem; }
 }

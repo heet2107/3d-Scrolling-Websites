@@ -1,13 +1,17 @@
 /* Shared styles for the inner pages (about / services / contact) */
 
-.nav-links { display: flex; align-items: center; gap: 2.2rem; }
+.nav-links { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 1rem 2.2rem; }
 .nav-links a {
   color: var(--ivory); text-decoration: none; font-size: .68rem;
   letter-spacing: .3em; text-transform: uppercase; opacity: .8;
   transition: opacity .3s, color .3s;
 }
 .nav-links a:hover, .nav-links a[aria-current="page"] { opacity: 1; color: var(--gold); }
-@media (max-width: 860px) { .nav-links { gap: 1.2rem; } .nav-links a { font-size: .6rem; letter-spacing: .2em; } }
+@media (max-width: 1000px) { .nav-links { gap: .8rem 1.2rem; } .nav-links a { font-size: .6rem; letter-spacing: .2em; } }
+@media (max-width: 720px) {
+  .nav-links { gap: .5rem .8rem; }
+  .nav-links a { font-size: .56rem; letter-spacing: .1em; }
+}
 
 /* page hero with ambient canvas */
 .page-hero { position: relative; height: 64vh; min-height: 420px; overflow: hidden; display: grid; place-items: end start; }
@@ -96,6 +100,18 @@
   transition: background .4s, color .4s;
 }
 .page-cta a.btn:hover { background: var(--gold); color: #0a0908; }
+
+@media (max-width: 720px) {
+  .page-hero { height: 48vh; min-height: 320px; }
+  .ph-copy { padding: 0 1.2rem 4vh; }
+  .page-main { padding: 7vh 1.2rem 3vh; }
+  .block { margin-bottom: 8vh; }
+  .stat-band { gap: 1.6rem; }
+  .pf-chips { gap: .5rem; }
+  .pf-chip { padding: .5rem .9rem; font-size: .56rem; letter-spacing: .16em; }
+  .svc-nav a { font-size: .56rem; letter-spacing: .16em; }
+  .finish-chip { padding: .55rem 1rem; font-size: .58rem; letter-spacing: .16em; }
+}
 
 /* generic form (contact / career) */
 .vl-form { display: flex; flex-direction: column; gap: 1.4rem; }
