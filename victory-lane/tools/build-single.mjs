@@ -71,14 +71,6 @@ for (const id of PAGE_IDS) {
 }
 pagesHtml = pagesHtml.replaceAll('aria-current="page"', '');
 
-// the in-file router replaces main.js's same-page Reserve scroll handler
-const navCtaOld = `  document.querySelector('.nav-cta').addEventListener('click', e => {
-    e.preventDefault();
-    lenis.scrollTo('#reserve', { duration: 2 });
-  });`;
-if (!mainJs.includes(navCtaOld)) throw new Error('main.js nav-cta anchor not found');
-mainJs = mainJs.replace(navCtaOld, () => '  /* Reserve link handled by the in-file hash router */');
-
 // index.html with everything inlined
 let html = read('index.html');
 html = mapLinks(html);

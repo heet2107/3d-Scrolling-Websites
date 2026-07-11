@@ -87,11 +87,6 @@
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
 
-  document.querySelector('.nav-cta').addEventListener('click', e => {
-    e.preventDefault();
-    lenis.scrollTo('#reserve', { duration: 2 });
-  });
-
   /* ---------- hero title split ---------- */
   const title = document.getElementById('hero-title');
   title.innerHTML = title.textContent.split('').map(c =>
@@ -156,22 +151,34 @@
     });
     macroTl.to({}, { duration: 0.4 });
 
-    /* ENGINEERING — pinned scrub, title, four specs, stats */
-    const engTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#engineering', start: 'top top', end: '+=380%',
-        pin: true, scrub: 0.4,
-        onUpdate: self => assembly.setProgress(self.progress),
-      },
-      defaults: { ease: 'none' },
-    });
-    engTl.fromTo('#eng-title', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1 }, 0.3)
-      .to('#eng-title', { opacity: 0, y: -40, duration: 1 }, 2.6);
-    gsap.utils.toArray('#engineering [data-spec]').forEach((el, i) => {
-      engTl.fromTo(el, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.8 }, 3.2 + i * 0.95);
-    });
-    engTl.fromTo('#stats', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9 }, 9.4)
-      .to({}, { duration: 0.6 });
+    /* ENGINEERING — pinned scrub. Desktop: six specs persist around the car.
+       Mobile: they play one at a time as full-width caption cards. */
+    const buildEngineering = mobile => {
+      const engTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#engineering', start: 'top top', end: '+=380%',
+          pin: true, scrub: 0.4,
+          onUpdate: self => assembly.setProgress(self.progress),
+        },
+        defaults: { ease: 'none' },
+      });
+      engTl.fromTo('#eng-title', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1 }, 0.3)
+        .to('#eng-title', { opacity: 0, y: -40, duration: 1 }, 2.6);
+      gsap.utils.toArray('#engineering [data-spec]').forEach((el, i) => {
+        if (mobile) {
+          const at = 3.0 + i * 1.05;
+          engTl.fromTo(el, { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.55 }, at);
+          engTl.to(el, { autoAlpha: 0, y: -20, duration: 0.5 }, at + 0.85);
+        } else {
+          engTl.fromTo(el, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.8 }, 3.2 + i * 0.95);
+        }
+      });
+      engTl.fromTo('#stats', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9 }, mobile ? 9.8 : 9.4)
+        .to({}, { duration: 0.6 });
+    };
+    const mmEng = gsap.matchMedia();
+    mmEng.add('(min-width: 721px)', () => { buildEngineering(false); });
+    mmEng.add('(max-width: 720px)', () => { buildEngineering(true); });
 
     /* SIGNATURE — ambient ping-pong playback while on screen
        (real footage doesn't loop seamlessly, so play forward then backward) */

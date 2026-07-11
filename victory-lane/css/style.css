@@ -42,7 +42,7 @@ body {
 }
 
 /* ---------- shared stage / canvas ---------- */
-.stage { position: relative; height: 100vh; width: 100%; overflow: hidden; background: var(--bg); }
+.stage { position: relative; height: 100vh; height: 100svh; width: 100%; overflow: hidden; background: var(--bg); }
 .seq { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .eyebrow {
@@ -152,7 +152,7 @@ body {
 .stats span { font-size: .64rem; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
 
 /* ---------- signature ---------- */
-.signature { position: relative; height: 100vh; overflow: hidden; display: grid; place-items: center; }
+.signature { position: relative; height: 100vh; height: 100svh; overflow: hidden; display: grid; place-items: center; }
 .sig-copy { position: relative; z-index: 5; text-align: center; padding: 4rem 5rem; }
 .sig-copy::before {
   content: ''; position: absolute; inset: -10%; z-index: -1;
@@ -205,31 +205,42 @@ footer {
 [data-reveal] { opacity: 0; transform: translateY(40px); }
 
 @media (max-width: 720px) {
-  .nav { padding: .8rem 1rem; }
+  .nav {
+    flex-direction: column; align-items: center; gap: .55rem;
+    padding: .7rem .8rem .8rem;
+    background: linear-gradient(rgba(6,5,4,.72), rgba(6,5,4,0));
+  }
   .nav-mark { display: none; }
   .nav-logo { height: 34px; }
   .hero-title { white-space: normal; font-size: clamp(2.6rem, 16vw, 4.5rem); }
   .hero-copy { padding: 0 1rem 6vh; }
-  .callout { max-width: 62vw; padding: 1rem 1.1rem; }
-  .callout h3 { font-size: 1.1rem; }
-  .callout p, .spec p { font-size: .58rem; letter-spacing: .16em; }
-  .co-left { left: 5vw; top: 24vh; }
-  .co-right { right: 5vw; top: 22vh; }
-  .co-low { top: 58vh; }
-  .spec { max-width: 42vw; padding: .8rem .9rem; }
-  .spec h4 { font-size: .95rem; }
-  .spec .co-rule, .callout .co-rule { width: 40px; margin-bottom: .7rem; }
-  .sp-1 { left: 4vw;  top: 15vh; }
-  .sp-2 { right: 4vw; top: 15vh; }
-  .sp-3 { left: 4vw;  top: 38vh; }
-  .sp-4 { right: 4vw; top: 38vh; }
-  .sp-5 { left: 4vw;  top: 61vh; }
-  .sp-6 { right: 4vw; top: 61vh; }
-  .eng-title { top: 6vh; padding: 0 1rem; }
-  .stats { bottom: 2.5vh; gap: 1.4rem; width: 100%; justify-content: center; }
-  .stats strong { font-size: 1.25rem; }
-  .stats span { font-size: .5rem; letter-spacing: .18em; }
+
+  /* callouts + specs become full-width bottom "caption cards" on phones —
+     the scroll timeline shows them one at a time */
+  .callout, .callout.co-right, .callout.co-low {
+    left: 6vw; right: 6vw; top: auto; bottom: 14vh; max-width: none;
+    text-align: left; padding: 1.1rem 1.2rem 1rem;
+    background: linear-gradient(90deg, rgba(6,5,4,.85) 0%, rgba(6,5,4,.55) 100%);
+    border-left: 2px solid var(--gold); border-radius: 0;
+  }
+  .callout h3 { font-size: 1.2rem; }
+  .callout p, .spec p { font-size: .6rem; letter-spacing: .16em; }
+  .callout .co-rule, .spec .co-rule { display: none; }
+  .co-right .co-rule { margin-left: 0; }
+  .spec, .sp-1, .sp-2, .sp-3, .sp-4, .sp-5, .sp-6 {
+    left: 6vw; right: 6vw; top: auto; bottom: 16vh; max-width: none;
+    text-align: left; padding: 1.1rem 1.2rem 1rem;
+    background: linear-gradient(90deg, rgba(6,5,4,.85) 0%, rgba(6,5,4,.55) 100%);
+    border-left: 2px solid var(--gold);
+  }
+  .spec h4 { font-size: 1.15rem; }
+  .eng-title { top: 10vh; padding: 0 1.2rem; font-size: clamp(1.7rem, 8vw, 2.4rem); }
+  .stats { bottom: 4vh; gap: 1.6rem; width: 100%; justify-content: center; padding: 0 .6rem; }
+  .stats strong { font-size: 1.3rem; }
+  .stats span { font-size: .5rem; letter-spacing: .16em; }
   .sig-copy { padding: 2.5rem 1.2rem; }
+  .sig-copy h2 { font-size: clamp(2rem, 9.5vw, 3rem); }
   .scroll-cue span { height: 36px; }
-  footer { padding: 1.8rem 1.2rem; font-size: .56rem; letter-spacing: .18em; gap: .6rem; }
+  .reserve { padding-top: 14vh; }
+  footer { padding: 1.8rem 1.2rem; font-size: .56rem; letter-spacing: .18em; gap: .6rem; justify-content: center; text-align: center; }
 }
