@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio — Victory Lane</title>
+<meta name="description" content="Victory Lane portfolio — Lamborghini, Porsche, Bentley, Mercedes and more. Mechanical work, exhaust upgrades, PPF, wraps and bodyshop projects.">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-brand">
+    <a href="index.html"><img class="nav-logo" src="assets/logo.webp" alt="Victory Lane emblem"></a>
+    <span class="nav-mark">VICTORY&nbsp;LANE</span>
+  </div>
+  <nav class="nav-links">
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html" aria-current="page">Portfolio</a>
+    <a href="career.html">Career</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <canvas class="seq" data-seq="assembly" aria-hidden="true"></canvas>
+  <div class="ph-scrim"></div>
+  <div class="ph-copy">
+    <p class="eyebrow" data-reveal>Victory Lane</p>
+    <h1 data-reveal class="d1">Portfolio</h1>
+  </div>
+</section>
+
+<main class="page-main">
+  <div class="block" data-reveal>
+    <span class="gold-rule"></span>
+    <p class="lead">Some of the machines that have taken a day off at Victory Lane.</p>
+
+    <div class="pf-chips" id="pf-chips">
+      <button class="pf-chip active" data-cat="all">All <em>46</em></button>
+      <button class="pf-chip" data-cat="Body Shop">Body Shop <em>04</em></button>
+      <button class="pf-chip" data-cat="Ceramic">Ceramic <em>01</em></button>
+      <button class="pf-chip" data-cat="Exhaust Upgrade">Exhaust Upgrade <em>05</em></button>
+      <button class="pf-chip" data-cat="Mechanical">Mechanical <em>10</em></button>
+      <button class="pf-chip" data-cat="Paint Job">Paint Job <em>03</em></button>
+      <button class="pf-chip" data-cat="PPF">PPF <em>10</em></button>
+      <button class="pf-chip" data-cat="Special Visit">Special Visit <em>08</em></button>
+      <button class="pf-chip" data-cat="Steering Wheel">Steering Wheel <em>03</em></button>
+      <button class="pf-chip" data-cat="Wrap">Wrap <em>03</em></button>
+    </div>
+  </div>
+
+  <div class="block pf-grid" id="pf-grid">
+    <div class="pf-card" data-cat="Mechanical" data-reveal><h3>Lamborghini Huracan</h3><span>Mechanical</span></div>
+    <div class="pf-card" data-cat="Mechanical" data-reveal><h3>Porsche 911 Carrera 4</h3><span>Mechanical</span></div>
+    <div class="pf-card" data-cat="Mechanical" data-reveal><h3>Bentley Flying Spur Speed</h3><span>Mechanical</span></div>
+    <div class="pf-card" data-cat="Exhaust Upgrade" data-reveal><h3>Lamborghini Huracan Evo</h3><span>Exhaust Upgrade</span></div>
+    <div class="pf-card" data-cat="Exhaust Upgrade" data-reveal><h3>Mercedes G63 AMG</h3><span>Exhaust Upgrade</span></div>
+    <div class="pf-card" data-cat="Mechanical" data-reveal><h3>Range Rover Autobiography SVO</h3><span>Mechanical</span></div>
+    <div class="pf-card" data-cat="Mechanical Exhaust Upgrade" data-reveal><h3>Ford Mustang</h3><span>Mechanical &amp; Exhaust Upgrade</span></div>
+    <div class="pf-card" data-cat="Body Shop Ceramic" data-reveal><h3>Porsche Panamera</h3><span>Body Shop &amp; Ceramic</span></div>
+    <div class="pf-card" data-cat="Body Shop" data-reveal><h3>Maybach GLS600</h3><span>Body Shop</span></div>
+    <div class="pf-card" data-cat="Mechanical" data-reveal><h3>Porsche Boxster</h3><span>Mechanical</span></div>
+    <div class="pf-card" data-cat="Mechanical" data-reveal><h3>Dodge Challenger</h3><span>Mechanical</span></div>
+    <div class="pf-card" data-cat="Special Visit" data-reveal><h3>Lamborghini Avio</h3><span>Special Visit</span></div>
+    <div class="pf-card" data-cat="Exhaust Upgrade" data-reveal><h3>Audi R8</h3><span>Exhaust Upgrade</span></div>
+    <div class="pf-card" data-cat="Exhaust Upgrade" data-reveal><h3>Defender V8</h3><span>Exhaust Upgrade</span></div>
+    <div class="pf-card" data-cat="Special Visit" data-reveal><h3>Porsche GT4</h3><span>Special Visit</span></div>
+    <div class="pf-card" data-cat="Special Visit" data-reveal><h3>Ferrari Roma</h3><span>Special Visit</span></div>
+    <div class="pf-card" data-cat="Special Visit" data-reveal><h3>Porsche 911</h3><span>Special Visit</span></div>
+  </div>
+
+  <div class="page-cta" data-reveal>
+    <p class="eyebrow">Yours could be next</p>
+    <a class="btn" href="contact.html#reserve-form">Reserve a bay</a>
+  </div>
+</main>
+
+<footer>
+  <span>Victory Lane · Sindhu Bhavan Road, Thaltej, Ahmedabad – 380059</span>
+  <span>+91 95127 33322 · inquiry@victorylane.in</span>
+  <span>@victorylane.in</span>
+</footer>
+
+<script src="vendor/lenis.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/SplitText.min.js"></script>
+<script src="vendor/Flip.min.js"></script>
+<script src="vendor/Physics2DPlugin.min.js"></script>
+<script src="js/pages.js"></script>
+<script src="js/dust.js"></script>
+<script>
+gsap.registerPlugin(Flip);
+document.getElementById('pf-chips').addEventListener('click', e => {
+  const chip = e.target.closest('.pf-chip');
+  if (!chip) return;
+  document.querySelectorAll('.pf-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  const cat = chip.dataset.cat;
+  const cards = document.querySelectorAll('.pf-card');
+  const state = Flip.getState(cards);
+  cards.forEach(card => {
+    card.classList.toggle('hide', cat !== 'all' && !card.dataset.cat.includes(cat));
+  });
+  Flip.from(state, {
+    duration: 0.65, ease: 'power3.inOut', scale: true, absolute: true,
+    onEnter: els => gsap.fromTo(els, { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' }),
+    onLeave: els => gsap.to(els, { opacity: 0, scale: 0.88, duration: 0.3 }),
+  });
+});
+</script>
+</body>
+</html>

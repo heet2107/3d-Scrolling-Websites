@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Victory Lane — Performance. Revamped.</title>
+<meta name="description" content="Victory Lane — Ahmedabad's premium automotive atelier. Performance, bodyshop, wraps and detailing for premium and super-premium marques. By appointment.">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-brand">
+    <a href="index.html"><img class="nav-logo" src="assets/logo.webp" alt="Victory Lane emblem"></a>
+    <span class="nav-mark">VICTORY&nbsp;LANE</span>
+  </div>
+  <nav class="nav-links">
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="career.html">Career</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<!-- 1 · HERO — scroll-scrubbed orbit -->
+<section class="stage" id="hero">
+  <canvas class="seq" id="canvas-hero" aria-label="Rotating car"></canvas>
+  <div class="hero-copy">
+    <p class="eyebrow" id="hero-eyebrow">Ahmedabad · Premium Automotive Atelier</p>
+    <h1 class="hero-title" id="hero-title" aria-label="Victory Lane">VICTORY LANE</h1>
+    <p class="hero-tag" id="hero-tag">Performance. Revamped.</p>
+  </div>
+  <div class="scroll-cue" id="scroll-cue"><span></span>Scroll</div>
+</section>
+
+<!-- 2 · STORY — workshop dolly scrubs behind the lines -->
+<section class="stage story" id="story">
+  <canvas class="seq" id="canvas-workshop" aria-hidden="true"></canvas>
+  <div class="story-scrim"></div>
+  <p class="story-line" data-line>Some see a machine.</p>
+  <p class="story-line" data-line>We see what it could become.</p>
+  <p class="story-line" data-line>Fifteen thousand square feet.<br><em>One obsession.</em></p>
+</section>
+
+<!-- 3 · MACRO — scroll-scrubbed detail flight -->
+<section class="stage" id="macro">
+  <canvas class="seq" id="canvas-macro" aria-label="Macro details"></canvas>
+  <div class="callout co-left"  data-callout><span class="co-rule"></span>
+    <h3>Paint, corrected to a mirror.</h3><p>Multi-stage machine polishing</p></div>
+  <div class="callout co-right" data-callout><span class="co-rule"></span>
+    <h3>Protection you'll never see.</h3><p>Ceramic &amp; paint protection film</p></div>
+  <div class="callout co-left co-low" data-callout><span class="co-rule"></span>
+    <h3>Details no one else will find.</h3><p>We will.</p></div>
+</section>
+
+<!-- 4 · ENGINEERING — scroll-scrubbed assembly -->
+<section class="stage" id="engineering">
+  <canvas class="seq" id="canvas-assembly" aria-label="Exploded assembly"></canvas>
+  <h2 class="eng-title" id="eng-title">Every discipline.<br>Under one roof.</h2>
+  <div class="spec sp-1" data-spec><span class="co-rule"></span><h4>Interior Works</h4><p>Alcantara · carbon fibre · upholstery</p></div>
+  <div class="spec sp-2" data-spec><span class="co-rule"></span><h4>Wrap</h4><p>Matte · satin · gloss · chrome</p></div>
+  <div class="spec sp-3" data-spec><span class="co-rule"></span><h4>Bodyshop &amp; Paintwork</h4><p>Original shades · precision finish</p></div>
+  <div class="spec sp-4" data-spec><span class="co-rule"></span><h4>Wheels &amp; Tyres</h4><p>RF · white wall · lettering</p></div>
+  <div class="spec sp-5" data-spec><span class="co-rule"></span><h4>Performance Upgrades</h4><p>ECM · chip tuning · brakes · suspension</p></div>
+  <div class="spec sp-6" data-spec><span class="co-rule"></span><h4>Car Repairs</h4><p>Mechanical · electrical · servicing</p></div>
+  <div class="stats" id="stats">
+    <div><strong>15,000+</strong><span>sq ft facility</span></div>
+    <div><strong>4.9&nbsp;★</strong><span>customer rated</span></div>
+    <div><strong>One</strong><span>roof, every discipline</span></div>
+  </div>
+</section>
+
+<!-- 5 · SIGNATURE — ambient atmosphere -->
+<section class="signature" id="signature">
+  <canvas class="seq" id="canvas-atmosphere" aria-hidden="true"></canvas>
+  <div class="sig-copy" data-reveal>
+    <p class="eyebrow">The Victory Standard</p>
+    <h2>Your car.<br>Treated as the only one.</h2>
+    <p class="sig-note">By appointment only&nbsp;·&nbsp;Thaltej, Ahmedabad</p>
+  </div>
+</section>
+
+<!-- 6 · RESERVE -->
+<section class="reserve" id="reserve">
+  <div class="reserve-inner" data-reveal>
+    <p class="eyebrow">Private consultation</p>
+    <h2>Reserve a bay.</h2>
+    <form id="reserve-form" autocomplete="off">
+      <input type="text" name="name" placeholder="Name" required>
+      <input type="tel" name="phone" placeholder="Phone" required>
+      <input type="text" name="car" placeholder="Marque &amp; model" required>
+      <button type="submit">Request an appointment</button>
+      <p class="form-done" id="form-done">Received. We'll call you.</p>
+    </form>
+  </div>
+  <footer>
+    <span>Victory Lane · Sindhu Bhavan Road, Thaltej, Ahmedabad – 380059</span>
+    <span>+91 95127 33322 · inquiry@victorylane.in</span>
+    <span>@victorylane.in</span>
+  </footer>
+</section>
+
+<script src="vendor/lenis.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/Physics2DPlugin.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/dust.js"></script>
+</body>
+</html>
