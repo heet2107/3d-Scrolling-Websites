@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContextQA — Testing that thinks</title>
+  <meta name="description" content="AI agents that create, run, and heal your tests — while you ship." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23e8c66a%22/></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+
+  <div id="loader">
+    <div class="loader-mark">CONTEXT<em style="color:var(--gold)">QA</em></div>
+    <div class="loader-bar"><i></i></div>
+  </div>
+
+  <nav>
+    <a class="logo" href="/">CONTEXT<em>QA</em></a>
+    <div class="links">
+      <a href="/" class="active">HOME</a>
+      <a href="/services.html">PLATFORM</a>
+      <a href="#story">STORY</a>
+      <a href="#agents">AI AGENTS</a>
+      <a class="btn" href="#cta">BOOK A DEMO</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- 1 · HERO — scroll-scrubbed orbit -->
+    <section id="hero" class="pin-section">
+      <div class="canvas-wrap" data-depth-scene="1">
+        <canvas id="heroCanvas"></canvas>
+        <div class="canvas-vignette"></div>
+      </div>
+      <div class="hero-copy" data-depth-scene="-0.5">
+        <p class="kicker">AI Test Automation</p>
+        <h1 id="heroTitle" class="display">CONTEXTQA</h1>
+        <p class="hero-sub"><strong>Testing that thinks.</strong><br />AI agents that create, run, and heal your tests — while you ship.</p>
+      </div>
+      <div class="scroll-hint">Scroll</div>
+    </section>
+
+    <!-- 2 · STORY -->
+    <section id="story">
+      <p class="kicker">Trained on your context</p>
+      <h2 class="story-line" data-reveal>Every release used to break a test.</h2>
+      <h2 class="story-line" data-reveal><span class="dim">Nobody noticed</span> until a user did.</h2>
+      <h2 class="story-line" data-reveal>ContextQA watches real user behavior — and turns it into <span class="gold">coverage</span>.</h2>
+      <p class="measure" data-reveal>No test code. No selector spreadsheets. Autonomous agents study how your product is actually used, write the tests you never had time to, and keep them green as the product changes underneath them.</p>
+    </section>
+
+    <!-- 3 · SELF-HEALING — scrubbed macro clip -->
+    <section id="selfheal" class="pin-section">
+      <div class="canvas-wrap" data-depth-scene="0.6">
+        <canvas id="healCanvas"></canvas>
+        <div class="canvas-vignette"></div>
+      </div>
+      <div class="scrub-heading" id="healHeading">
+        <p class="kicker">Self-healing</p>
+        <h2>Tests that repair themselves.</h2>
+        <p>Your UI shipped. Your selectors didn't survive. Nothing broke.</p>
+      </div>
+      <div class="callout" id="healC1" style="right: 8vw; top: 22vh;" data-tilt="10">
+        <span class="n">01 — DETECT</span>
+        <h3>DOM drift detection</h3>
+        <p>Every deploy is diffed against what the agent knew. Changed selectors are caught before your suite runs red.</p>
+      </div>
+      <div class="callout" id="healC2" style="left: 8vw; bottom: 18vh;" data-tilt="10">
+        <span class="n">02 — HEAL</span>
+        <h3>Visual AI + DOM analysis</h3>
+        <p>Elements are recognized the way a human recognizes them — by look, role, and context. Broken locators re-fuse on the spot.</p>
+      </div>
+      <div class="callout" id="healC3" style="right: 10vw; bottom: 24vh;" data-tilt="10">
+        <span class="n">03 — EXPLAIN</span>
+        <h3>Root cause, not false failures</h3>
+        <p>When a test truly fails, you're told exactly why — not handed a stack trace and a guess.</p>
+      </div>
+    </section>
+
+    <!-- 4 · ASSEMBLY — one platform -->
+    <section id="assembly" class="pin-section">
+      <div class="canvas-wrap" data-depth-scene="0.6">
+        <canvas id="asmCanvas"></canvas>
+        <div class="canvas-vignette"></div>
+      </div>
+      <div class="scrub-heading" id="asmHeading">
+        <p class="kicker">The platform</p>
+        <h2>One platform. Every surface.</h2>
+      </div>
+      <div class="spec" id="spec1" style="left: 9vw; top: 46vh;"><em>Web · Mobile · API · Salesforce</em></div>
+      <div class="spec" id="spec2" style="right: 9vw; top: 30vh;">20% → <em>80% coverage</em> in weeks</div>
+      <div class="spec" id="spec3" style="left: 12vw; bottom: 22vh;"><em>70% less</em> test maintenance</div>
+      <div class="spec" id="spec4" style="right: 11vw; bottom: 30vh;">Plain-English tests — <em>no code</em></div>
+      <div class="spec" id="spec5" style="left: 34vw; bottom: 10vh;">Jenkins · GitHub Actions · Azure DevOps · Bitbucket · <em>Jira</em> · Slack</div>
+    </section>
+
+    <!-- 5 · AI AGENTS -->
+    <section id="agents">
+      <video muted loop playsinline autoplay>
+        <source src="video/clip4_atmosphere.webm" type="video/webm" />
+        <source src="video/clip4_atmosphere.mp4" type="video/mp4" />
+      </video>
+      <div class="shade"></div>
+      <div class="inner">
+        <p class="kicker" data-reveal>Agentic QA</p>
+        <h2 data-reveal>Your AI agents need QA too.</h2>
+        <p data-reveal>Adversarial scenarios, hallucination traps, multi-turn edge cases, policy violations — generated and executed before your users find them.</p>
+      </div>
+      <div class="marquee">
+        <div class="track" id="marqueeTrack">
+          <span>AGENTFORCE<i></i>·</span><span>AMAZON BEDROCK<i></i>·</span><span>AZURE AI FOUNDRY<i></i>·</span><span>SNOWFLAKE CORTEX<i></i>·</span><span>INTERCOM FIN<i></i>·</span><span>CUSTOM AGENTS<i></i>·</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 · CTA -->
+    <section id="cta">
+      <p class="kicker" data-reveal>Private demo</p>
+      <h2 data-reveal>See it heal a test in fifteen minutes.</h2>
+      <div class="cta-row" data-reveal>
+        <a class="btn" href="https://contextqa.com/book-a-demo/" target="_blank" rel="noreferrer">BOOK A DEMO</a>
+        <a class="btn btn-ghost" href="https://contextqa.com/" target="_blank" rel="noreferrer">START FREE</a>
+      </div>
+      <p class="sub" data-reveal>Quietly testing everything, so you don't have to.</p>
+    </section>
+  </main>
+
+  <footer>
+    <span>CONTEXTQA — CONTEXT-AWARE AI TESTING</span>
+    <span>© 2026</span>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
