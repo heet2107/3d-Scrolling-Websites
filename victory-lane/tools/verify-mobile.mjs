@@ -77,6 +77,10 @@ for (const vp of [{ w: 390, h: 844, tag: 'phone' }, { w: 768, h: 1024, tag: 'tab
       if (f === 0.45) await page.screenshot({ path: join(SHOTS, 'm-home-specs.png') });
     }
     check('phone: engineering specs play one at a time', maxVisible >= 1 && maxVisible <= 2, `max simultaneous=${maxVisible}`);
+    // portrait canvases render the WHOLE frame (full car) over a blurred wash
+    const modes = await page.evaluate(() =>
+      Object.fromEntries(Object.entries(window.__VL.scrubbers).map(([k, s]) => [k, s.mode])));
+    check('phone: canvases use full-frame ambient mode', Object.values(modes).every(m => m === 'ambient'), JSON.stringify(modes));
     await page.goto('http://localhost:4173/services.html', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(700);
     await page.screenshot({ path: join(SHOTS, 'm-services.png') });

@@ -5,10 +5,11 @@
 
   /* ---------- frame-sequence scrubber ---------- */
   class Scrubber {
-    constructor(canvasId, seqName) {
+    constructor(canvasId, seqName, opts = {}) {
       this.canvas = document.getElementById(canvasId);
       this.ctx = this.canvas.getContext('2d');
       this.seq = seqName;
+      this.bandY = opts.bandY ?? 0.5; // vertical placement of the full frame in portrait mode
       this.images = [];
       this.loaded = new Set();
       this.count = 0;
@@ -74,9 +75,26 @@
       if (force) this.resize();
       const img = this.images[i];
       const cw = this.canvas.width, ch = this.canvas.height;
-      const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-      const w = img.naturalWidth * s, h = img.naturalHeight * s;
-      this.ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+      if (cw / ch < 0.8) {
+        // portrait screens: show the WHOLE frame (full car) floating over a
+        // blurred, darkened wash of the same frame instead of cropping into it
+        this.mode = 'ambient';
+        if (!this._bg) {
+          this._bg = document.createElement('canvas');
+          this._bg.width = 24; this._bg.height = 24;
+        }
+        this._bg.getContext('2d').drawImage(img, 0, 0, 24, 24);
+        this.ctx.drawImage(this._bg, 0, 0, cw, ch); // tiny→huge stretch = cheap heavy blur
+        this.ctx.fillStyle = 'rgba(6,5,4,0.5)';
+        this.ctx.fillRect(0, 0, cw, ch);
+        const h = img.naturalHeight * (cw / img.naturalWidth);
+        this.ctx.drawImage(img, 0, (ch - h) * this.bandY, cw, h);
+      } else {
+        this.mode = 'cover';
+        const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+        const w = img.naturalWidth * s, h = img.naturalHeight * s;
+        this.ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+      }
       this.drawn = i;
     }
   }
@@ -101,9 +119,9 @@
 
   async function boot() {
     const [hero, macro, assembly, atmosphere, workshop] = await Promise.all([
-      new Scrubber('canvas-hero', 'hero').load(),
+      new Scrubber('canvas-hero', 'hero', { bandY: 0.62 }).load(), // car sits below the title on phones
       new Scrubber('canvas-macro', 'macro').load(),
-      new Scrubber('canvas-assembly', 'assembly').load(),
+      new Scrubber('canvas-assembly', 'assembly', { bandY: 0.42 }).load(), // clear of the caption cards
       new Scrubber('canvas-atmosphere', 'atmosphere').load(),
       new Scrubber('canvas-workshop', 'workshop').load(),
     ]);
