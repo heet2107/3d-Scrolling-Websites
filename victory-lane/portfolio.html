@@ -87,16 +87,30 @@
 </footer>
 
 <script src="vendor/lenis.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/SplitText.min.js"></script>
+<script src="vendor/Flip.min.js"></script>
+<script src="vendor/Physics2DPlugin.min.js"></script>
 <script src="js/pages.js"></script>
+<script src="js/dust.js"></script>
 <script>
+gsap.registerPlugin(Flip);
 document.getElementById('pf-chips').addEventListener('click', e => {
   const chip = e.target.closest('.pf-chip');
   if (!chip) return;
   document.querySelectorAll('.pf-chip').forEach(c => c.classList.remove('active'));
   chip.classList.add('active');
   const cat = chip.dataset.cat;
-  document.querySelectorAll('.pf-card').forEach(card => {
+  const cards = document.querySelectorAll('.pf-card');
+  const state = Flip.getState(cards);
+  cards.forEach(card => {
     card.classList.toggle('hide', cat !== 'all' && !card.dataset.cat.includes(cat));
+  });
+  Flip.from(state, {
+    duration: 0.65, ease: 'power3.inOut', scale: true, absolute: true,
+    onEnter: els => gsap.fromTo(els, { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' }),
+    onLeave: els => gsap.to(els, { opacity: 0, scale: 0.88, duration: 0.3 }),
   });
 });
 </script>

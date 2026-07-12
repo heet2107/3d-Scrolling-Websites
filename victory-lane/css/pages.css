@@ -87,10 +87,13 @@
 .svc-nav a { text-decoration: none; color: var(--muted); font-size: .68rem; letter-spacing: .3em; text-transform: uppercase; transition: color .3s; }
 .svc-nav a:hover { color: var(--gold); }
 
-/* reveal animation for pages (IntersectionObserver adds .in) */
+/* reveal animation for pages (IntersectionObserver adds .in — fallback used by
+   the single-file build; live pages run GSAP instead, flagged via .gsap-pages) */
 [data-reveal] { opacity: 0; transform: translateY(42px); transition: opacity 1.1s cubic-bezier(.22,1,.36,1), transform 1.1s cubic-bezier(.22,1,.36,1); }
 [data-reveal].in { opacity: 1; transform: none; }
 [data-reveal].d1 { transition-delay: .12s; } [data-reveal].d2 { transition-delay: .24s; } [data-reveal].d3 { transition-delay: .36s; }
+.gsap-pages [data-reveal] { transition: none; }
+.svc-card, .pf-card { will-change: transform; }
 
 .page-cta { text-align: center; padding: 8vh 0 12vh; }
 .page-cta a.btn {

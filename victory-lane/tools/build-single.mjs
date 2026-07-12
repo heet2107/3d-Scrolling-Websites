@@ -83,7 +83,9 @@ html = html.replace('src="assets/logo.webp"', () => `src="${b64('assets/logo.web
 html = html.replace('<script src="vendor/lenis.min.js"></script>', () => `<script>window.EMBEDDED_FRAMES = ${JSON.stringify(embedded)};</script>\n<script>\n${read('vendor/lenis.min.js')}\n</script>`);
 html = html.replace('<script src="vendor/gsap.min.js"></script>', () => `<script>\n${read('vendor/gsap.min.js')}\n</script>`);
 html = html.replace('<script src="vendor/ScrollTrigger.min.js"></script>', () => `<script>\n${read('vendor/ScrollTrigger.min.js')}\n</script>`);
+html = html.replace('<script src="vendor/Physics2DPlugin.min.js"></script>', () => `<script>\n${read('vendor/Physics2DPlugin.min.js')}\n</script>`);
 html = html.replace('<script src="js/main.js"></script>', () => `<script>\n${mainJs}\n</script>`);
+html = html.replace('<script src="js/dust.js"></script>', () => `<script>\n${read('js/dust.js')}\n</script>`);
 
 // mount the embedded pages after the home wrapper, then add the hash router
 const ROUTER_JS = `
