@@ -87,10 +87,13 @@
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
 
-  /* ---------- hero title split ---------- */
+  /* ---------- hero title split ----------
+     letters live inside unbreakable word spans so narrow screens wrap
+     between words (VICTORY / LANE), never mid-word */
   const title = document.getElementById('hero-title');
-  title.innerHTML = title.textContent.split('').map(c =>
-    c === ' ' ? '<span class="sp"></span>' : `<span class="ch">${c}</span>`).join('');
+  title.innerHTML = title.textContent.split(' ').map(word =>
+    `<span class="wd">${word.split('').map(c => `<span class="ch">${c}</span>`).join('')}</span>`
+  ).join('<span class="sp"></span>');
 
   /* ---------- boot ---------- */
   const scrubbers = {};

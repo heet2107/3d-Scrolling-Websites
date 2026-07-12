@@ -19,6 +19,29 @@ const check = (name, cond, detail = '') => {
   if (!cond) fails.push(name);
 };
 
+// hero text fitting at awkward widths: words never break mid-word, nothing overflows
+for (const w of [320, 390, 600, 835]) {
+  const page = await browser.newPage({ viewport: { width: w, height: 844 } });
+  await page.goto('http://localhost:4173/', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => window.__VL && window.__VL.ready, null, { timeout: 30000 });
+  await page.waitForTimeout(300);
+  const t = await page.evaluate(() => {
+    const vw = document.documentElement.clientWidth;
+    const fits = el => { const r = el.getBoundingClientRect(); return r.left >= -1 && r.right <= vw + 1; };
+    return {
+      wordsIntact: [...document.querySelectorAll('#hero-title .wd')].every(el => el.getClientRects().length === 1),
+      titleFits: fits(document.getElementById('hero-title')),
+      eyebrowFits: fits(document.getElementById('hero-eyebrow')),
+      tagFits: fits(document.getElementById('hero-tag')),
+    };
+  });
+  check(`hero text fits at ${w}px (words intact, no overflow)`,
+    t.wordsIntact && t.titleFits && t.eyebrowFits && t.tagFits, JSON.stringify(t));
+  if (w === 390) await page.screenshot({ path: join(SHOTS, 'm-hero-fit-390.png') });
+  if (w === 600) await page.screenshot({ path: join(SHOTS, 'm-hero-fit-600.png') });
+  await page.close();
+}
+
 for (const vp of [{ w: 390, h: 844, tag: 'phone' }, { w: 768, h: 1024, tag: 'tablet' }]) {
   const page = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
   for (const p of PAGES) {
