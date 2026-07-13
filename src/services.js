@@ -104,13 +104,12 @@ healTl
   )
   .to('#healPulse', { opacity: 0, duration: 0.05 }, 0.95);
 
-/* ---------- ambient video drift ---------- */
-gsap.from('.svc-hero video', {
-  scale: 1.18,
-  duration: 3,
-  ease: 'power2.out',
+/* ---------- hero runner panel: rows tick in ---------- */
+gsap.from('#svcRunner', { autoAlpha: 0, x: 40, duration: 1, ease: 'power3.out', delay: 0.5 });
+gsap.from('.svc-run', {
+  opacity: 0, x: 16, duration: 0.5, stagger: 0.16, ease: 'power2.out',
+  scrollTrigger: { trigger: '#svcRunner', start: 'top 80%', once: true },
 });
-document.querySelector('.svc-hero video').play().catch(() => {});
 
 /* ---------- site-wide pointer effects ---------- */
 initCursorDust();

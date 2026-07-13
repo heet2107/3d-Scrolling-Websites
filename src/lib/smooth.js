@@ -14,5 +14,6 @@ export function initSmoothScroll() {
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis; // test/automation hook
   return lenis;
 }

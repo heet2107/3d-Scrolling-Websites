@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/styles.css" />
+  <link rel="stylesheet" href="/src/scenes.css" />
 </head>
 <body>
 
@@ -27,15 +28,26 @@
   <main>
     <!-- hero -->
     <header class="svc-hero">
-      <video muted loop playsinline autoplay>
-        <source src="video/clip4_atmosphere.webm" type="video/webm" />
-        <source src="video/clip4_atmosphere.mp4" type="video/mp4" />
-      </video>
-      <div class="shade"></div>
-      <div class="inner">
-        <p class="kicker">The platform</p>
-        <h1 id="svcTitle" class="display"><span class="l">Everything.</span><span class="l">Tested.</span></h1>
-        <p class="lede">One autonomous QA layer across every surface you ship — created in plain English, executed in parallel, healed without you.</p>
+      <div class="bg-fade"></div>
+      <div class="svc-hero-grid">
+        <div class="inner">
+          <p class="kicker">The platform</p>
+          <h1 id="svcTitle" class="display"><span class="l">Everything.</span><span class="l">Tested.</span></h1>
+          <p class="lede">One autonomous QA layer across every surface you ship — created in plain English, executed in parallel, healed without you.</p>
+        </div>
+        <div class="mono-panel" id="svcRunner" data-tilt="5">
+          <div class="win-dots"><i></i><i></i><i></i></div>
+          <div class="win-title">contextqa run · main</div>
+          <div class="code" style="margin-top:38px">
+            <span class="ln"><span class="tok-dim">$</span> contextqa test --all</span>
+            <span class="ln svc-run"><span class="tok-str">✓</span> checkout.flow <span class="tok-dim">· web</span></span>
+            <span class="ln svc-run"><span class="tok-str">✓</span> login.session <span class="tok-dim">· mobile</span></span>
+            <span class="ln svc-run"><span class="tok-str">✓</span> orders.api <span class="tok-dim">· api</span></span>
+            <span class="ln svc-run"><span class="tok-fn">⟳</span> lead.route <span class="tok-dim">· salesforce · healed</span></span>
+            <span class="ln svc-run"><span class="tok-str">✓</span> agent.guardrails <span class="tok-dim">· ai</span></span>
+            <span class="ln"><span class="tok-dim">217 passed · 0 failed · 3 healed</span></span>
+          </div>
+        </div>
       </div>
     </header>
 

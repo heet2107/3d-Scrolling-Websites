@@ -1,0 +1,144 @@
+/* ============================================================
+   Software-testing visual scenes (replaces the hardware footage)
+   ============================================================ */
+
+.scene-stage {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.scene-stage svg { width: min(980px, 86vw); height: auto; overflow: visible; }
+.scene-stage .panel-host { pointer-events: none; }
+
+/* ---------- HERO · browser-under-test ---------- */
+.ut-frame { fill: rgba(13, 17, 30, 0.78); stroke: var(--hairline); stroke-width: 1.5; }
+.ut-chrome { fill: rgba(255, 255, 255, 0.028); }
+.ut-dot { fill: #2b3348; }
+.ut-addr { fill: rgba(255, 255, 255, 0.05); }
+.ut-ui { fill: rgba(139, 92, 246, 0.10); }
+.ut-ui.b { fill: rgba(59, 130, 246, 0.12); }
+.ut-ui.g { fill: rgba(232, 198, 106, 0.10); }
+.ut-bbox { fill: none; stroke: var(--gold); stroke-width: 2; }
+.ut-check circle { fill: var(--gold); }
+.ut-check path { stroke: #0a0a0a; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ut-beam { fill: url(#beamGrad); }
+.ut-scanline { stroke: var(--gold); stroke-width: 1.2; opacity: 0.55; }
+
+.cov-hud {
+  position: absolute; top: 15vh; right: 8vw; text-align: right; z-index: 6;
+}
+.cov-hud .cov-lbl {
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.42em;
+  color: var(--gold); text-transform: uppercase;
+}
+.cov-hud .cov-val {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(40px, 6vw, 88px); color: var(--ink); line-height: 1;
+  margin-top: 6px;
+}
+.cov-bar { width: 190px; height: 3px; background: var(--hairline); margin: 12px 0 0 auto; overflow: hidden; }
+.cov-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--blue), var(--gold)); }
+
+/* ---------- shared floating panel (code / terminal) ---------- */
+.mono-panel {
+  position: relative;
+  width: min(760px, 86vw);
+  background: rgba(8, 11, 20, 0.86);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  padding: 30px 34px;
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.8);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 15px;
+}
+.mono-panel::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40px;
+  background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--hairline);
+}
+.mono-panel .win-dots { position: absolute; top: 16px; left: 20px; display: flex; gap: 7px; z-index: 2; }
+.mono-panel .win-dots i { width: 9px; height: 9px; border-radius: 50%; background: #2b3348; display: block; }
+.mono-panel .win-title {
+  position: absolute; top: 12px; left: 0; right: 0; text-align: center;
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.24em; color: var(--muted);
+}
+.mono-panel .code { margin-top: 34px; }
+.mono-panel .ln { display: block; white-space: pre-wrap; color: var(--muted); line-height: 2.05; }
+.tok-kw { color: #a78bfa; }
+.tok-str { color: #60a5fa; }
+.tok-fn { color: var(--gold); }
+.tok-dim { color: rgba(151, 160, 182, 0.5); }
+
+/* selector that breaks then heals */
+.sh-selector { color: #60a5fa; transition: none; }
+.sh-selector.broken { color: #ef4444; text-decoration: line-through; }
+.sh-selector.healed { color: #34d399; }
+
+.sh-scan {
+  position: absolute; left: 0; right: 0; height: 74px; top: -80px; z-index: 1;
+  background: linear-gradient(180deg, transparent, rgba(232, 198, 106, 0.16), transparent);
+  pointer-events: none;
+}
+.sh-deploy {
+  position: absolute; top: 50px; right: 26px; z-index: 3;
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.2em;
+  color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 999px;
+  padding: 5px 13px; opacity: 0;
+}
+
+.test-row { display: flex; align-items: center; gap: 14px; margin-top: 26px; font-family: var(--font-display); font-size: 14px; }
+.test-row .fname { color: var(--ink); letter-spacing: 0.04em; }
+.test-row .st { padding: 5px 13px; border-radius: 7px; font-size: 11.5px; letter-spacing: 0.14em; opacity: 0; }
+.st.pending { color: var(--muted); border: 1px solid var(--hairline); opacity: 1; }
+.st.fail { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); }
+.st.pass { color: #34d399; border: 1px solid rgba(52, 211, 153, 0.5); }
+
+/* ---------- PLATFORM · surfaces assembling ---------- */
+.plat-core { fill: rgba(232, 198, 106, 0.07); stroke: var(--gold); stroke-width: 1.6; }
+.plat-core-label { fill: var(--ink); font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 0.06em; text-anchor: middle; }
+.plat-connector { stroke: var(--gold); stroke-width: 1.4; fill: none; opacity: 0.6; }
+.surface .s-box { fill: rgba(8, 11, 20, 0.85); stroke: var(--hairline); stroke-width: 1.4; }
+.surface .s-label { fill: var(--ink); font-family: var(--font-display); font-size: 16px; letter-spacing: 0.05em; text-anchor: middle; }
+.surface .s-ico { stroke: var(--gold); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- AGENTS · adversarial terminal ---------- */
+#agents { position: relative; min-height: 118vh; display: flex; align-items: center; overflow: hidden; }
+#agents .agents-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(70% 60% at 72% 42%, rgba(59, 130, 246, 0.10), transparent 70%),
+    radial-gradient(60% 50% at 20% 70%, rgba(139, 92, 246, 0.10), transparent 70%);
+}
+#agents .inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; width: 100%; padding: 0 8vw; }
+#agents .copy h2 { font-size: clamp(34px, 4.8vw, 74px); }
+#agents .copy > p { margin-top: 22px; color: var(--muted); max-width: 460px; font-size: 16px; }
+
+.terminal .t-line { display: block; line-height: 2.1; opacity: 0; }
+.t-user { color: #a78bfa; }
+.t-agent { color: var(--ink); }
+.t-meta { color: rgba(151, 160, 182, 0.55); }
+.t-verdict { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.14em; padding: 2px 9px; border-radius: 6px; margin-left: 8px; }
+.v-block { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); }
+.v-catch { color: var(--gold); border: 1px solid rgba(232, 198, 106, 0.5); }
+.v-pass { color: #34d399; border: 1px solid rgba(52, 211, 153, 0.5); }
+
+/* ---------- services hero visual ---------- */
+.svc-hero { position: relative; min-height: 92vh; display: flex; align-items: center; overflow: hidden; padding: 12vh 8vw; }
+.svc-hero .svc-hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 5vw; align-items: center; width: 100%; }
+.svc-hero .bg-fade {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(60% 60% at 78% 40%, rgba(59, 130, 246, 0.10), transparent 70%),
+    linear-gradient(180deg, transparent 60%, var(--bg));
+}
+.svc-hero h1 { font-size: clamp(42px, 6vw, 100px); }
+.svc-hero h1 .l { display: block; white-space: nowrap; }
+
+@media (max-width: 900px) {
+  #agents .inner { grid-template-columns: 1fr; gap: 6vh; }
+  #agents .terminal { order: 2; }
+  .svc-hero .svc-hero-grid { grid-template-columns: 1fr; gap: 5vh; }
+  .cov-hud { top: 11vh; right: 6vw; }
+  .mono-panel { font-size: 13px; padding: 24px 22px; }
+}
