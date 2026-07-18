@@ -10,8 +10,6 @@
   <meta property="og:image" content="assets/img/og.jpg" />
   <meta property="og:type" content="website" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23050505'/%3E%3Ctext x='50' y='68' font-size='52' font-family='Arial Black' font-weight='900' fill='%2318E29B' text-anchor='middle'%3EHB%3C/text%3E%3C/svg%3E" />
-  <link rel="preload" href="assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -34,6 +32,7 @@
     <a class="brand" href="#top">HB<span>©</span></a>
     <div class="head-meta"><span class="dot"></span>Available for work</div>
     <nav class="head-nav">
+      <a href="#experience">Experience</a>
       <a href="#work">Work</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -75,19 +74,11 @@
       <div class="stats-grid">
         <div class="stat">
           <span class="stat-num" data-count="500" data-suffix="+">0</span>
-          <span class="stat-label">AI test scenarios processed daily</span>
+          <span class="stat-label">AI test scenarios processed daily by agents I built</span>
         </div>
         <div class="stat">
           <span class="stat-num" data-count="92" data-suffix="%">0</span>
-          <span class="stat-label">autonomous agent success rate</span>
-        </div>
-        <div class="stat">
-          <span class="stat-num" data-count="99.7" data-suffix="%" data-decimals="1">0</span>
-          <span class="stat-label">of malicious inputs blocked in production</span>
-        </div>
-        <div class="stat">
-          <span class="stat-num" data-count="100" data-suffix="K+">0</span>
-          <span class="stat-label">documents in a sub-second RAG corpus</span>
+          <span class="stat-label">autonomous agent success rate in production</span>
         </div>
         <div class="stat">
           <span class="stat-num" data-count="5" data-suffix="+">0</span>
@@ -106,7 +97,7 @@
           <div class="pillar" data-pillar>
             <span class="pillar-idx">01</span>
             <h3 class="pillar-title">AI Engineering</h3>
-            <p class="pillar-copy">LLM integration, RAG pipelines, MCP servers and multi-agent orchestration — production-grade, with guardrails that block 99.7% of malicious inputs.</p>
+            <p class="pillar-copy">LLM integration, RAG pipelines, MCP servers and multi-agent orchestration — production-grade, with safety guardrails built in.</p>
           </div>
           <div class="pillar" data-pillar>
             <span class="pillar-idx">02</span>
@@ -116,9 +107,40 @@
           <div class="pillar" data-pillar>
             <span class="pillar-idx">03</span>
             <h3 class="pillar-title">Cloud &amp; DevOps</h3>
-            <p class="pillar-copy">AWS, Docker, Kubernetes, Terraform and CI/CD pipelines that cut release cycles from 3 days to 4 hours at 99.9% uptime.</p>
+            <p class="pillar-copy">AWS, Docker, Kubernetes, Terraform and CI/CD pipelines that ship in hours, not days — without dropping uptime.</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ EXPERIENCE ============ -->
+    <section class="xp" id="experience">
+      <p class="section-tag">[ 03 — Where I've shipped ]</p>
+      <div class="xp-rows">
+        <article class="xp-row">
+          <span class="xp-dates">Aug 2023 — Present</span>
+          <div class="xp-head">
+            <h3 class="xp-role">Software Engineer, AI/ML</h3>
+            <span class="xp-co">ContextQA · Austin, TX</span>
+          </div>
+          <p class="xp-blurb">Autonomous testing agents on MCP + ReAct, RAG retrieval experiments, AI safety guardrails and the CI/CD that keeps it all shipping daily.</p>
+        </article>
+        <article class="xp-row">
+          <span class="xp-dates">Mar 2021 — Jun 2023</span>
+          <div class="xp-head">
+            <h3 class="xp-role">Full-Stack Web Developer</h3>
+            <span class="xp-co">Restoration Partner · Portland, MI</span>
+          </div>
+          <p class="xp-blurb">Secure React, Node.js and PostgreSQL applications, RESTful APIs, Salesforce implementations end to end, and AI chatbots that meaningfully cut support load.</p>
+        </article>
+        <article class="xp-row">
+          <span class="xp-dates">May 2020 — Mar 2021</span>
+          <div class="xp-head">
+            <h3 class="xp-role">Software Engineer Intern</h3>
+            <span class="xp-co">MiHIN · Grand Rapids, MI</span>
+          </div>
+          <p class="xp-blurb">Healthcare software in a regulated environment — Agile delivery, data governance, and AWS IAM for cloud health applications.</p>
+        </article>
       </div>
     </section>
 
@@ -127,7 +149,7 @@
       <video class="work-bg" id="closerVideo" data-mp4="assets/video/closer.mp4" data-webm="assets/video/closer.webm" poster="assets/img/poster.jpg" muted loop playsinline preload="none"></video>
       <div class="work-veil" aria-hidden="true"></div>
       <div class="work-inner">
-        <p class="section-tag">[ 03 — Selected work ]</p>
+        <p class="section-tag">[ 04 — Selected work ]</p>
         <h2 class="work-title">WORK</h2>
         <div class="cards">
           <article class="card" data-tilt>
@@ -140,7 +162,7 @@
           <article class="card" data-tilt>
             <span class="card-idx">002</span>
             <h3 class="card-title">Autonomous QA Agent</h3>
-            <p class="card-pitch">An MCP + ReAct testing agent at ContextQA that runs 500+ QA scenarios a day at a 92% success rate — tool selection, error recovery and all.</p>
+            <p class="card-pitch">An MCP + ReAct testing agent at ContextQA that runs hundreds of QA workflows a day — tool selection, error recovery and all.</p>
             <p class="card-tech">MCP · ReAct · Claude · GitHub Actions</p>
             <span class="card-arrow" aria-hidden="true">→</span>
           </article>
@@ -155,6 +177,35 @@
       </div>
     </section>
 
+    <!-- ============ SKILLS ============ -->
+    <section class="skills" id="skills">
+      <p class="section-tag">[ 05 — Toolkit ]</p>
+      <div class="skill-group">
+        <h3 class="skill-label">AI Engineering</h3>
+        <div class="chips">
+          <span class="chip">Claude API</span><span class="chip">RAG Pipelines</span><span class="chip">MCP Servers</span><span class="chip">Prompt Architecture</span><span class="chip">Multi-Agent Systems</span><span class="chip">LangSmith</span><span class="chip">n8n</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3 class="skill-label">Languages &amp; Frameworks</h3>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">TypeScript</span><span class="chip">React</span><span class="chip">Next.js</span><span class="chip">Node.js</span><span class="chip">FastAPI</span><span class="chip">GraphQL</span><span class="chip">PostgreSQL</span><span class="chip">MongoDB</span><span class="chip">Redis</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3 class="skill-label">Cloud &amp; DevOps</h3>
+        <div class="chips">
+          <span class="chip">AWS</span><span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Terraform</span><span class="chip">GitHub Actions</span><span class="chip">CI/CD</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3 class="skill-label">Also Fluent In</h3>
+        <div class="chips">
+          <span class="chip">Salesforce — Admin &amp; AI Associate certified</span><span class="chip">Figma</span><span class="chip">Jira</span><span class="chip">Tableau</span>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ FINALE ============ -->
     <section class="finale" id="contact">
       <h2 class="finale-type">
@@ -162,10 +213,27 @@
         <span class="fin-line"><i>SOMETHING</i></span>
         <span class="fin-line fin-accent"><i>INTELLIGENT</i></span>
       </h2>
-      <div class="cta-row">
-        <a class="btn btn-solid" href="mailto:Heetbarot21@gmail.com">Start a project</a>
-        <a class="btn btn-ghost" href="https://www.linkedin.com/in/heet-barot/" target="_blank" rel="noopener">Connect on LinkedIn</a>
-      </div>
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="form-row">
+          <label class="field">
+            <span class="field-label">Your name</span>
+            <input type="text" name="name" autocomplete="name" placeholder="Ada Lovelace" required />
+          </label>
+          <label class="field">
+            <span class="field-label">Your email</span>
+            <input type="email" name="email" autocomplete="email" placeholder="you@company.com" required />
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">What are we building?</span>
+          <textarea name="message" rows="5" placeholder="Tell me about the product, the problem, the deadline…" required></textarea>
+        </label>
+        <div class="cta-row">
+          <button class="btn btn-solid" type="submit">Send it</button>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/heet-barot/" target="_blank" rel="noopener">Connect on LinkedIn</a>
+        </div>
+        <p class="form-note" id="formNote">This opens your mail app with the message pre-filled — or write me directly at <a href="mailto:Heetbarot21@gmail.com">Heetbarot21@gmail.com</a>.</p>
+      </form>
       <footer class="site-foot">
         <div class="foot-links">
           <a href="https://www.linkedin.com/in/heet-barot/" target="_blank" rel="noopener">LinkedIn</a>

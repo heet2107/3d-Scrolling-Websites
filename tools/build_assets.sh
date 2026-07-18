@@ -24,7 +24,7 @@ rm -f "$REPO/assets/frames"/orbit_*.jpg
 
 echo "==> extracting orbit frames"
 "$FF" -y -hide_banner -loglevel error -i "$ORBIT" \
-  -vf "fps=15,scale=1536:-2" -frames:v 120 -q:v 4 \
+  -vf "fps=15,scale=1920:-2" -frames:v 120 -q:v 3 \
   "$REPO/assets/frames/orbit_%04d.jpg"
 
 echo "==> poster + og image"

@@ -276,6 +276,48 @@ if (!prefersReduced && matchMedia('(pointer: fine)').matches) {
   });
 }
 
+/* ---------- experience rows reveal ---------- */
+gsap.utils.toArray('.xp-row').forEach((row, i) => {
+  gsap.from(row, {
+    opacity: 0, y: 60, duration: 0.85, delay: i * 0.08, ease: 'power3.out',
+    scrollTrigger: { trigger: row, start: 'top 90%', once: true },
+  });
+});
+
+/* ---------- skills chips reveal ---------- */
+gsap.utils.toArray('.skill-group').forEach((group) => {
+  const chips = group.querySelectorAll('.chip');
+  gsap.from(group.querySelector('.skill-label'), {
+    opacity: 0, y: 40, duration: 0.7, ease: 'power3.out',
+    scrollTrigger: { trigger: group, start: 'top 88%', once: true },
+  });
+  gsap.from(chips, {
+    opacity: 0, y: 24, scale: 0.94, duration: 0.5, stagger: 0.035, ease: 'power2.out',
+    scrollTrigger: { trigger: group, start: 'top 88%', once: true },
+  });
+});
+
+/* ---------- contact form → mailto ---------- */
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+  gsap.from(contactForm, {
+    opacity: 0, y: 50, duration: 0.9, ease: 'power3.out',
+    scrollTrigger: { trigger: contactForm, start: 'top 88%', once: true },
+  });
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(contactForm);
+    const name = (data.get('name') || '').toString().trim();
+    const email = (data.get('email') || '').toString().trim();
+    const message = (data.get('message') || '').toString().trim();
+    const subject = encodeURIComponent(`Project inquiry — ${name || 'your site'}`);
+    const body = encodeURIComponent(`${message}\n\n— ${name}${email ? ` (${email})` : ''}`);
+    window.location.href = `mailto:Heetbarot21@gmail.com?subject=${subject}&body=${body}`;
+    const note = document.getElementById('formNote');
+    if (note) note.textContent = 'Opening your mail app… if nothing happens, email Heetbarot21@gmail.com directly.';
+  });
+}
+
 /* ---------- finale kinetic type ---------- */
 gsap.utils.toArray('.fin-line i').forEach((line, i) => {
   gsap.to(line, {
