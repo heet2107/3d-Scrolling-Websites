@@ -33,13 +33,16 @@ echo "==> poster + og image"
 "$FF" -y -hide_banner -loglevel error -i "$ORBIT" \
   -vf "select=eq(n\,0),scale=1200:-2" -frames:v 1 -q:v 4 "$REPO/assets/img/og.jpg"
 
-echo "==> transcoding background videos"
-"$FF" -y -hide_banner -loglevel error -i "$BUILDER" \
-  -vf "scale=1280:-2" -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p -movflags +faststart -an \
-  "$REPO/assets/video/builder.mp4"
-"$FF" -y -hide_banner -loglevel error -i "$CLOSER" \
-  -vf "scale=1280:-2" -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p -movflags +faststart -an \
-  "$REPO/assets/video/closer.mp4"
+echo "==> transcoding background videos (h264 + vp9)"
+for pair in "builder:$BUILDER" "closer:$CLOSER"; do
+  name="${pair%%:*}"; src="${pair#*:}"
+  "$FF" -y -hide_banner -loglevel error -i "$src" \
+    -vf "scale=1280:-2" -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p -movflags +faststart -an \
+    "$REPO/assets/video/$name.mp4"
+  "$FF" -y -hide_banner -loglevel error -i "$src" \
+    -vf "scale=1280:-2" -c:v libvpx-vp9 -b:v 0 -crf 34 -row-mt 1 -pix_fmt yuv420p -an \
+    "$REPO/assets/video/$name.webm"
+done
 
 echo "==> done"
 ls "$REPO/assets/frames" | head -3

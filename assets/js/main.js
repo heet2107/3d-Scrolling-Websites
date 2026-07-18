@@ -217,17 +217,24 @@ pillars.forEach((pillar, i) => {
   }
 });
 
-/* ---------- background videos: play only in view ---------- */
+/* ---------- background videos: pick a playable codec, blob-load
+   (works on Range-less static servers), play only in view ---------- */
 [['#builderVideo', '.pillars'], ['#closerVideo', '.work']].forEach(([vidSel, trigSel]) => {
   const video = document.querySelector(vidSel);
   if (!video) return;
+  const canH264 = video.canPlayType('video/mp4; codecs="avc1.42E01E"');
+  const srcUrl = canH264 ? video.dataset.mp4 : video.dataset.webm;
+  const loaded = fetch(srcUrl)
+    .then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+    .then((blob) => { video.src = URL.createObjectURL(blob); })
+    .catch(() => { video.src = srcUrl; });
   ScrollTrigger.create({
     trigger: trigSel,
     start: 'top bottom',
     end: 'bottom top',
     onToggle(self) {
       if (self.isActive) {
-        video.play().catch(() => {});
+        loaded.then(() => video.play().catch(() => {}));
       } else {
         video.pause();
       }
