@@ -6,8 +6,11 @@
 gsap.registerPlugin(ScrollTrigger);
 
 const FRAME_COUNT = 120;
-const FRAME_PATH = (i) => `assets/frames/orbit_${String(i + 1).padStart(4, '0')}.jpg`;
-const POSTER_PATH = 'assets/img/poster.jpg';
+// Optional CDN prefix (set window.ASSET_BASE before this script to serve
+// the heavy assets from elsewhere, e.g. a commit-pinned CDN mirror).
+const BASE = window.ASSET_BASE || '';
+const FRAME_PATH = (i) => `${BASE}assets/frames/orbit_${String(i + 1).padStart(4, '0')}.jpg`;
+const POSTER_PATH = `${BASE}assets/img/poster.jpg`;
 
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -223,7 +226,7 @@ pillars.forEach((pillar, i) => {
   const video = document.querySelector(vidSel);
   if (!video) return;
   const canH264 = video.canPlayType('video/mp4; codecs="avc1.42E01E"');
-  const srcUrl = canH264 ? video.dataset.mp4 : video.dataset.webm;
+  const srcUrl = BASE + (canH264 ? video.dataset.mp4 : video.dataset.webm);
   const loaded = fetch(srcUrl)
     .then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
     .then((blob) => { video.src = URL.createObjectURL(blob); })
