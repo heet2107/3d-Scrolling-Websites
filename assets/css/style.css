@@ -381,11 +381,9 @@ body {
   box-shadow: 0 0 0 3px rgba(24, 226, 155, 0.18);
   background: rgba(24, 226, 155, 0.03);
 }
-.contact-form .cta-row { margin: 10px 0 26px; justify-content: flex-start; }
+.contact-form .cta-row { margin: 10px 0 0; justify-content: flex-start; }
 .contact-form .btn { border: 0; cursor: pointer; }
 .contact-form .btn-ghost { border: 1px solid rgba(242, 237, 225, 0.3); }
-.form-note { font-size: 13px; color: rgba(242, 237, 225, 0.4); }
-.form-note a { color: var(--emerald); text-decoration: none; }
 
 /* ---------- pillars ---------- */
 .pillars { height: 400vh; position: relative; }

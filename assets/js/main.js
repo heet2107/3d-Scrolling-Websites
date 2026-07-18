@@ -313,8 +313,6 @@ if (contactForm) {
     const subject = encodeURIComponent(`Project inquiry — ${name || 'your site'}`);
     const body = encodeURIComponent(`${message}\n\n— ${name}${email ? ` (${email})` : ''}`);
     window.location.href = `mailto:Heetbarot21@gmail.com?subject=${subject}&body=${body}`;
-    const note = document.getElementById('formNote');
-    if (note) note.textContent = 'Opening your mail app… if nothing happens, email Heetbarot21@gmail.com directly.';
   });
 }
 
