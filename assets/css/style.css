@@ -381,7 +381,7 @@ body {
   box-shadow: 0 0 0 3px rgba(24, 226, 155, 0.18);
   background: rgba(24, 226, 155, 0.03);
 }
-.contact-form .cta-row { margin: 10px 0 18px; justify-content: flex-start; }
+.contact-form .cta-row { margin: 10px 0 26px; justify-content: flex-start; }
 .contact-form .btn { border: 0; cursor: pointer; }
 .contact-form .btn-ghost { border: 1px solid rgba(242, 237, 225, 0.3); }
 .form-note { font-size: 13px; color: rgba(242, 237, 225, 0.4); }
@@ -592,9 +592,26 @@ body {
 /* ---------- responsive ---------- */
 @media (max-width: 720px) {
   .head-meta { display: none; }
-  .hero-name { font-size: clamp(72px, 24vw, 140px); }
+  .site-head { padding: 16px 18px; }
+  .brand { font-size: 18px; }
+  .head-nav { gap: 14px; }
+  .head-nav a { font-size: 11px; letter-spacing: 0.14em; }
+  .hero-name { font-size: clamp(64px, 21vw, 130px); }
+  .hero-type { padding-bottom: 13vh; }
   .pillar-copy { font-size: 15px; }
   .card { min-height: 260px; }
+  .work-title { -webkit-text-stroke-width: 1.5px; }
+  .marquee-track { -webkit-text-stroke-width: 1px; }
+}
+
+@media (max-width: 640px) {
+  .contact-form .cta-row { gap: 12px; }
+  .contact-form .btn,
+  .contact-form .btn-ghost { width: 100%; text-align: center; }
+  .btn { padding: 18px 32px; }
+  .cta-row { width: 100%; }
+  .finale-type { font-size: clamp(48px, 15vw, 90px); }
+  .stat-num { font-size: clamp(52px, 17vw, 90px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

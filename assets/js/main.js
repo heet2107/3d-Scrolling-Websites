@@ -178,7 +178,7 @@ document.querySelectorAll('.stat-num').forEach((el) => {
     v: target,
     duration: 1.8,
     ease: 'power2.out',
-    scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+    scrollTrigger: { trigger: el, start: 'top 88%' },
     onUpdate() {
       el.textContent = state.v.toFixed(decimals) + suffix;
     },
@@ -190,7 +190,7 @@ document.querySelectorAll('.stat-num').forEach((el) => {
 gsap.utils.toArray('.stat').forEach((el, i) => {
   gsap.from(el, {
     opacity: 0, y: 40, duration: 0.8, delay: i * 0.06, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 92%', once: true },
+    scrollTrigger: { trigger: el, start: 'top 92%' },
   });
 });
 
@@ -248,12 +248,12 @@ pillars.forEach((pillar, i) => {
 /* ---------- work section reveals ---------- */
 gsap.from('.work-title', {
   y: 120, opacity: 0, duration: 1, ease: 'power4.out',
-  scrollTrigger: { trigger: '.work', start: 'top 70%', once: true },
+  scrollTrigger: { trigger: '.work', start: 'top 70%' },
 });
 gsap.utils.toArray('.card').forEach((card, i) => {
   gsap.from(card, {
     y: 90, opacity: 0, duration: 0.9, delay: i * 0.12, ease: 'power3.out',
-    scrollTrigger: { trigger: '.cards', start: 'top 85%', once: true },
+    scrollTrigger: { trigger: '.cards', start: 'top 85%' },
   });
 });
 
@@ -280,7 +280,7 @@ if (!prefersReduced && matchMedia('(pointer: fine)').matches) {
 gsap.utils.toArray('.xp-row').forEach((row, i) => {
   gsap.from(row, {
     opacity: 0, y: 60, duration: 0.85, delay: i * 0.08, ease: 'power3.out',
-    scrollTrigger: { trigger: row, start: 'top 90%', once: true },
+    scrollTrigger: { trigger: row, start: 'top 90%' },
   });
 });
 
@@ -289,11 +289,11 @@ gsap.utils.toArray('.skill-group').forEach((group) => {
   const chips = group.querySelectorAll('.chip');
   gsap.from(group.querySelector('.skill-label'), {
     opacity: 0, y: 40, duration: 0.7, ease: 'power3.out',
-    scrollTrigger: { trigger: group, start: 'top 88%', once: true },
+    scrollTrigger: { trigger: group, start: 'top 88%' },
   });
   gsap.from(chips, {
     opacity: 0, y: 24, scale: 0.94, duration: 0.5, stagger: 0.035, ease: 'power2.out',
-    scrollTrigger: { trigger: group, start: 'top 88%', once: true },
+    scrollTrigger: { trigger: group, start: 'top 88%' },
   });
 });
 
@@ -302,7 +302,7 @@ const contactForm = document.getElementById('contactForm');
 if (contactForm) {
   gsap.from(contactForm, {
     opacity: 0, y: 50, duration: 0.9, ease: 'power3.out',
-    scrollTrigger: { trigger: contactForm, start: 'top 88%', once: true },
+    scrollTrigger: { trigger: contactForm, start: 'top 88%' },
   });
   contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -322,12 +322,8 @@ if (contactForm) {
 gsap.utils.toArray('.fin-line i').forEach((line, i) => {
   gsap.to(line, {
     y: 0, duration: 1.1, delay: i * 0.08, ease: 'power4.out',
-    scrollTrigger: { trigger: '.finale', start: 'top 62%', once: true },
+    scrollTrigger: { trigger: '.finale', start: 'top 62%' },
   });
-});
-gsap.from('.cta-row .btn', {
-  y: 40, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
-  scrollTrigger: { trigger: '.cta-row', start: 'top 88%', once: true },
 });
 
 /* ---------- anchor links through Lenis ---------- */
