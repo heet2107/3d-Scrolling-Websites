@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rathang Rajpal — Software Engineer</title>
+  <meta name="description" content="Rathang Rajpal — software engineer building full-stack systems and AI agents that ship. Dallas, TX." />
+  <meta property="og:title" content="Rathang Rajpal — Software Engineer" />
+  <meta property="og:description" content="Full-stack systems & AI agents that ship." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23050706'/%3E%3Ctext x='32' y='44' font-family='Arial Black,Arial' font-size='34' font-weight='900' fill='%2312E28A' text-anchor='middle'%3ERR%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Loader -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__mono">RR</div>
+    <div class="loader__pct" id="loaderPct">0</div>
+    <div class="loader__bar"><span id="loaderBar"></span></div>
+  </div>
+
+  <!-- Grain -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Nav -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#hero" data-scroll>RR<span class="nav__dot">.</span></a>
+    <nav class="nav__links">
+      <a href="#craft" data-scroll>Craft</a>
+      <a href="#work" data-scroll>Work</a>
+      <a href="#contact" data-scroll class="nav__cta">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO / ORBIT ============ -->
+    <section class="hero" id="hero">
+      <div class="hero__stage" id="heroStage">
+        <canvas id="orbitCanvas"></canvas>
+        <div class="hero__vignette" aria-hidden="true"></div>
+
+        <div class="hero__corners" aria-hidden="true">
+          <span class="hero__corner hero__corner--tl">Software Engineer</span>
+          <span class="hero__corner hero__corner--tr">Dallas, TX</span>
+          <span class="hero__corner hero__corner--bl">Portfolio — 2026</span>
+          <span class="hero__corner hero__corner--br" id="orbitHud">Orbit 001 / 160</span>
+        </div>
+
+        <div class="hero__title" id="heroTitle">
+          <h1 class="hero__name" aria-label="Rathang Rajpal">
+            <span class="hero__line" data-split>RATHANG</span>
+            <span class="hero__line hero__line--accent" data-split>RAJPAL</span>
+          </h1>
+          <p class="hero__sub" id="heroSub">I build full-stack systems &amp; AI agents that ship.</p>
+        </div>
+
+        <div class="hero__scrollcue" id="scrollCue" aria-hidden="true">
+          <span>Scroll</span>
+          <i></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STATS ============ -->
+    <section class="stats" id="stats">
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>Full-Stack — AI Agents — Cloud &amp; Scale — React — Spring Boot — Go — Kubernetes — </span><span>Full-Stack — AI Agents — Cloud &amp; Scale — React — Spring Boot — Go — Kubernetes — </span>
+        </div>
+      </div>
+      <div class="stats__grid">
+        <div class="stat">
+          <div class="stat__num"><span class="stat__val" data-count="3">0</span><span class="stat__suffix">+</span></div>
+          <div class="stat__label">Years shipping software</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num"><span class="stat__val" data-count="1000000" data-compact="1">0</span><span class="stat__suffix">+</span></div>
+          <div class="stat__label">Records processed daily</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num"><span class="stat__val" data-count="20">0</span><span class="stat__suffix">+</span></div>
+          <div class="stat__label">Microservices owned</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num"><span class="stat__val" data-count="5">0</span><span class="stat__suffix">+</span></div>
+          <div class="stat__label">AI agent workflows shipped</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num"><span class="stat__val" data-count="2">0</span><span class="stat__suffix">&times;</span></div>
+          <div class="stat__label">Hackathon &amp; case-comp wins</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ THREE PILLARS ============ -->
+    <section class="craft" id="craft">
+      <div class="craft__stage" id="craftStage">
+        <video class="craft__video" id="craftVideo" src="assets/video/builder.mp4" poster="assets/img/builder-poster.jpg" muted loop playsinline preload="metadata"></video>
+        <div class="craft__scrim" aria-hidden="true"></div>
+
+        <div class="craft__head">
+          <span class="eyebrow">What I do</span>
+          <h2 class="craft__title">Three ways I move the needle</h2>
+        </div>
+
+        <div class="pillars">
+          <article class="pillar" data-pillar>
+            <span class="pillar__index">01</span>
+            <h3 class="pillar__name">Full-Stack Engineering</h3>
+            <p class="pillar__pitch">React, Spring Boot &amp; Go services engineered to take millions of records a day — without blinking.</p>
+          </article>
+          <article class="pillar" data-pillar>
+            <span class="pillar__index">02</span>
+            <h3 class="pillar__name">AI Agentic Systems</h3>
+            <p class="pillar__pitch">Multi-agent LLM workflows — like ObservAIbility — that cut engineering effort by a third and ship 25% faster.</p>
+          </article>
+          <article class="pillar" data-pillar>
+            <span class="pillar__index">03</span>
+            <h3 class="pillar__name">Cloud &amp; Scale</h3>
+            <p class="pillar__pitch">AWS to Azure, Kubernetes, serverless pipelines — migrated, monitored and optimized in production.</p>
+          </article>
+        </div>
+
+        <div class="craft__progress" aria-hidden="true">
+          <span class="craft__tick" data-tick></span>
+          <span class="craft__tick" data-tick></span>
+          <span class="craft__tick" data-tick></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section class="work" id="work">
+      <div class="work__bg">
+        <video class="work__video" id="workVideo" src="assets/video/closer.mp4" poster="assets/img/closer-poster.jpg" muted loop playsinline preload="metadata"></video>
+        <div class="work__scrim" aria-hidden="true"></div>
+      </div>
+
+      <div class="work__content">
+        <div class="work__head">
+          <span class="eyebrow">Selected work</span>
+          <h2 class="work__title">Built. Shipped.<br/>Measured.</h2>
+        </div>
+
+        <div class="cards">
+          <a class="card" href="https://github.com/Rathang1" target="_blank" rel="noopener" data-card>
+            <span class="card__index">01</span>
+            <div class="card__body">
+              <h3 class="card__name">ObservAIbility</h3>
+              <p class="card__pitch">A multi-agent LLM log-analysis tool on OpenSearch that cut workflow debugging effort by 40%.</p>
+              <div class="card__tags"><span>LLM Agents</span><span>OpenSearch</span><span>Python</span></div>
+            </div>
+            <span class="card__arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          <a class="card" href="https://www.officedepot.com" target="_blank" rel="noopener" data-card>
+            <span class="card__index">02</span>
+            <div class="card__body">
+              <h3 class="card__name">OfficeDepot.com Platform</h3>
+              <p class="card__pitch">20+ React &amp; Go microservices powering enterprise e-commerce — organic traffic up 12–15%.</p>
+              <div class="card__tags"><span>React</span><span>Go</span><span>Kubernetes</span></div>
+            </div>
+            <span class="card__arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          <a class="card" href="https://github.com/Rathang1" target="_blank" rel="noopener" data-card>
+            <span class="card__index">03</span>
+            <div class="card__body">
+              <h3 class="card__name">HealthifyMe</h3>
+              <p class="card__pitch">A quit-smoking companion with geofenced nudges — Hack DFW winner, sponsored by Google.</p>
+              <div class="card__tags"><span>React Native</span><span>Firebase</span><span>MongoDB</span></div>
+            </div>
+            <span class="card__arrow" aria-hidden="true">&#8599;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FINALE ============ -->
+    <section class="finale" id="contact">
+      <div class="finale__inner">
+        <span class="eyebrow">Next move</span>
+        <h2 class="finale__title" data-split-words>LET&rsquo;S BUILD SOMETHING</h2>
+        <p class="finale__sub">Hard problems, sharp deadlines, ambitious products — I&rsquo;m in.</p>
+        <div class="finale__actions">
+          <a class="btn btn--primary" href="mailto:rathang.rajpal@outlook.com">Email me</a>
+          <a class="btn btn--ghost" href="https://linkedin.com/in/rathang-rajpal" target="_blank" rel="noopener">LinkedIn &#8599;</a>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="footer__left">
+          <span class="footer__brand">RR<span class="nav__dot">.</span></span>
+          <span class="footer__copy">&copy; 2026 Rathang Rajpal — Dallas, TX</span>
+        </div>
+        <nav class="footer__links">
+          <a href="https://linkedin.com/in/rathang-rajpal" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/Rathang1" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:rathang.rajpal@outlook.com">rathang.rajpal@outlook.com</a>
+          <a href="tel:+14699272600">+1 (469) 927-2600</a>
+        </nav>
+      </footer>
+    </section>
+
+  </main>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/lenis.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
