@@ -153,7 +153,7 @@
     const off2 = spread(chars2, -1);
     heroTl.to(chars1, { x: (i) => off1[i], duration: 1 }, 0);
     heroTl.to(chars2, { x: (i) => off2[i], duration: 1 }, 0);
-    heroTl.to('.hero__name', { yPercent: -14, duration: 1 }, 0);
+    heroTl.to('.hero__name', { yPercent: -6, duration: 1 }, 0);
     heroTl.to('#heroSub', { autoAlpha: 0, y: -30, duration: 0.18 }, 0.06);
     heroTl.to('#scrollCue', { autoAlpha: 0, duration: 0.06 }, 0.01);
     heroTl.to('#heroTitle', { autoAlpha: 0, duration: 0.16 }, 0.84);
