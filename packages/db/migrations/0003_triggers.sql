@@ -41,6 +41,7 @@ create trigger on_auth_user_created
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = ''
 as $$
 begin
   new.updated_at := now();
@@ -222,3 +223,13 @@ $$;
 
 revoke all on function public.create_organisation(text, text) from public, anon;
 grant execute on function public.create_organisation(text, text) to authenticated;
+
+-- ── RPC surface hygiene ─────────────────────────────────────────────────────
+
+-- Trigger functions are invoked by triggers, never via the API. Remove them
+-- from the PostgREST RPC surface entirely.
+revoke all on function public.handle_new_user() from public, anon, authenticated;
+revoke all on function public.set_updated_at() from public, anon, authenticated;
+revoke all on function public.enforce_organisation_hierarchy() from public, anon, authenticated;
+revoke all on function public.enforce_membership_owner_rules() from public, anon, authenticated;
+revoke all on function public.audit_log_immutable() from public, anon, authenticated;
