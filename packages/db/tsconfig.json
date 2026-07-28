@@ -1,0 +1,7 @@
+{
+  "extends": "@webheroai/config/typescript/library",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["src", "drizzle.config.ts"]
+}
