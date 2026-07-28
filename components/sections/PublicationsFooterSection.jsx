@@ -381,6 +381,7 @@ export default function PublicationsFooterSection() {
                 rel="noopener noreferrer"
                 ref={el => { itemRefs.current[i] = el }}
                 className={styles.item}
+                data-tilt="soft"
               >
                 <div className={styles.num}>0{i + 1}.</div>
                 <div className={styles.itemBody}>
@@ -458,7 +459,7 @@ export default function PublicationsFooterSection() {
             </h2>
             <p className={styles.mobileDesc}>{profile.description}</p>
             <div className={styles.mobileCtas}>
-              <a href={`mailto:${profile.email}`} className={styles.mobileTalkBtn}>
+              <a href={`mailto:${profile.email}`} className={styles.mobileTalkBtn} data-tilt>
                 Let&apos;s talk <FiArrowUpRight />
               </a>
             </div>
@@ -469,7 +470,7 @@ export default function PublicationsFooterSection() {
                 return (
                   <Fragment key={label}>
                     {i > 0 && <div className={styles.mobileSocialDivider} aria-hidden />}
-                    <a href={s.href} target="_blank" rel="noopener noreferrer" className={styles.mobileSocialLink} aria-label={label}>
+                    <a href={s.href} target="_blank" rel="noopener noreferrer" className={styles.mobileSocialLink} aria-label={label} data-tilt="soft">
                       <span className={styles.mobileSocialIconEl}>{MOBILE_SOCIAL_ICONS[label]}</span>
                       <span className={styles.mobileSocialLabelEl}>{label.toUpperCase()}</span>
                     </a>
@@ -510,6 +511,7 @@ export default function PublicationsFooterSection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={styles.footerLink}
+                        data-tilt="soft"
                       >
                         {SOCIAL_ICONS[s.label] && (
                           <span className={styles.socialIcon}>{SOCIAL_ICONS[s.label]}</span>
@@ -519,7 +521,7 @@ export default function PublicationsFooterSection() {
                     </span>
                   ))}
                 </div>
-                <a href={`mailto:${profile.email}`} className={styles.footerMail}>
+                <a href={`mailto:${profile.email}`} className={styles.footerMail} data-tilt="soft">
                   <FaEnvelope size={12} />
                   {profile.email}
                 </a>
@@ -537,7 +539,7 @@ export default function PublicationsFooterSection() {
                   ))}
                   <span className={styles.ctaAccent}>{content.footer.ctaAccent}</span>
                 </p>
-                <a href={`mailto:${profile.email}`} className={styles.talkBtn}>
+                <a href={`mailto:${profile.email}`} className={styles.talkBtn} data-tilt>
                   Let&apos;s talk →
                 </a>
               </div>
@@ -552,7 +554,7 @@ export default function PublicationsFooterSection() {
           <div ref={bottomBarRef} className={styles.bottomBar}>
             <div className={styles.bottomLeft}>
               <div className={styles.monogram}>
-                <span className={styles.monoLetters}>VK</span>
+                <span className={styles.monoLetters}>HB</span>
                 <span className={styles.monoDot} />
               </div>
               <span className={styles.leftDivider} />

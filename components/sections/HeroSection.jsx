@@ -153,7 +153,7 @@ export default function HeroSection() {
         <div ref={pillsRef} className={styles.pills}>
           {content.hero.pills.map((tag, i) => (
             <Fragment key={tag}>
-              <span className={styles.pill}>{tag}</span>
+              <span className={styles.pill} data-tilt="soft">{tag}</span>
               {i < content.hero.pills.length - 1 && (
                 <span className={styles.pillDot} aria-hidden="true" />
               )}
@@ -162,14 +162,14 @@ export default function HeroSection() {
         </div>
 
         {/* View Projects CTA */}
-        <button ref={ctaBtnRef} type="button" className={styles.viewBtn} onClick={handleViewProjects}>
+        <button ref={ctaBtnRef} type="button" className={styles.viewBtn} data-tilt onClick={handleViewProjects}>
            View Projects <FiArrowUpRight />
         </button>
 
         {/* Stats Row */}
         <div ref={statsRef} className={styles.stats}>
           {[...profile.stats.slice(0, 2), content.hero.specialistStat].map(s => (
-            <div key={s.label} className={styles.statCard}>
+            <div key={s.label} className={styles.statCard} data-tilt>
               <span className={styles.statValue}>{s.value}</span>
               <span className={styles.statLabel}>{s.label}</span>
             </div>
@@ -180,7 +180,7 @@ export default function HeroSection() {
 
       {/* Tagline + Availability Cards */}
       <div className={styles.cardsCol}>
-        <div ref={taglineCardRef} className={styles.taglineCard}>
+        <div ref={taglineCardRef} className={styles.taglineCard} data-tilt>
           <p className={styles.taglineText}>
             {splitTagline(profile.tagline, content.hero.taglineHighlight)}
           </p>
@@ -188,7 +188,7 @@ export default function HeroSection() {
         </div>
 
         {profile.available && (
-          <div ref={availCardRef} className={styles.availCard}>
+          <div ref={availCardRef} className={styles.availCard} data-tilt>
             <div className={styles.availHeader}>
               <span className={styles.availDot} />
               <span className={styles.availStatus}>{content.hero.availableLabel}</span>

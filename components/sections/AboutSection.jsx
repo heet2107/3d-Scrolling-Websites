@@ -85,7 +85,7 @@ export default function AboutSection() {
       {/* ── Left: photo + signature + socials ───────── */}
       <div ref={photoRef} className={styles.photoCol}>
         <div className={styles.photoWrap}>
-          <div className={styles.photoFrame} data-about-photo>
+          <div className={styles.photoFrame} data-about-photo data-tilt="strong">
             <Image
               src="/assets/about.webp"
               alt="Heet Barot"
@@ -108,6 +108,7 @@ export default function AboutSection() {
               rel="noopener noreferrer"
               aria-label={label}
               className={styles.socialLink}
+              data-tilt="soft"
             >
               <Icon />
             </a>

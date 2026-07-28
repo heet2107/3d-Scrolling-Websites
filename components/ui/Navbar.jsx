@@ -120,6 +120,7 @@ export default function Navbar() {
         <a
           href={`mailto:${profile.email}`}
           className={`${styles.emailBtn} rounded-full text-xs font-semibold px-5 h-8`}
+          data-tilt
         >
           Email me
         </a>

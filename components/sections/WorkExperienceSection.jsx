@@ -141,6 +141,7 @@ export default function WorkExperienceSection() {
                 <div
                   ref={el => { cardRefs.current[i] = el }}
                   className={styles.card}
+                  data-tilt="soft"
                 >
                   <div className={styles.cardHead}>
                     <span className={styles.period}>{exp.period} - {exp.periodEnd}</span>

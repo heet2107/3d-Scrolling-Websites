@@ -156,7 +156,7 @@ export default function ProjectsSection() {
               >
                 <div className={styles.slideLeft}>
                   <div className={styles.meta}>
-                    <span className={styles.typeTag}>{proj.type}</span>
+                    <span className={styles.typeTag} data-tilt="soft">{proj.type}</span>
                   </div>
                   <h2 className={styles.title}>{proj.title}</h2>
                   <p  className={styles.subtitle}>{proj.subtitle}</p>
@@ -165,6 +165,7 @@ export default function ProjectsSection() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.liveBtn}
+                    data-tilt
                   >
                     <span>Live Demo</span>
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -177,7 +178,7 @@ export default function ProjectsSection() {
                   <p className={styles.desc}>{proj.desc}</p>
                   <div className={styles.stack}>
                     {proj.tech.map(t => (
-                      <span key={t} className={styles.tag}>{t}</span>
+                      <span key={t} className={styles.tag} data-tilt="soft">{t}</span>
                     ))}
                   </div>
                 </div>

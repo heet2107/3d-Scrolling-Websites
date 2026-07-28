@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '@/lib/gsap'
 import Navbar                from '@/components/ui/Navbar'
+import TiltEffects           from '@/components/ui/TiltEffects'
+import AmbientAudio          from '@/components/ui/AmbientAudio'
 import VideoIntro            from '@/components/sections/VideoIntro'
 import HeroSection           from '@/components/sections/HeroSection'
 import AboutSection          from '@/components/sections/AboutSection'
@@ -167,6 +169,8 @@ export default function Home() {
       />
 
       <Navbar />
+      <TiltEffects />
+      <AmbientAudio />
       <main ref={mainRef} style={{ height: '100vh', overflowY: 'scroll', overscrollBehavior: 'none' }}>
         <div>
           <VideoIntro />

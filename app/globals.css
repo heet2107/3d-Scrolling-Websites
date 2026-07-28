@@ -79,3 +79,15 @@ main { scrollbar-width: none; -ms-overflow-style: none; }
   html, body { height: 100svh !important; }
   main { height: 100svh !important; }
 }
+
+/* ─── 3D hover (TiltEffects) ─────────────────────────────── */
+/* Elements with data-tilt get a cursor-following perspective tilt.
+   The lift shadow only applies on fine pointers while hovered. */
+[data-tilt] {
+  will-change: transform;
+  transition: box-shadow 0.35s ease;
+}
+
+[data-tilt].tiltLifted {
+  box-shadow: 0 22px 45px -18px rgba(30, 15, 4, 0.4);
+}

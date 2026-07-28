@@ -15,12 +15,14 @@ function scrollNext() {
 }
 
 export default function VideoIntro() {
+  const sectionRef  = useRef(null)
   const videoRef    = useRef(null)
   const greetRef    = useRef(null)
   const nameRef     = useRef(null)
   const roleRef     = useRef(null)
   const scrollRef   = useRef(null)
   const hintRef     = useRef(null)
+  const startedRef  = useRef(false)
 
   // muted state drives icon only - DOM muted property is controlled exclusively via ref
   const [muted,    setMuted]    = useState(true)
@@ -70,10 +72,31 @@ export default function VideoIntro() {
     function onAnimationDone() {
       const v = videoRef.current
       if (!v) return
+      startedRef.current = true
       v.play().catch(() => {})
     }
     window.addEventListener('loader-animation-done', onAnimationDone)
     return () => window.removeEventListener('loader-animation-done', onAnimationDone)
+  }, [])
+
+  // Pause both intro videos while other sections are on screen,
+  // resume when the visitor scrolls back to the top
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+    const vids = section.querySelectorAll('video')
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        vids.forEach(v => {
+          if (v === videoRef.current && !startedRef.current) return
+          v.play().catch(() => {})
+        })
+      } else {
+        vids.forEach(v => v.pause())
+      }
+    }, { threshold: 0.35 })
+    io.observe(section)
+    return () => io.disconnect()
   }, [])
 
   // Auto-hide hint after 6 s
@@ -115,7 +138,7 @@ export default function VideoIntro() {
   }
 
   return (
-    <section className={styles.section}>
+    <section ref={sectionRef} className={styles.section}>
 
       {/* 1 - Blurred ambient background */}
       <video
@@ -172,7 +195,7 @@ export default function VideoIntro() {
 
       {/* 8 - Controls (bottom-right) */}
       <div className={styles.controls}>
-        <button className={styles.ctrlBtn} onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
+        <button className={styles.ctrlBtn} data-tilt="soft" onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
           {playing
             ? /* Pause icon */
               <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
@@ -186,7 +209,7 @@ export default function VideoIntro() {
           }
         </button>
 
-        <button className={styles.ctrlBtn} onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
+        <button className={styles.ctrlBtn} data-tilt="soft" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
           {muted
             ? /* Muted icon */
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
