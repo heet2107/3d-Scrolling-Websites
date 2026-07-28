@@ -7,7 +7,13 @@ import { profile } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function About({ hasPortrait: portraitOnDisk = false }: { hasPortrait?: boolean }) {
+export default function About({
+  hasPortrait: portraitOnDisk = false,
+  portraitSrc = "/media/headshot.jpg",
+}: {
+  hasPortrait?: boolean;
+  portraitSrc?: string;
+}) {
   const rootRef = useRef<HTMLElement>(null);
   const [hasPortrait, setHasPortrait] = useState(portraitOnDisk);
 
@@ -72,8 +78,8 @@ export default function About({ hasPortrait: portraitOnDisk = false }: { hasPort
               {/* Drop your headshot at public/media/headshot.jpg */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/media/headshot.jpg"
-                alt="Heet Barot"
+                src={portraitSrc}
+                alt="Heet Barot — Software Engineer specializing in AI/ML systems"
                 className="h-full w-full object-cover"
                 onError={() => setHasPortrait(false)}
               />

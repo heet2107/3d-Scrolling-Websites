@@ -94,6 +94,12 @@ body {
   animation: glow-pulse 2.4s ease-in-out infinite;
 }
 
+/* scroll indicator pulse */
+@keyframes scroll-pulse {
+  0% { transform: translateY(-100%); }
+  60%, 100% { transform: translateY(300%); }
+}
+
 /* reduce motion */
 @media (prefers-reduced-motion: reduce) {
   .grain::after,

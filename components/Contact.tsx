@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { profile } from "@/lib/data";
+import { mediaUrl } from "@/lib/media";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,8 +34,18 @@ export default function Contact() {
     <footer
       ref={rootRef}
       id="contact"
-      className="relative flex min-h-[90svh] flex-col justify-between px-6 pb-10 pt-32 md:px-12"
+      className="relative flex min-h-[90svh] flex-col justify-between overflow-hidden px-6 pb-10 pt-32 md:px-12"
     >
+      <video
+        className="absolute inset-0 -z-10 h-full w-full object-cover opacity-25"
+        src={mediaUrl("/media/closer.mp4")}
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden
+      />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink via-ink/60 to-ink" />
       <div>
         <p className="mb-8 font-mono text-[11px] uppercase tracking-wider2 text-moss">
           06 / Contact — open to AI engineering & full-stack roles
