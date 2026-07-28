@@ -1,0 +1,14 @@
+{
+  "name": "@webheroai/config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./typescript/base": "./typescript/base.json",
+    "./typescript/library": "./typescript/library.json",
+    "./typescript/nextjs": "./typescript/nextjs.json",
+    "./eslint/base": "./eslint/base.mjs"
+  },
+  "dependencies": {
+    "typescript-eslint": "^8.65.0"
+  }
+}
