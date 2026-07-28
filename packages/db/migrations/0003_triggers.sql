@@ -152,12 +152,25 @@ create trigger memberships_enforce_owner_rules
 
 -- Insert-only for everyone, including the service role. RLS already denies
 -- update/delete for API roles; this closes the gap for privileged connections.
+-- DELETE must still be allowed inside the organisation-deletion cascade
+-- (owner deletes org → audit rows go with the tenant): at that point the
+-- organisation row is already gone, which is the signal the delete is
+-- legitimate. Without this carve-out the cascade trips the trigger and
+-- organisations can never be deleted at all.
 create or replace function public.audit_log_immutable()
 returns trigger
 language plpgsql
+security definer
+set search_path = ''
 as $$
 begin
-  raise exception 'audit_log rows cannot be modified or deleted';
+  if tg_op = 'UPDATE' then
+    raise exception 'audit_log rows cannot be modified';
+  end if;
+  if exists (select 1 from public.organisations o where o.id = old.organisation_id) then
+    raise exception 'audit_log rows cannot be deleted while their organisation exists';
+  end if;
+  return old;
 end
 $$;
 
