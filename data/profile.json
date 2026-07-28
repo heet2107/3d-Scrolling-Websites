@@ -1,0 +1,276 @@
+{
+  "name": {
+    "first": "Heet",
+    "last": "Barot",
+    "full": "Heet Barot"
+  },
+  "email": "heetbarot21@gmail.com",
+  "tagline": "Building AI-powered products & cinematic web experiences.",
+  "description": "Building AI-powered systems, autonomous agents, and full-stack products with modern web technologies.",
+  "roles": {
+    "short": "Software Engineer",
+    "detailed": "AI Engineer · Full-Stack · RAG & MCP Systems"
+  },
+  "location": {
+    "based": "Austin, TX",
+    "availability": "US & Remote"
+  },
+  "available": true,
+  "bio": "Software Development Engineer specializing in LLM integration and prompt engineering, with production experience building AI-powered systems at scale. Expert in RAG pipelines with semantic search, MCP servers for tool-augmented LLMs, and multi-agent orchestration. Strong full-stack foundation in React, TypeScript, Node.js, and Python, with secure, scalable pipelines built on GitHub Actions, Terraform, Kubernetes, and Docker.",
+  "stats": [
+    { "value": "5+",  "label": "Years Experience" },
+    { "value": "10+", "label": "Projects Shipped" },
+    { "value": "3",   "label": "Companies" }
+  ],
+  "skills": [
+    "AI Engineer",
+    "Prompt Architect",
+    "RAG Pipelines",
+    "MCP Builder",
+    "Claude API",
+    "React / Next.js",
+    "TypeScript",
+    "Python Dev",
+    "Node.js",
+    "AWS Cloud",
+    "DevOps / CI-CD",
+    "Salesforce"
+  ],
+  "experience": [
+    {
+      "id": 1,
+      "role": "Software Engineer (AI/ML)",
+      "company": "ContextQA",
+      "companyShort": "CONTEXTQA",
+      "type": "Full-time",
+      "location": "Austin, TX",
+      "period": "Aug 2023",
+      "periodEnd": "Present",
+      "bullets": [
+        "Built an autonomous testing agent using MCP servers and the ReAct framework, enabling Claude to run multi-step QA workflows with tool selection and error recovery — 500+ test scenarios daily at a 92% success rate.",
+        "Designed A/B experiments on RAG retrieval strategies (dense vs hybrid with reranking), lifting NDCG@10 from 0.72 to 0.81 and improving QA workflow efficiency by 40%.",
+        "Implemented AI safety guardrails — prompt-injection detection, content filtering, and structured output validation — blocking 99.7% of malicious inputs in production.",
+        "Shipped GitHub Actions CI/CD with Jest, Snyk scanning, Docker builds, and AWS ECS deploys, cutting release cycles from 3 days to 4 hours at 99.9% uptime."
+      ],
+      "desc": "AI/ML-focused engineering on autonomous testing agents, RAG systems, and AI safety guardrails, plus reusable React component libraries and CI/CD automation.",
+      "tech": [
+        "Claude",
+        "MCP",
+        "RAG",
+        "React",
+        "TypeScript",
+        "GitHub Actions",
+        "Docker",
+        "AWS ECS"
+      ]
+    },
+    {
+      "id": 2,
+      "role": "Full-Stack Web Developer",
+      "company": "Restoration Partner",
+      "companyShort": "RESTORATION",
+      "type": "Full-time",
+      "location": "Portland, MI",
+      "period": "Mar 2021",
+      "periodEnd": "Jun 2023",
+      "bullets": [
+        "Built secure, high-performance web applications with React, Node.js, TypeScript, and PostgreSQL under OWASP guidelines with RBAC and input sanitization.",
+        "Designed REST APIs on Express.js with OAuth 2.0 and rate limiting; delivered Salesforce implementations across Sales Cloud, Service Cloud, Live Agent, and AppExchange.",
+        "Built custom AI chatbot solutions with context-aware prompting that reduced customer support tickets by 45%.",
+        "Deployed AWS S3, CloudFront, CloudWatch, and SIEM tooling for security monitoring and performance optimization."
+      ],
+      "desc": "Full-stack product engineering with React, Node.js, TypeScript, and PostgreSQL, plus Salesforce implementations, AI chatbots, and AWS security tooling.",
+      "tech": [
+        "React",
+        "Node.js",
+        "TypeScript",
+        "PostgreSQL",
+        "Express.js",
+        "Salesforce",
+        "AWS"
+      ]
+    },
+    {
+      "id": 3,
+      "role": "Software Engineer Intern",
+      "company": "MiHIN",
+      "companyShort": "MIHIN",
+      "type": "Internship",
+      "location": "Grand Rapids, MI",
+      "period": "May 2020",
+      "periodEnd": "Mar 2021",
+      "bullets": [
+        "Worked across the full SDLC in healthcare technology — requirements gathering, development, testing, and deployment — within SCRUM/XP teams.",
+        "Helped develop data governance policies aligned to SOX and GDPR with comprehensive audit trails.",
+        "Supported AWS IAM role management, access policies, and secure authentication for cloud-based healthcare applications."
+      ],
+      "desc": "Healthcare technology engineering across the full SDLC with a focus on compliance, data governance, and secure AWS IAM management.",
+      "tech": [
+        "SDLC",
+        "Agile / SCRUM",
+        "AWS IAM",
+        "GDPR",
+        "Healthcare IT"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "Vanikaar",
+      "subtitle": "Voice → Software, Live",
+      "type": "AI Platform",
+      "link": "https://swarvani-mvp-builder.vercel.app/",
+      "image": "/assets/project-vanikaar.jpg",
+      "tech": [
+        "Real-time Transcription",
+        "AI Codegen",
+        "Next.js",
+        "Sandboxed Builds",
+        "Multi-language NLP"
+      ],
+      "desc": "Real-time meeting intelligence that turns spoken product decisions into a working application before the call ends. Live transcription in any language, feature extraction, and automatic MVP generation — no specs, no prompts."
+    },
+    {
+      "id": 2,
+      "title": "CaseGenius",
+      "subtitle": "AI Legal-Tech Platform",
+      "type": "SaaS",
+      "link": "https://www.casegenius.app/",
+      "image": "/assets/project-casegenius.jpg",
+      "tech": [
+        "Next.js",
+        "Claude API",
+        "Supabase",
+        "RLS Security",
+        "RAG"
+      ],
+      "desc": "Transforming immigration law practice — an AI-powered case platform with org-walled RLS security, document intelligence chat, and an adversarially-tested safety suite: 8/8 cross-tenant, injection, and leak tests passing in production."
+    },
+    {
+      "id": 3,
+      "title": "BiznezzAI",
+      "subtitle": "AI Platform for SMBs",
+      "type": "AI Platform",
+      "link": "https://github.com/heet2107",
+      "image": "/assets/project-biznezz.jpg",
+      "tech": [
+        "Claude API",
+        "RAG",
+        "Next.js",
+        "PostgreSQL"
+      ],
+      "desc": "AI automation platform for small businesses — tree-of-thought reasoning for multi-step decisions and a RAG pipeline over 100K+ documents with semantic chunking, metadata filtering, and sub-second retrieval. 90% recommendation acceptance rate."
+    },
+    {
+      "id": 4,
+      "title": "InboundCMS",
+      "subtitle": "Agency Platform · SEO / AEO / GEO",
+      "type": "Platform",
+      "link": "https://inboundcms.com/",
+      "image": "/assets/project-inboundcms.jpg",
+      "tech": [
+        "Next.js",
+        "SEO",
+        "AEO / GEO",
+        "Analytics"
+      ],
+      "desc": "Site and platform for an Austin creative marketing agency built for the AI-search era — SEO, Answer Engine Optimization, and Generative Engine Optimization for visibility across Google, ChatGPT, and Gemini."
+    },
+    {
+      "id": 5,
+      "title": "Victory Lane",
+      "subtitle": "Automotive Atelier Experience",
+      "type": "Web Experience",
+      "link": "https://victory-lane-seven.vercel.app/",
+      "image": "/assets/project-victorylane.jpg",
+      "tech": [
+        "Next.js",
+        "Cinematic UI",
+        "Responsive Design"
+      ],
+      "desc": "Performance. Revamped. A cinematic web experience for a premium automotive atelier — paint correction, ceramic protection, wraps, and performance tuning presented with a moody, high-end visual language."
+    },
+    {
+      "id": 6,
+      "title": "D Barot Law",
+      "subtitle": "Law Firm Platform",
+      "type": "Website",
+      "link": "https://dbarotlaw.com/",
+      "image": "/assets/project-dbarotlaw.jpg",
+      "tech": [
+        "Web Platform",
+        "Booking",
+        "SEO"
+      ],
+      "desc": "Full web presence for a New York law firm practicing immigration, IP & trademark, and family law across all 50 states — attorney profiles, practice areas, and consultation booking."
+    },
+    {
+      "id": 7,
+      "title": "FoodLab",
+      "subtitle": "AI Meal Planning App",
+      "type": "App",
+      "link": "https://github.com/heet2107",
+      "image": "/assets/project-foodlab.jpg",
+      "tech": [
+        "OpenAI API",
+        "React",
+        "Node.js",
+        "Supabase"
+      ],
+      "desc": "Personalized AI meal planning — intelligent recommendations, calorie tracking, and dietary progress visualization with secure Supabase persistence and interactive nutrition dashboards."
+    }
+  ],
+  "publications": [
+    {
+      "id": 1,
+      "title": "Salesforce Administrator",
+      "platform": "Salesforce",
+      "year": "Certified",
+      "link": "https://trailhead.salesforce.com/en/credentials/administrator",
+      "desc": "Certified in Salesforce org administration — workflow automation, reports and dashboards, data and access management across Sales Cloud and Service Cloud."
+    },
+    {
+      "id": 2,
+      "title": "Salesforce AI Associate",
+      "platform": "Salesforce",
+      "year": "Certified",
+      "link": "https://trailhead.salesforce.com/en/credentials/aiassociate",
+      "desc": "Certified in AI fundamentals on the Salesforce platform — Einstein capabilities, ethical AI principles, and data readiness for AI-powered CRM."
+    },
+    {
+      "id": 3,
+      "title": "Advanced DevOps",
+      "platform": "TrainWithShubham",
+      "year": "Certified",
+      "link": "https://www.trainwithshubham.com/",
+      "desc": "Advanced DevOps certification covering CI/CD pipeline design, Docker, Kubernetes, Terraform, and cloud-native deployment automation."
+    },
+    {
+      "id": 4,
+      "title": "B.A. Information Science, Minor in IT",
+      "platform": "Michigan State University",
+      "year": "Degree",
+      "link": "https://msu.edu/",
+      "desc": "Bachelor of Arts in Information Science with a minor in Information Technology from Michigan State University, East Lansing, MI."
+    },
+    {
+      "id": 5,
+      "title": "Full-Stack Web Development",
+      "platform": "Hackbright Academy",
+      "year": "Bootcamp",
+      "link": "https://hackbrightacademy.com/",
+      "desc": "Intensive full-stack web development bootcamp — modern JavaScript, React, backend APIs, and databases."
+    }
+  ],
+  "socials": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/heet2107"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/heet-barot"
+    }
+  ]
+}

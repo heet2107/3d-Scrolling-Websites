@@ -1,0 +1,22 @@
+{
+  "site": {
+    "tagline": "Portfolio 2026"
+  },
+  "hero": {
+    "taglineHighlight": "experiences",
+    "freelanceNote": "Open to AI engineering & full-stack roles.",
+    "availableLabel": "Available for work",
+    "pills": ["AI Engineer", "Prompt Architect", "MCP Builder", "Full-Stack Dev"],
+    "specialistStat": { "value": "AI + Full Stack", "label": "Specialist" }
+  },
+  "interstitial": {
+    "availabilityLabel": "Availability",
+    "basedInLabel": "Based in",
+    "statLabels": ["Years\nexperience", "Projects\nshipped", "Companies\nworked at"]
+  },
+  "footer": {
+    "eyebrow": "Available for collaborations",
+    "ctaLines": ["Building AI", "systems & products", "that feel"],
+    "ctaAccent": "alive."
+  }
+}
