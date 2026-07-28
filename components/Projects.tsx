@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "@/lib/data";
+import { mediaUrl } from "@/lib/media";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -65,7 +66,7 @@ export default function Projects() {
               <div className="relative aspect-[16/10] overflow-hidden rounded-sm border border-line bg-panel">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={p.image}
+                  src={mediaUrl(p.image)}
                   alt={p.title}
                   loading="lazy"
                   className="proj-img h-full w-full object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100"

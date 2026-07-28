@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { profile } from "@/lib/data";
+import { mediaUrl } from "@/lib/media";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -65,7 +66,7 @@ export default function Hero() {
       <div className="absolute inset-0">
         <video
           className="hero-video h-full w-full object-cover opacity-60"
-          src="/media/hero-loop.mp4"
+          src={mediaUrl("/media/hero-loop.mp4")}
           autoPlay
           muted
           loop
