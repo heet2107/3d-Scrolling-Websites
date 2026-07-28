@@ -22,7 +22,7 @@
   right: 1.5vw;
   bottom: 0;
   height: 92%;
-  width: 29.5%;
+  width: 28%;
   z-index: 1;
 }
 
@@ -361,7 +361,7 @@
 /* ─── Responsive: Tablet 768–1023px ─────────────────────── */
 @media (min-width: 768px) and (max-width: 1023px) {
   .content     { left: 3rem; top: 18vh; max-width: 40vw; --hero-name-size: clamp(3rem, 7vw, 6rem); }
-  .photo       { width: 33%; }
+  .photo       { width: 32%; }
   .cardsCol    { left: 43%; top: 22vh; width: clamp(175px, 18vw, 240px); }
   .socialSidebar { width: 2.25rem; }
   .name        { white-space: normal; }
