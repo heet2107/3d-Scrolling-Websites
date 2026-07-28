@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import { mediaUrl } from "@/lib/media";
 import "./globals.css";
 
 const SITE_URL = "https://heet-cinematic-portfolio.vercel.app";
+const OG_IMAGE = mediaUrl("/og.jpg");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -26,14 +28,14 @@ export const metadata: Metadata = {
       "Cinematic portfolio showcasing AI systems, autonomous agents, RAG pipelines, and full-stack products.",
     type: "website",
     url: SITE_URL,
-    images: ["/og.jpg"],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Heet Barot | AI Engineer & Full-Stack Developer",
     description:
       "Cinematic portfolio showcasing AI systems, autonomous agents, RAG pipelines, and full-stack products.",
-    images: ["/og.jpg"],
+    images: [OG_IMAGE],
   },
   robots: { index: true, follow: true },
 };
