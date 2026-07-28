@@ -8,7 +8,7 @@
   "tagline": "Building AI-powered products & cinematic web experiences.",
   "description": "Building AI-powered systems, autonomous agents, and full-stack products with modern web technologies.",
   "roles": {
-    "short": "Software Engineer",
+    "short": "AI Engineer",
     "detailed": "AI Engineer · Full-Stack · RAG & MCP Systems"
   },
   "location": {
@@ -16,11 +16,20 @@
     "availability": "US & Remote"
   },
   "available": true,
-  "bio": "Software Development Engineer specializing in LLM integration and prompt engineering, with production experience building AI-powered systems at scale. Expert in RAG pipelines with semantic search, MCP servers for tool-augmented LLMs, and multi-agent orchestration. Strong full-stack foundation in React, TypeScript, Node.js, and Python, with secure, scalable pipelines built on GitHub Actions, Terraform, Kubernetes, and Docker.",
+  "bio": "AI Engineer specializing in LLM integration and prompt engineering, with production experience building AI-powered systems at scale. Expert in RAG pipelines with semantic search, MCP servers for tool-augmented LLMs, and multi-agent orchestration. Strong full-stack foundation in React, TypeScript, Node.js, and Python, with secure, scalable pipelines built on GitHub Actions, Terraform, Kubernetes, and Docker.",
   "stats": [
-    { "value": "5+",  "label": "Years Experience" },
-    { "value": "10+", "label": "Projects Shipped" },
-    { "value": "3",   "label": "Companies" }
+    {
+      "value": "5+",
+      "label": "Years Experience"
+    },
+    {
+      "value": "10+",
+      "label": "Projects Shipped"
+    },
+    {
+      "value": "3",
+      "label": "Companies"
+    }
   ],
   "skills": [
     "AI Engineer",
