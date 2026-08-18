@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Manufacturing Facilities | Monga Brothers Ltd.</title>
 <meta name="description" content="Induction furnace, re-rolling unit, drop forging unit and machining unit — Monga Brothers manufactures from scrap metal to finished goods.">
-<meta name="theme-color" content="#0a0d12">
+<meta name="theme-color" content="#f7f5ef">
+<script>(function() {
+  try {
+    var t = localStorage.getItem("mb-theme");
+    if (t === "dark") document.documentElement.removeAttribute("data-theme");
+    else if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+  } catch (e) {}
+})();</script>
 <meta property="og:title" content="Manufacturing Facilities | Monga Brothers Ltd.">
 <meta property="og:description" content="Induction furnace, re-rolling unit, drop forging unit and machining unit — Monga Brothers manufactures from scrap metal to finished goods.">
 <meta property="og:type" content="website">
@@ -23,13 +30,19 @@
 <header class="site-head">
   <div class="shell site-head__inner">
     <a class="brand" href="index.html">
-      <img src="assets/img/logo-monga-brothers-light.png" width="1140" height="177"
+      <img class="brand__on-dark" src="assets/img/logo-monga-brothers-light.png" width="1140" height="177"
+           alt="Monga Brothers Ltd. — an ISO 9001:2015 company">
+      <img class="brand__on-light" src="assets/img/logo-monga-brothers.png" width="1140" height="177"
            alt="Monga Brothers Ltd. — an ISO 9001:2015 company">
     </a>
     <nav aria-label="Primary">
       <ul class="nav"><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="solutions.html">Solutions<svg class="nav__caret" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5Z"/></svg></a><ul class="submenu"><li><a href="defense.html">Defense Manufacturing</a></li><li><a href="railway.html">Railway Components</a></li><li><a href="manufacturing.html">Manufacturing Facilities</a></li></ul></li><li><a href="industries.html">Industries</a></li><li><a href="products.html">Products</a></li><li><a href="contact.html">Contact</a></li></ul>
     </nav>
     <a class="btn" href="contact.html">Get a quote <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.2 5.4 11.8 6.8 16 11H4v2h12l-4.2 4.2 1.4 1.4L19.8 12Z"/></svg></a>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 13.6A8.5 8.5 0 1 1 10.4 3.6a6.8 6.8 0 0 0 10 10Z"/></svg>
+    </button>
     <button class="burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Menu">
       <i></i><i></i><i></i>
     </button>
