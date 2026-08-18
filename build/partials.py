@@ -194,7 +194,7 @@ def footer():
       </div>
     </div>
     <div class="footer__bar">
-      <span>&copy; 2024 Monga Brothers Ltd. All rights reserved.</span>
+      <span>&copy; 2026 Monga Brothers Ltd. All rights reserved.</span>
       <span>Ludhiana, Punjab, India &middot; ISO 9001:2015</span>
     </div>
   </div>
