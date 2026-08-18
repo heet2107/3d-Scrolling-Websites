@@ -279,7 +279,13 @@
 
       ScrollTrigger.matchMedia({
         "(min-width: 961px)": function () {
-          var getDist = function () { return Math.max(0, rail.scrollWidth - wrap.clientWidth); };
+          // The rail starts at the centered shell's left offset, so it must
+          // travel that far extra — and stop with the last card aligned to the
+          // shell's right edge, not the viewport's.
+          var getDist = function () {
+            var shellLeft = rail.parentElement.offsetLeft;
+            return Math.max(0, rail.scrollWidth + 2 * shellLeft - wrap.clientWidth);
+          };
           gsap.to(rail, {
             x: function () { return -getDist(); },
             ease: "none",
