@@ -45,6 +45,36 @@
     }
   }
 
+  /* ------------------------------------------------------------- theme --- */
+
+  function initTheme() {
+    var btns = $$("[data-theme-toggle]");
+    var meta = $('meta[name="theme-color"]');
+
+    function label() {
+      var light = document.documentElement.getAttribute("data-theme") === "light";
+      if (meta) meta.setAttribute("content", light ? "#f7f5ef" : "#0a0d12");
+      btns.forEach(function (b) {
+        b.setAttribute("aria-label",
+          light ? "Switch to dark theme" : "Switch to light theme");
+      });
+    }
+
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var root = document.documentElement;
+        var toLight = root.getAttribute("data-theme") !== "light";
+        if (toLight) root.setAttribute("data-theme", "light");
+        else root.removeAttribute("data-theme");
+        try { localStorage.setItem("mb-theme", toLight ? "light" : "dark"); } catch (e) {}
+        label();
+        // header glass, pinned sections etc. re-measure against the new look
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      });
+    });
+    label();
+  }
+
   function initMenu() {
     var burger = $(".burger");
     var mnav = $("#mnav");
@@ -382,6 +412,7 @@
 
   function boot() {
     splitStatements();
+    initTheme();
     initChrome();
     initMenu();
     markCurrent();

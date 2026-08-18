@@ -30,6 +30,8 @@ ICONS = {
     "leaf": '<path d="M17 8C8 10 5.9 16.2 3.8 21.7l1.9.7.5-1.4c1-.1 1.9-.2 2.8-.2 8 0 12-4.6 12-12.8 0-1-.2-2-.5-3-1 1-2.9 2-5.5 3.5Z"/>',
     "facebook": '<path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.25-1.5 1.55-1.5h1.65V4.6A22 22 0 0 0 14.3 4.5c-2.4 0-4 1.45-4 4.1v2.3H7.6V14h2.7v8Z"/>',
     "linkedin": '<path d="M6.94 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM3 8.5h3.9V21H3Zm6.5 0h3.7v1.7h.05a4.1 4.1 0 0 1 3.7-2c3.95 0 4.7 2.6 4.7 6V21h-3.9v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21H9.5Z"/>',
+    "sun": '<circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/>',
+    "moon": '<path d="M20.4 13.6A8.5 8.5 0 1 1 10.4 3.6a6.8 6.8 0 0 0 10 10Z"/>',
     "whatsapp": '<path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.35A10 10 0 1 0 12 2Zm5.1 13.9c-.25.7-1.45 1.35-2 1.4-.5.05-1.15.1-3.65-.9-3.1-1.25-5-4.4-5.15-4.6-.15-.2-1.2-1.6-1.2-3.05S5.85 7.6 6.1 7.3a.85.85 0 0 1 .6-.3h.45c.15 0 .35-.05.55.4s.7 1.7.75 1.85a.45.45 0 0 1 0 .45 5.4 5.4 0 0 1-.45.6c-.2.2-.4.45-.2.8a11.8 11.8 0 0 0 2.15 2.65 10.4 10.4 0 0 0 2 1.25c.25.1.4.1.55-.05s.65-.75.8-1 .35-.2.55-.15 1.4.65 1.65.8.4.2.45.3a2 2 0 0 1-.1 1Z"/>',
 }
 
@@ -56,13 +58,20 @@ NAV = [
 
 def head(title, description):
     return f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | Monga Brothers Ltd.</title>
 <meta name="description" content="{description}">
-<meta name="theme-color" content="#0a0d12">
+<meta name="theme-color" content="#f7f5ef">
+<script>(function() {{
+  try {{
+    var t = localStorage.getItem("mb-theme");
+    if (t === "dark") document.documentElement.removeAttribute("data-theme");
+    else if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+  }} catch (e) {{}}
+}})();</script>
 <meta property="og:title" content="{title} | Monga Brothers Ltd.">
 <meta property="og:description" content="{description}">
 <meta property="og:type" content="website">
@@ -101,13 +110,19 @@ def header(current=""):
 <header class="site-head">
   <div class="shell site-head__inner">
     <a class="brand" href="index.html">
-      <img src="assets/img/logo-monga-brothers-light.png" width="1140" height="177"
+      <img class="brand__on-dark" src="assets/img/logo-monga-brothers-light.png" width="1140" height="177"
+           alt="Monga Brothers Ltd. — an ISO 9001:2015 company">
+      <img class="brand__on-light" src="assets/img/logo-monga-brothers.png" width="1140" height="177"
            alt="Monga Brothers Ltd. — an ISO 9001:2015 company">
     </a>
     <nav aria-label="Primary">
       <ul class="nav">{''.join(items)}</ul>
     </nav>
     <a class="btn" href="contact.html">Get a quote {icon('arrow')}</a>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true">{ICONS['sun']}</svg>
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true">{ICONS['moon']}</svg>
+    </button>
     <button class="burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Menu">
       <i></i><i></i><i></i>
     </button>
