@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://meridian-wellness.vercel.app/sitemap.xml
+Sitemap: https://meridian-wellness-rouge.vercel.app/sitemap.xml

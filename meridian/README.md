@@ -13,6 +13,14 @@ npx http-server meridian -p 8001 --ext html
 
 `--ext html` mirrors Vercel's `cleanUrls`, so `/rhythm` resolves to `rhythm.html`.
 
+## Live
+
+<https://meridian-wellness-rouge.vercel.app>
+
+The bare `meridian-wellness.vercel.app` belongs to an unrelated project — `*.vercel.app`
+is a global namespace. `BASE_URL` in `build/partials.py` is the one place the canonical
+origin is set; change it there if a custom domain is attached and rebuild.
+
 ## The idea
 
 The organizing spine is the **day**, not a curriculum. Four hours, each with its own

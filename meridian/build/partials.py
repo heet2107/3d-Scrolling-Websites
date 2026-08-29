@@ -3,7 +3,7 @@
 SITE = "MERIDIAN"
 # Canonical origin, used for the sitemap and canonical tags.
 # Change this one line when a custom domain is attached.
-BASE_URL = "https://meridian-wellness.vercel.app"
+BASE_URL = "https://meridian-wellness-rouge.vercel.app"
 TAGLINE = "Wellness in rhythm with the day."
 CITY = "Ojai, California"
 ADDRESS = "412 Matilija Street, Ojai, CA 93023"
