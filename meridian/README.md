@@ -15,11 +15,25 @@ npx http-server meridian -p 8001 --ext html
 
 ## Live
 
-<https://meridian-wellness-rouge.vercel.app>
+**Current branch build** (what this repository actually contains):
+<https://meridian-wellness-git-cla-3d3338-heetbarot21-gmailcoms-projects.vercel.app>
+
+**Production:** <https://meridian-wellness-rouge.vercel.app>
+
+Those differ, and will keep differing until this branch merges. Vercel promotes to
+production **only from the project's production branch** (`main`); a push to any other
+branch produces a *preview* deployment and leaves the production alias untouched. Because
+this project's very first deployment was marked production and nothing has been promoted
+since, `meridian-wellness-rouge.vercel.app` is frozen on that first build — the one that
+still had procedural artwork instead of photography.
+
+Merging to `main` promotes automatically. To promote sooner, open the project's
+Deployments tab in Vercel and use *Promote to Production* on the latest build.
 
 The bare `meridian-wellness.vercel.app` belongs to an unrelated project — `*.vercel.app`
 is a global namespace. `BASE_URL` in `build/partials.py` is the one place the canonical
-origin is set; change it there if a custom domain is attached and rebuild.
+origin is set; it points at the production alias deliberately, since that is the canonical
+URL once merged.
 
 ## The idea
 
