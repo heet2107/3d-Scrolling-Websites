@@ -17,35 +17,35 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # --------------------------------------------------------------------------
 
 PRACTICES = [
-    {"slug": "breath", "name": "Breath", "phase": "Dawn", "art": "practice-breath",
+    {"slug": "breath", "alt": "Mist rising off a still river between forested banks.", "name": "Breath", "phase": "Dawn", "art": "practice-breath",
      "dur": "25–45 min", "kind": "Solo or guided",
      "lede": "Downregulate on command.",
      "body": "Nasal mechanics, CO₂ tolerance, and the long exhale. You learn to move "
              "yourself from wired to steady in under four minutes — then you practise it "
              "until it works on a bad day, not just a good one.",
      "chips": ["Pranayama", "CO₂ tolerance", "Coherence", "Cold exposure"]},
-    {"slug": "movement", "name": "Movement", "phase": "Meridian", "art": "practice-movement",
+    {"slug": "movement", "alt": "Two walkers climbing a stone-stepped path through woodland.", "name": "Movement", "phase": "Meridian", "art": "practice-movement",
      "dur": "50–60 min", "kind": "Small group",
      "lede": "Strength that keeps its range.",
      "body": "Slow loaded movement through full range — hips, spine, shoulders, feet. "
              "Not a workout that leaves you wrecked; a practice that leaves you longer "
              "than it found you, three times a week, for thirty years.",
      "chips": ["Mobility", "Slow strength", "Gait", "Load"]},
-    {"slug": "sound", "name": "Sound", "phase": "Dusk", "art": "practice-sound",
+    {"slug": "sound", "alt": "A hand-beaten singing bowl with its wooden striker resting inside.", "name": "Sound", "phase": "Dusk", "art": "practice-sound",
      "dur": "45 min", "kind": "Group",
      "lede": "Resonance you feel in the sternum.",
      "body": "Bowls, gong, and voice in a room built for it. Sound is the fastest route "
              "we know into a parasympathetic state for people who cannot sit still and "
              "cannot be told to relax.",
      "chips": ["Sound bath", "Overtone", "Humming", "Group"]},
-    {"slug": "restore", "name": "Restore", "phase": "Deep", "art": "practice-restore",
+    {"slug": "restore", "alt": "Snow-capped peaks mirrored in a completely still lake.", "name": "Restore", "phase": "Deep", "art": "practice-restore",
      "dur": "60–75 min", "kind": "Guided",
      "lede": "The practice you sleep after.",
      "body": "Yin holds, yoga nidra, and legs-up-the-wall in a dim room at the end of the "
              "day. We treat this as training, not as a reward — it is where the adaptation "
              "from everything else actually lands.",
      "chips": ["Yin", "Nidra", "Sleep protocol", "Dim room"]},
-    {"slug": "nourish", "name": "Nourish", "phase": "Meridian", "art": "practice-nourish",
+    {"slug": "nourish", "alt": "The scored crust of a rustic loaf, close up.", "name": "Nourish", "phase": "Meridian", "art": "practice-nourish",
      "dur": "Ongoing",  "kind": "1:1 + kitchen",
      "lede": "Eat with the light.",
      "body": "Front-load the day, close the window early, and cook things that were grown "
@@ -166,8 +166,8 @@ def practice_card(p, href=True):
     return f"""<article class="card reveal">
   <div class="card__art">
     <span class="badge">{p["phase"]}</span>
-    <img src="/assets/art/{p["art"]}.svg" width="1200" height="1500" loading="lazy" decoding="async"
-         alt="Light study in the {p["phase"].lower()} palette, standing in for the {p["name"].lower()} practice.">
+    <img src="/assets/img/{p["art"]}.webp" width="1200" height="1500" loading="lazy" decoding="async"
+         alt="{p["alt"]}">
   </div>
   <div class="card__body">
     <p class="card__meta">{p["dur"]} &middot; {p["kind"]}</p>
@@ -198,8 +198,8 @@ def retreat_card(r):
     return f"""<article class="card reveal">
   <div class="card__art card__art--wide">
     <span class="badge">{r["left"]}</span>
-    <img src="/assets/art/{r["art"]}.svg" width="1600" height="1000" loading="lazy" decoding="async"
-         alt="Abstract landform study standing in for the {r["t"]} retreat.">
+    <img src="/assets/img/{r["art"]}.webp" width="1600" height="1000" loading="lazy" decoding="async"
+         alt="Landscape photograph for the {r["t"]} retreat.">
   </div>
   <div class="card__body">
     <p class="card__meta">{r["len"]} &middot; {r["when"]}</p>
@@ -213,9 +213,12 @@ def retreat_card(r):
 </article>"""
 
 
-def journal_row(a):
-    return f"""<a class="row" href="/journal">
+def journal_row(a, thumb=False):
+    art = (f'<span class="row__img"><img src="/assets/img/{a["art"]}.webp" width="1200" '
+           f'height="800" loading="lazy" decoding="async" alt=""></span>') if thumb else ""
+    return f"""<a class="row{' row--thumb' if thumb else ''}" href="/journal">
   <span class="row__k">{a["phase"]}</span>
+  {art}
   <span class="row__t">{a["t"]}<span>{a["sub"]}</span></span>
   <span class="row__m">{a["date"]} &middot; {a["read"]}</span>
   <span class="row__a" aria-hidden="true">&rarr;</span>
@@ -231,9 +234,9 @@ def phase_block(ph, art_suffix=""):
     <p>{ph['body']}</p>
   </div>
   <div class="phase__art">
-    <img src="/assets/art/phase-{ph['key']}{art_suffix}.svg" width="1600" height="700"
+    <img src="/assets/img/phase-{ph['key']}{art_suffix}.webp" width="1600" height="700"
          loading="lazy" decoding="async"
-         alt="Light study of the {ph['name'].lower()} hour: {ph['name']} palette with the sun at its position in the day.">
+         alt="The {ph['name'].lower()} hour: {ph['alt']}">
   </div>
 </article>"""
 
@@ -255,9 +258,9 @@ def phase_sequence(idprefix="seq"):
     <p class="lede">{ph['body']}</p>
   </div>
   <div class="phaseseq__art" data-par>
-    <img src="/assets/art/phase-{ph['key']}.svg" width="1400" height="900"
+    <img src="/assets/img/phase-{ph['key']}.webp" width="1400" height="900"
          loading="lazy" decoding="async"
-         alt="Light study of the {ph['name'].lower()} hour, sun at its position in the day.">
+         alt="The {ph['name'].lower()} hour: {ph['alt']}">
   </div>
 </article>"""
 
@@ -353,8 +356,8 @@ def home():
         </div>
       </div>
       <div class="hero__media reveal" data-par>
-        <img src="/assets/art/hero-dawn.svg" width="1600" height="900" fetchpriority="high" decoding="async"
-             alt="A light study of the dawn hour: warm apricot wash with the sun low on the left.">
+        <img src="/assets/img/hero.webp" width="1400" height="1080" fetchpriority="high" decoding="async"
+             alt="Layered hills under low morning fog, warm light across the ridges.">
       </div>
     </div>
     <div class="hero__foot reveal">{stat_html}</div>
@@ -515,8 +518,8 @@ def practices():
       </div>
       <div class="reveal" style="direction:ltr">
         <div class="hero__media" style="aspect-ratio:4/3.4" data-par>
-          <img src="/assets/art/{p['art']}.svg" width="1200" height="1500" loading="lazy" decoding="async"
-               alt="Light study standing in for the {p['name'].lower()} practice.">
+          <img src="/assets/img/{p['art']}.webp" width="1200" height="1500" loading="lazy" decoding="async"
+               alt="{p['alt']}">
         </div>
       </div>
     </div>
@@ -610,8 +613,8 @@ def journal():
   <article class="card reveal" style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)">
     <div class="card__art card__art--wide" style="aspect-ratio:auto">
       <span class="badge">{feat['phase']}</span>
-      <img src="/assets/art/{feat['art']}.svg" width="1200" height="800" decoding="async"
-           alt="Abstract light study heading the featured article.">
+      <img src="/assets/img/{feat['art']}.webp" width="1200" height="800" decoding="async"
+           alt="Photograph heading the featured article.">
     </div>
     <div class="card__body" style="justify-content:center;padding:clamp(1.5rem,3vw,2.75rem)">
       <p class="card__meta">Featured &middot; {feat['date']} &middot; {feat['read']}</p>
@@ -630,7 +633,7 @@ def journal():
     <p class="lede">Filed by the phase it belongs to. Roughly two pieces a month, whenever there
       is genuinely something to say.</p>
   </div>
-  <div class="rows reveal">{''.join(journal_row(a) for a in JOURNAL)}</div>
+  <div class="rows reveal">{''.join(journal_row(a, thumb=True) for a in JOURNAL)}</div>
 </div></section>
 
 <section class="section section--tint"><div class="wrap wrap--narrow">
@@ -664,8 +667,8 @@ def membership():
                    "package in that room.")
     body += f"""<section class="section section--tight"><div class="wrap">
   <div class="hero__media reveal" data-par style="aspect-ratio:16/5;margin-bottom:clamp(2rem,5vh,3.5rem)">
-    <img src="/assets/art/band-membership.svg" width="1600" height="620" loading="lazy" decoding="async"
-         alt="Light study of the meridian hour heading the membership tiers.">
+    <img src="/assets/img/band-membership.webp" width="1600" height="620" loading="lazy" decoding="async"
+         alt="Wide landscape at golden hour heading the membership tiers.">
   </div>
   <div class="tiers">{''.join(tier_block(t) for t in TIERS)}</div>
   <p class="form-note reveal" style="margin-top:2rem">Drop-in $34 &middot; First visit free &middot;
@@ -716,8 +719,8 @@ def visit():
                    "belongs to the bakery and they will tell you so.")
     body += f"""<section class="section section--tight"><div class="wrap">
   <div class="hero__media reveal" data-par style="aspect-ratio:16/5;margin-bottom:clamp(2rem,5vh,3.5rem)">
-    <img src="/assets/art/band-visit.svg" width="1600" height="620" loading="lazy" decoding="async"
-         alt="Layered contour study of the Ojai valley heading the visit page.">
+    <img src="/assets/img/band-visit.webp" width="1600" height="620" loading="lazy" decoding="async"
+         alt="Coastal hills and a footpath, heading the visit page.">
   </div>
   <div class="section__head" style="align-items:start;margin-bottom:clamp(1.5rem,3vw,2.5rem)">
     <div class="reveal">

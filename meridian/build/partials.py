@@ -22,19 +22,19 @@ NAV = [
 
 # The four hours the whole site is built on.
 PHASES = [
-    {"key": "dawn", "name": "Dawn", "hours": "05:30 — 09:00", "colour": "#E8A87C",
+    {"key": "dawn", "alt": "layered hills under low fog as the light arrives.", "name": "Dawn", "hours": "05:30 — 09:00", "colour": "#E8A87C",
      "line": "Wake the body before you wake the phone.",
      "body": "Light first, then breath, then movement. The first ninety minutes set the "
              "slope of everything after them — we spend them deliberately."},
-    {"key": "meridian", "name": "Meridian", "hours": "11:00 — 14:00", "colour": "#DFB55A",
+    {"key": "meridian", "alt": "a field of sunflowers under a high, bright sky.", "name": "Meridian", "hours": "11:00 — 14:00", "colour": "#DFB55A",
      "line": "Hold the peak without burning it.",
      "body": "Your core temperature, grip strength and alertness top out around now. "
              "This is the hour for load, for focus, and for eating like you mean it."},
-    {"key": "dusk", "name": "Dusk", "hours": "16:30 — 19:30", "colour": "#C98E86",
+    {"key": "dusk", "alt": "a hazy sun dropping behind ridged hills.", "name": "Dusk", "hours": "16:30 — 19:30", "colour": "#C98E86",
      "line": "Come down on purpose, not by collapse.",
      "body": "Ojai's pink moment is our cue. Long exhales, slow tissue, warm light, and "
              "sound — the practices that tell a nervous system the day is closing."},
-    {"key": "deep", "name": "Deep", "hours": "21:00 — 05:00", "collapse": True, "colour": "#7A8CA0",
+    {"key": "deep", "alt": "the Milky Way over a dark ridge line.", "name": "Deep", "hours": "21:00 — 05:00", "collapse": True, "colour": "#7A8CA0",
      "line": "The work you don't feel yourself doing.",
      "body": "Repair happens in the dark. We treat sleep as the primary practice and "
              "build the other three hours to protect it."},
@@ -54,7 +54,7 @@ def head(title, desc, page, depth_note=""):
 <meta property="og:type" content="website">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
-<meta property="og:image" content="/assets/art/hero-dawn.svg">
+<meta property="og:image" content="/assets/img/hero.webp">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FBF8F3'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23DFB55A'/%3E%3Cpath d='M3 22h26' stroke='%235E7154' stroke-width='2'/%3E%3C/svg%3E">
 

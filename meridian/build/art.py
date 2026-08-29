@@ -198,48 +198,16 @@ def bloom(name, phase, w=1200, h=1500, seed=0):
 
 
 def build():
+    """Only the guide slots remain procedural.
+
+    Everything else is now photography (assets/img, see CREDITS.md). Guides stay
+    abstract deliberately: attaching an invented name and biography to a
+    photograph of a real, identifiable person misrepresents them.
+    """
     OUT.mkdir(parents=True, exist_ok=True)
     made = []
-
-    # Hero + phase light studies (wide)
-    made.append(light_study("hero-dawn", "dawn", 1400, 1080, seed=11))
-    for i, ph in enumerate(("dawn", "meridian", "dusk", "deep")):
-        made.append(light_study(f"phase-{ph}", ph, 1400, 900, seed=20 + i))
-        made.append(light_study(f"phase-{ph}-wide", ph, 1600, 700, seed=40 + i))
-
-    # Practices (portrait cards)
-    for i, (n, ph, fn) in enumerate([
-        ("practice-breath", "dawn", ripple),          # Dawn
-        ("practice-movement", "meridian", dune),      # Meridian
-        ("practice-sound", "dusk", ripple),           # Dusk
-        ("practice-restore", "deep", dune),           # Deep
-        ("practice-nourish", "meridian", bloom),      # Meridian — same hour as
-                                                      # movement, so a different
-                                                      # form keeps them apart
-    ]):
-        made.append(fn(n, ph, 1200, 1500, seed=60 + i))
-
-    # Guides (portrait slots — photography goes here)
     for i, ph in enumerate(("sage", "dawn", "dusk", "meridian")):
         made.append(bloom(f"guide-{i+1}", ph, 1100, 1375, seed=80 + i))
-
-    # Journal thumbnails — one per article, tinted to the hour it is filed under
-    # (see JOURNAL in build.py; order must match).
-    for i, (ph, fn) in enumerate([
-        ("dawn", dune), ("meridian", ripple), ("dusk", light_study),
-        ("deep", dune), ("dawn", bloom), ("meridian", light_study),
-    ]):
-        made.append(fn(f"journal-{i+1}", ph, 1200, 800, seed=100 + i))
-
-    # Wide bands heading the pages that had no artwork of their own
-    made.append(light_study("band-membership", "meridian", 1600, 620, seed=140))
-    made.append(dune("band-visit", "sage", 1600, 620, seed=141))
-    made.append(light_study("band-statement", "dusk", 1600, 900, seed=142))
-
-    # Retreats (wide)
-    for i, (ph, fn) in enumerate([("dusk", dune), ("sage", light_study), ("deep", dune)]):
-        made.append(fn(f"retreat-{i+1}", ph, 1600, 1000, seed=120 + i))
-
     print(f"{len(made)} artworks -> {OUT}")
     return made
 
