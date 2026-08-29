@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1375" width="1100" height="1375" role="img">
+<defs>
+<filter id="guide-4-soft" x="-40%" y="-40%" width="180%" height="180%">
+<feGaussianBlur stdDeviation="82"/></filter>
+<filter id="gguide-4-4" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/>
+<feColorMatrix type="saturate" values="0"/>
+<feComponentTransfer><feFuncA type="linear" slope="0.2"/></feComponentTransfer>
+</filter>
+</defs>
+<rect width="1100" height="1375" fill="#FBF8F3"/>
+<circle cx="547" cy="978" r="241" fill="#DFB55A" opacity="0.228" filter="url(#guide-4-soft)"/><circle cx="213" cy="801" r="266" fill="#EBD08A" opacity="0.216" filter="url(#guide-4-soft)"/><circle cx="788" cy="294" r="257" fill="#7D9070" opacity="0.214" filter="url(#guide-4-soft)"/><circle cx="783" cy="653" r="372" fill="#AFBFA2" opacity="0.322" filter="url(#guide-4-soft)"/><circle cx="348" cy="628" r="260" fill="#DFB55A" opacity="0.301" filter="url(#guide-4-soft)"/>
+<rect width="1100" height="1375" filter="url(#gguide-4-4)" opacity="0.55" style="mix-blend-mode:multiply"/>
+</svg>
