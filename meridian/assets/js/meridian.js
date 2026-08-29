@@ -56,8 +56,13 @@
   /* Whichever hour is nearest the middle of the viewport tints the page. */
   function initPhaseLight() {
     /* data-hour marks the blocks; data-phase is what we write on <html>.
-       Sharing one attribute would make the root element its own candidate. */
-    var marked = Array.prototype.slice.call(document.querySelectorAll('[data-hour]'));
+       Sharing one attribute would make the root element its own candidate.
+       Sequence panels are excluded: they are stacked in one grid cell, so all
+       four sit at the viewport centre at once and the nearest-to-centre test
+       picks between them arbitrarily — which fought initPhaseSequence and left
+       the page tinted one hour behind the panel actually on screen. */
+    var marked = Array.prototype.slice.call(
+      document.querySelectorAll('[data-hour]:not(.phaseseq__panel)'));
     if (!marked.length || REDUCED) return;
 
     var pick = function () {
@@ -77,23 +82,33 @@
   }
 
   /* ---------- The day arc ----------------------------------------------- */
+  function arcPlacer(arc) {
+    var prog = arc && arc.querySelector('.arc__prog');
+    var sun = arc && arc.querySelector('.arc__sun');
+    if (!prog || !sun) return null;
+    var len = prog.getTotalLength();
+    return function (t) {
+      t = Math.max(0, Math.min(1, t));
+      prog.style.strokeDasharray = len;
+      prog.style.strokeDashoffset = len * (1 - t);
+      var pt = prog.getPointAtLength(len * Math.max(0.0001, t));
+      sun.setAttribute('cx', pt.x);
+      sun.setAttribute('cy', pt.y);
+      var key = ORDER[Math.min(ORDER.length - 1, Math.floor(t * ORDER.length * 0.999))];
+      sun.setAttribute('fill', PHASE[key].c);
+      prog.style.stroke = PHASE[key].c;
+    };
+  }
+
   function initArcs() {
     document.querySelectorAll('.arc').forEach(function (arc) {
-      var prog = arc.querySelector('.arc__prog');
-      var sun = arc.querySelector('.arc__sun');
-      if (!prog || !sun) return;
+      /* An arc inside a pinned sequence is driven by that sequence instead.
+         Its own trigger measures the sticky stage's document position, so it
+         runs to completion within the first screen of a multi-screen track. */
+      if (arc.closest('[data-seq]')) return;
 
-      var len = prog.getTotalLength();
-      var place = function (t) {
-        prog.style.strokeDasharray = len;
-        prog.style.strokeDashoffset = len * (1 - t);
-        var pt = prog.getPointAtLength(len * Math.max(0.0001, t));
-        sun.setAttribute('cx', pt.x);
-        sun.setAttribute('cy', pt.y);
-        var key = ORDER[Math.min(ORDER.length - 1, Math.floor(t * ORDER.length * 0.999))];
-        sun.setAttribute('fill', PHASE[key].c);
-        prog.style.stroke = PHASE[key].c;
-      };
+      var place = arcPlacer(arc);
+      if (!place) return;
 
       if (REDUCED || !hasGSAP) { place(1); return; }
 
@@ -116,6 +131,113 @@
     gsap.to(words, {
       yPercent: 0, opacity: 1, duration: 1.15, ease: 'expo.out',
       stagger: 0.075, delay: 0.15
+    });
+  }
+
+  /* ---------- Scroll progress ------------------------------------------- */
+  function initProgress() {
+    var bar = document.getElementById('progress');
+    if (!bar || REDUCED) return;
+    var tick = function () {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = 'scaleX(' + (max > 0 ? window.scrollY / max : 0) + ')';
+    };
+    tick();
+    window.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', tick);
+  }
+
+  /* ---------- Parallax media -------------------------------------------- */
+  /* The art is 118% of its frame, so it can drift without exposing an edge. */
+  function initParallax() {
+    if (REDUCED || !hasGSAP) return;
+    gsap.utils.toArray('[data-par]').forEach(function (frame) {
+      var img = frame.querySelector('img');
+      if (!img) return;
+      gsap.fromTo(img, { yPercent: -7 }, {
+        yPercent: 7, ease: 'none',
+        scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: 0.6 }
+      });
+    });
+  }
+
+  /* ---------- Pinned phase sequence ------------------------------------- */
+  /* One stage, four hours. The panel, the page tint and the arc all move
+     together, so the whole viewport reads as a single hour at a time. */
+  function initPhaseSequence() {
+    var track = document.querySelector('[data-seq]');
+    if (!track) return;
+    var panels = Array.prototype.slice.call(track.querySelectorAll('.phaseseq__panel'));
+    var num = track.querySelector('[data-seq-num]');
+    if (!panels.length) return;
+
+    var place = arcPlacer(track.querySelector('.arc'));
+
+    if (REDUCED || !hasGSAP) {
+      panels.forEach(function (p) { p.style.opacity = 1; });
+      if (place) place(1);
+      return;
+    }
+    if (place) place(0);
+
+    gsap.set(panels, { opacity: 0, y: 26 });
+    gsap.set(panels[0], { opacity: 1, y: 0 });
+
+    var current = 0;
+    function show(i) {
+      if (i === current) return;
+      var dir = i > current ? 1 : -1;
+      panels.forEach(function (p, k) {
+        if (k === i) {
+          p.classList.add('is-on');
+          /* Delayed in, quick out: these panels are stacked in one grid cell,
+             so any real overlap renders two paragraphs on top of each other. */
+          gsap.fromTo(p, { opacity: 0, y: 34 * dir },
+            { opacity: 1, y: 0, duration: 0.5, delay: 0.2, ease: 'expo.out', overwrite: true });
+        } else if (k === current) {
+          p.classList.remove('is-on');
+          gsap.to(p, { opacity: 0, y: -34 * dir, duration: 0.22, ease: 'power2.in', overwrite: true });
+        } else {
+          p.classList.remove('is-on');
+          gsap.set(p, { opacity: 0, overwrite: true });
+        }
+      });
+      setPhase(panels[i].getAttribute('data-hour'));
+      if (num) num.textContent = ('0' + (i + 1)).slice(-2);
+      current = i;
+    }
+
+    ScrollTrigger.create({
+      trigger: track,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: function (self) {
+        show(Math.min(panels.length - 1, Math.floor(self.progress * panels.length * 0.9999)));
+        if (place) place(self.progress);
+      }
+    });
+  }
+
+  /* ---------- Statement scrub ------------------------------------------- */
+  function initStatement() {
+    var track = document.querySelector('[data-statement]');
+    if (!track) return;
+    var words = Array.prototype.slice.call(track.querySelectorAll('.w'));
+    if (!words.length) return;
+
+    if (REDUCED || !hasGSAP) { words.forEach(function (w) { w.classList.add('on'); }); return; }
+
+    ScrollTrigger.create({
+      trigger: track,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true,
+      onUpdate: function (self) {
+        /* Light the line a little ahead of the scroll so the last word
+           is lit before the section starts leaving. */
+        var lit = Math.round(self.progress * 1.25 * words.length);
+        words.forEach(function (w, i) { w.classList.toggle('on', i < lit); });
+      }
     });
   }
 
@@ -210,8 +332,12 @@
   /* ---------- Boot ------------------------------------------------------ */
   function boot() {
     initNav();
+    initProgress();
     initPhaseLight();
     initArcs();
+    initParallax();
+    initPhaseSequence();
+    initStatement();
     initHero();
     initReveals();
     initCounters();

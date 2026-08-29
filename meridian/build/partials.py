@@ -67,6 +67,7 @@ def head(title, desc, page, depth_note=""):
 </head>
 <body data-page="{page}">
 
+<div class="progress" id="progress" aria-hidden="true"></div>
 <div class="grain-page" aria-hidden="true"></div>
 """
 

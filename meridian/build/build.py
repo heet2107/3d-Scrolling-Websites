@@ -80,11 +80,11 @@ JOURNAL = [
     {"t": "The pink moment", "sub": "What dusk light does to a nervous system",
      "phase": "Dusk", "read": "5 min", "art": "journal-3", "date": "14 Jul 2026"},
     {"t": "Sleep is the practice", "sub": "Everything else is preparation for it",
-     "phase": "Deep", "read": "9 min", "art": "journal-1", "date": "02 Jul 2026"},
+     "phase": "Deep", "read": "9 min", "art": "journal-4", "date": "02 Jul 2026"},
     {"t": "Against the 5am club", "sub": "Chronotype is not a character flaw",
-     "phase": "Dawn", "read": "7 min", "art": "journal-2", "date": "18 Jun 2026"},
+     "phase": "Dawn", "read": "7 min", "art": "journal-5", "date": "18 Jun 2026"},
     {"t": "Eating with the light", "sub": "Front-loading, and closing the window early",
-     "phase": "Meridian", "read": "6 min", "art": "journal-3", "date": "04 Jun 2026"},
+     "phase": "Meridian", "read": "6 min", "art": "journal-6", "date": "04 Jun 2026"},
 ]
 
 RETREATS = [
@@ -238,6 +238,58 @@ def phase_block(ph, art_suffix=""):
 </article>"""
 
 
+def phase_sequence(idprefix="seq"):
+    """The four hours as one pinned stage that crossfades on scroll.
+
+    Rendered as a plain stacked list first; the sticky behaviour is added by
+    the .js class, so this degrades to readable content without JavaScript.
+    """
+    panels = ""
+    for i, ph in enumerate(P.PHASES):
+        panels += f"""<article class="phaseseq__panel{' is-on' if i == 0 else ''}"
+         style="--pc:{ph['colour']}" data-hour="{ph['key']}">
+  <div>
+    <p class="phaseseq__hour"><i></i>{ph['hours']}</p>
+    <h3 class="display">{ph['name']}</h3>
+    <p class="phaseseq__lead">{ph['line']}</p>
+    <p class="lede">{ph['body']}</p>
+  </div>
+  <div class="phaseseq__art" data-par>
+    <img src="/assets/art/phase-{ph['key']}.svg" width="1400" height="900"
+         loading="lazy" decoding="async"
+         alt="Light study of the {ph['name'].lower()} hour, sun at its position in the day.">
+  </div>
+</article>"""
+
+    return f"""<section class="phaseseq" id="{idprefix}">
+  <div class="phaseseq__track" data-seq>
+    <div class="phaseseq__stage">
+      <div class="wrap phaseseq__panels">{panels}</div>
+      <div class="wrap">
+        <p class="phaseseq__count" aria-hidden="true">The hours <b data-seq-num>01</b>&thinsp;/&thinsp;04</p>
+        {P.arc(idprefix + "Arc")}
+      </div>
+    </div>
+  </div>
+</section>"""
+
+
+def statement(words, art=None):
+    """A line that lights word by word as it is scrolled through."""
+    spans = " ".join(
+        f'<span class="w">{w}</span>' if not w.startswith("<") else w
+        for w in words.split(" "))
+    return f"""<section class="statement section--tint">
+  <div class="statement__track" data-statement>
+    <div class="statement__stage">
+      <div class="wrap">
+        <p class="statement__line">{spans}</p>
+      </div>
+    </div>
+  </div>
+</section>"""
+
+
 def tier_block(t):
     feats = ""
     for f in t["feats"]:
@@ -300,7 +352,7 @@ def home():
           <a class="btn" href="/rhythm">Understand the rhythm</a>
         </div>
       </div>
-      <div class="hero__media reveal">
+      <div class="hero__media reveal" data-par>
         <img src="/assets/art/hero-dawn.svg" width="1600" height="900" fetchpriority="high" decoding="async"
              alt="A light study of the dawn hour: warm apricot wash with the sun low on the left.">
       </div>
@@ -326,6 +378,8 @@ def home():
     </div>
   </div>
 </section>
+
+{statement("Most people are not <em>unmotivated.</em> They are doing the right thing at the wrong hour.")}
 
 <section class="section section--tint">
   <div class="wrap">
@@ -398,15 +452,8 @@ def rhythm():
                    '<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--solid" href="/visit#book">Map your day <span class="arrow">&rarr;</span></a></div>')
 
     body += f"""
-<section class="section section--tight">
-  <div class="wrap wrap--narrow reveal">{P.arc("rhythmArc")}</div>
-</section>
 
-<section class="section" id="phases">
-  <div class="wrap">
-    <div class="phases">{''.join(phase_block(p) for p in P.PHASES)}</div>
-  </div>
-</section>
+{phase_sequence("rhythmSeq")}
 
 <section class="section section--tint">
   <div class="wrap">
@@ -455,7 +502,7 @@ def practices():
     for i, p in enumerate(PRACTICES):
         chips = "".join(f'<li class="chip">{c}</li>' for c in p["chips"])
         flip = "direction:rtl" if i % 2 else ""
-        detail += f"""<section class="section{' section--tint' if i % 2 else ''}" id="{p['slug']}">
+        detail += f"""<section class="section stack__item{' section--tint' if i % 2 else ''}" id="{p['slug']}">
   <div class="wrap">
     <div class="section__head" style="{flip};align-items:center;margin-bottom:0">
       <div class="reveal" style="direction:ltr">
@@ -467,7 +514,7 @@ def practices():
         <div class="btn-row"><a class="btn" href="/visit#book">Try {p['name'].lower()} <span class="arrow">&rarr;</span></a></div>
       </div>
       <div class="reveal" style="direction:ltr">
-        <div class="hero__media" style="aspect-ratio:4/3.4">
+        <div class="hero__media" style="aspect-ratio:4/3.4" data-par>
           <img src="/assets/art/{p['art']}.svg" width="1200" height="1500" loading="lazy" decoding="async"
                alt="Light study standing in for the {p['name'].lower()} practice.">
         </div>
@@ -475,6 +522,7 @@ def practices():
     </div>
   </div>
 </section>"""
+    detail = f'<div class="stack">{detail}</div>'
 
     body = P.phead("Practices", "What we do", "Five practices,<br>four hours.",
                    "Each practice belongs to a phase, has a guide who has lived inside it for a "
@@ -615,6 +663,10 @@ def membership():
                    "with the same free ninety-minute first visit, and nobody will sell you a "
                    "package in that room.")
     body += f"""<section class="section section--tight"><div class="wrap">
+  <div class="hero__media reveal" data-par style="aspect-ratio:16/5;margin-bottom:clamp(2rem,5vh,3.5rem)">
+    <img src="/assets/art/band-membership.svg" width="1600" height="620" loading="lazy" decoding="async"
+         alt="Light study of the meridian hour heading the membership tiers.">
+  </div>
   <div class="tiers">{''.join(tier_block(t) for t in TIERS)}</div>
   <p class="form-note reveal" style="margin-top:2rem">Drop-in $34 &middot; First visit free &middot;
     Students and NHS/teacher rates at 30% &mdash; just ask.</p>
@@ -663,6 +715,10 @@ def visit():
                    "glass pointed straight at the Topatopas. Park behind the building; the front lot "
                    "belongs to the bakery and they will tell you so.")
     body += f"""<section class="section section--tight"><div class="wrap">
+  <div class="hero__media reveal" data-par style="aspect-ratio:16/5;margin-bottom:clamp(2rem,5vh,3.5rem)">
+    <img src="/assets/art/band-visit.svg" width="1600" height="620" loading="lazy" decoding="async"
+         alt="Layered contour study of the Ojai valley heading the visit page.">
+  </div>
   <div class="section__head" style="align-items:start;margin-bottom:clamp(1.5rem,3vw,2.5rem)">
     <div class="reveal">
       <p class="eyebrow">Today</p>

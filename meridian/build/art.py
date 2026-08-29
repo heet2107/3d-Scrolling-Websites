@@ -223,9 +223,18 @@ def build():
     for i, ph in enumerate(("sage", "dawn", "dusk", "meridian")):
         made.append(bloom(f"guide-{i+1}", ph, 1100, 1375, seed=80 + i))
 
-    # Journal thumbnails (landscape)
-    for i, (ph, fn) in enumerate([("dawn", dune), ("meridian", ripple), ("dusk", light_study)]):
+    # Journal thumbnails — one per article, tinted to the hour it is filed under
+    # (see JOURNAL in build.py; order must match).
+    for i, (ph, fn) in enumerate([
+        ("dawn", dune), ("meridian", ripple), ("dusk", light_study),
+        ("deep", dune), ("dawn", bloom), ("meridian", light_study),
+    ]):
         made.append(fn(f"journal-{i+1}", ph, 1200, 800, seed=100 + i))
+
+    # Wide bands heading the pages that had no artwork of their own
+    made.append(light_study("band-membership", "meridian", 1600, 620, seed=140))
+    made.append(dune("band-visit", "sage", 1600, 620, seed=141))
+    made.append(light_study("band-statement", "dusk", 1600, 900, seed=142))
 
     # Retreats (wide)
     for i, (ph, fn) in enumerate([("dusk", dune), ("sage", light_study), ("deep", dune)]):

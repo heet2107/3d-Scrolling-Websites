@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img">
+<defs>
+<linearGradient id="journal-6-sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#F8EFD9"/><stop offset="0.62" stop-color="#FBF8F3"/>
+<stop offset="1" stop-color="#EBD08A" stop-opacity="0.42"/>
+</linearGradient>
+<radialGradient id="journal-6-sun" cx="0.500" cy="0.200" r="0.72">
+<stop offset="0" stop-color="#DFB55A" stop-opacity="0.92"/>
+<stop offset="0.30" stop-color="#DFB55A" stop-opacity="0.34"/>
+<stop offset="1" stop-color="#DFB55A" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="journal-6-band" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#DFB55A" stop-opacity="0.7"/>
+<stop offset="1" stop-color="#EBD08A" stop-opacity="0.3"/>
+</linearGradient>
+<filter id="gjournal-6-1" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/>
+<feColorMatrix type="saturate" values="0"/>
+<feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer>
+</filter>
+</defs>
+<rect width="1200" height="800" fill="url(#journal-6-sky)"/>
+<rect width="1200" height="800" fill="url(#journal-6-sun)"/>
+<path d="M0 427 C 336 414 744 439 1200 421 L 1200 800 L 0 800 Z" fill="url(#journal-6-band)" opacity="0.160"/><path d="M0 512 C 336 491 744 533 1200 504 L 1200 800 L 0 800 Z" fill="url(#journal-6-band)" opacity="0.130"/><path d="M0 587 C 336 568 744 605 1200 579 L 1200 800 L 0 800 Z" fill="url(#journal-6-band)" opacity="0.100"/><path d="M0 675 C 336 665 744 686 1200 671 L 1200 800 L 0 800 Z" fill="url(#journal-6-band)" opacity="0.070"/>
+<circle cx="600" cy="160" r="62" fill="#DFB55A" opacity="0.30"/>
+<circle cx="600" cy="160" r="36" fill="#FBF8F3" opacity="0.62"/>
+<rect width="1200" height="800" filter="url(#gjournal-6-1)" opacity="0.55" style="mix-blend-mode:multiply"/>
+</svg>

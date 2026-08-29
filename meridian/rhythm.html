@@ -23,6 +23,7 @@
 </head>
 <body data-page="rhythm">
 
+<div class="progress" id="progress" aria-hidden="true"></div>
 <div class="grain-page" aria-hidden="true"></div>
 <header class="nav" id="nav">
   <div class="nav__inner">
@@ -55,71 +56,78 @@
     </div>
   </div>
 </section>
-<section class="section section--tight">
-  <div class="wrap wrap--narrow reveal"><div class="arc" id="rhythmArc">
+
+<section class="phaseseq" id="rhythmSeq">
+  <div class="phaseseq__track" data-seq>
+    <div class="phaseseq__stage">
+      <div class="wrap phaseseq__panels"><article class="phaseseq__panel is-on"
+         style="--pc:#E8A87C" data-hour="dawn">
+  <div>
+    <p class="phaseseq__hour"><i></i>05:30 — 09:00</p>
+    <h3 class="display">Dawn</h3>
+    <p class="phaseseq__lead">Wake the body before you wake the phone.</p>
+    <p class="lede">Light first, then breath, then movement. The first ninety minutes set the slope of everything after them — we spend them deliberately.</p>
+  </div>
+  <div class="phaseseq__art" data-par>
+    <img src="/assets/art/phase-dawn.svg" width="1400" height="900"
+         loading="lazy" decoding="async"
+         alt="Light study of the dawn hour, sun at its position in the day.">
+  </div>
+</article><article class="phaseseq__panel"
+         style="--pc:#DFB55A" data-hour="meridian">
+  <div>
+    <p class="phaseseq__hour"><i></i>11:00 — 14:00</p>
+    <h3 class="display">Meridian</h3>
+    <p class="phaseseq__lead">Hold the peak without burning it.</p>
+    <p class="lede">Your core temperature, grip strength and alertness top out around now. This is the hour for load, for focus, and for eating like you mean it.</p>
+  </div>
+  <div class="phaseseq__art" data-par>
+    <img src="/assets/art/phase-meridian.svg" width="1400" height="900"
+         loading="lazy" decoding="async"
+         alt="Light study of the meridian hour, sun at its position in the day.">
+  </div>
+</article><article class="phaseseq__panel"
+         style="--pc:#C98E86" data-hour="dusk">
+  <div>
+    <p class="phaseseq__hour"><i></i>16:30 — 19:30</p>
+    <h3 class="display">Dusk</h3>
+    <p class="phaseseq__lead">Come down on purpose, not by collapse.</p>
+    <p class="lede">Ojai's pink moment is our cue. Long exhales, slow tissue, warm light, and sound — the practices that tell a nervous system the day is closing.</p>
+  </div>
+  <div class="phaseseq__art" data-par>
+    <img src="/assets/art/phase-dusk.svg" width="1400" height="900"
+         loading="lazy" decoding="async"
+         alt="Light study of the dusk hour, sun at its position in the day.">
+  </div>
+</article><article class="phaseseq__panel"
+         style="--pc:#7A8CA0" data-hour="deep">
+  <div>
+    <p class="phaseseq__hour"><i></i>21:00 — 05:00</p>
+    <h3 class="display">Deep</h3>
+    <p class="phaseseq__lead">The work you don't feel yourself doing.</p>
+    <p class="lede">Repair happens in the dark. We treat sleep as the primary practice and build the other three hours to protect it.</p>
+  </div>
+  <div class="phaseseq__art" data-par>
+    <img src="/assets/art/phase-deep.svg" width="1400" height="900"
+         loading="lazy" decoding="async"
+         alt="Light study of the deep hour, sun at its position in the day.">
+  </div>
+</article></div>
+      <div class="wrap">
+        <p class="phaseseq__count" aria-hidden="true">The hours <b data-seq-num>01</b>&thinsp;/&thinsp;04</p>
+        <div class="arc" id="rhythmSeqArc">
 <svg viewBox="0 0 900 180" role="img" aria-label="The arc of a day, from dawn through meridian and dusk into deep night.">
   <path class="arc__path" d="M20 150 C 200 10, 700 10, 880 150"/>
-  <path class="arc__prog" id="rhythmArcProg" d="M20 150 C 200 10, 700 10, 880 150"/>
-  <circle class="arc__sun" id="rhythmArcSun" cx="20" cy="150" r="9" fill="#E8A87C"/>
+  <path class="arc__prog" id="rhythmSeqArcProg" d="M20 150 C 200 10, 700 10, 880 150"/>
+  <circle class="arc__sun" id="rhythmSeqArcSun" cx="20" cy="150" r="9" fill="#E8A87C"/>
   <text class="arc__tick" x="20"  y="174" text-anchor="middle">DAWN</text>
   <text class="arc__tick" x="316" y="174" text-anchor="middle">MERIDIAN</text>
   <text class="arc__tick" x="600" y="174" text-anchor="middle">DUSK</text>
   <text class="arc__tick" x="880" y="174" text-anchor="middle">DEEP</text>
 </svg>
-</div></div>
-</section>
-
-<section class="section" id="phases">
-  <div class="wrap">
-    <div class="phases"><article class="phase reveal" style="--pc:#E8A87C" data-hour="dawn">
-  <p class="phase__hour"><i></i>05:30 — 09:00</p>
-  <div class="phase__body">
-    <h3 class="display">Dawn</h3>
-    <p style="margin:.35rem 0 .6rem;color:var(--ink);font-size:1.02rem">Wake the body before you wake the phone.</p>
-    <p>Light first, then breath, then movement. The first ninety minutes set the slope of everything after them — we spend them deliberately.</p>
-  </div>
-  <div class="phase__art">
-    <img src="/assets/art/phase-dawn.svg" width="1600" height="700"
-         loading="lazy" decoding="async"
-         alt="Light study of the dawn hour: Dawn palette with the sun at its position in the day.">
-  </div>
-</article><article class="phase reveal" style="--pc:#DFB55A" data-hour="meridian">
-  <p class="phase__hour"><i></i>11:00 — 14:00</p>
-  <div class="phase__body">
-    <h3 class="display">Meridian</h3>
-    <p style="margin:.35rem 0 .6rem;color:var(--ink);font-size:1.02rem">Hold the peak without burning it.</p>
-    <p>Your core temperature, grip strength and alertness top out around now. This is the hour for load, for focus, and for eating like you mean it.</p>
-  </div>
-  <div class="phase__art">
-    <img src="/assets/art/phase-meridian.svg" width="1600" height="700"
-         loading="lazy" decoding="async"
-         alt="Light study of the meridian hour: Meridian palette with the sun at its position in the day.">
-  </div>
-</article><article class="phase reveal" style="--pc:#C98E86" data-hour="dusk">
-  <p class="phase__hour"><i></i>16:30 — 19:30</p>
-  <div class="phase__body">
-    <h3 class="display">Dusk</h3>
-    <p style="margin:.35rem 0 .6rem;color:var(--ink);font-size:1.02rem">Come down on purpose, not by collapse.</p>
-    <p>Ojai's pink moment is our cue. Long exhales, slow tissue, warm light, and sound — the practices that tell a nervous system the day is closing.</p>
-  </div>
-  <div class="phase__art">
-    <img src="/assets/art/phase-dusk.svg" width="1600" height="700"
-         loading="lazy" decoding="async"
-         alt="Light study of the dusk hour: Dusk palette with the sun at its position in the day.">
-  </div>
-</article><article class="phase reveal" style="--pc:#7A8CA0" data-hour="deep">
-  <p class="phase__hour"><i></i>21:00 — 05:00</p>
-  <div class="phase__body">
-    <h3 class="display">Deep</h3>
-    <p style="margin:.35rem 0 .6rem;color:var(--ink);font-size:1.02rem">The work you don't feel yourself doing.</p>
-    <p>Repair happens in the dark. We treat sleep as the primary practice and build the other three hours to protect it.</p>
-  </div>
-  <div class="phase__art">
-    <img src="/assets/art/phase-deep.svg" width="1600" height="700"
-         loading="lazy" decoding="async"
-         alt="Light study of the deep hour: Deep palette with the sun at its position in the day.">
-  </div>
-</article></div>
+</div>
+      </div>
+    </div>
   </div>
 </section>
 
