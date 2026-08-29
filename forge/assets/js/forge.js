@@ -62,7 +62,9 @@
 
     // Lighter encode for small screens; both are all-intra so seeks land clean.
     var small = window.matchMedia('(max-width: 860px)').matches;
-    var base = 'assets/video/' + (small ? 'hero-chalk-sm' : 'hero-chalk');
+    // Root-absolute: the host serves this page at /forge (no trailing slash),
+    // so a relative path would resolve against / and 404.
+    var base = '/forge/assets/video/' + (small ? 'hero-chalk-sm' : 'hero-chalk');
 
     // Prefer VP9: Chromium builds without proprietary codecs can't decode H.264,
     // and Safari can't decode VP9 — between them every engine gets a stream.

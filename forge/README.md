@@ -15,6 +15,17 @@ npx http-server . -p 8000
 > which breaks seeking — the hero scrub will sit frozen on frame one. Use
 > `http-server`, `serve`, nginx, or Vercel. Vercel serves ranges by default.
 
+## Asset paths
+
+Asset URLs in `index.html` and `forge.js` are **root-absolute** (`/forge/assets/...`),
+not relative. `vercel.json` sets `trailingSlash: false`, so the host redirects `/forge/`
+to `/forge` — at which point a relative `assets/…` resolves against `/` and 404s, and the
+page deploys unstyled. Root-absolute paths are stable under both URL forms.
+
+The consequence: **this site must be served at `/forge/`.** If you ever relocate it or
+deploy `forge/` as its own project root, rewrite those prefixes. The `@font-face` URLs in
+`forge-fonts.css` are stylesheet-relative and resolve correctly either way.
+
 ## Design
 
 Charcoal ground (`#0B0C0D`), bone-white type (`#EDE6DA`), one blood-red accent
