@@ -1,3 +1,18 @@
+# 3d-Scrolling-Websites
+
+Two independent static sites, each deployed as its own Vercel project:
+
+| Directory | Site | Vercel project | Serves at |
+| --- | --- | --- | --- |
+| repository root | Monga Brothers Ltd. | `monga-brothers-website` | `/` |
+| [`forge/`](forge/) | FORGE — strength gym, Detroit | `forge-gym` | `/` (root directory `forge`) |
+
+`forge/` carries its own `vercel.json` and is served as a site root, not under
+`/forge`. See [`forge/README.md`](forge/README.md) for its build notes — in
+particular, its scroll-scrubbed hero needs a server that honours HTTP Range.
+
+---
+
 # Monga Brothers Ltd. — website
 
 A static, dependency-light marketing site for **Monga Brothers Ltd.**, an ISO 9001:2015
