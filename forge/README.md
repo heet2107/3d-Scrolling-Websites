@@ -6,9 +6,9 @@ Static, dependency-light, no build step. Lives in `forge/` so it sits alongside 
 Monga Brothers site at the repository root rather than replacing it.
 
 ```bash
-# Serve from the repository root with a server that supports HTTP Range requests
-npx http-server . -p 8000
-# open http://localhost:8000/forge/
+# Serve THIS directory as the site root, with a server that supports HTTP Range
+npx http-server forge -p 8000
+# open http://localhost:8000
 ```
 
 > **Range requests are required.** Python's `http.server` ignores the `Range` header,
@@ -17,14 +17,17 @@ npx http-server . -p 8000
 
 ## Asset paths
 
-Asset URLs in `index.html` and `forge.js` are **root-absolute** (`/forge/assets/...`),
-not relative. `vercel.json` sets `trailingSlash: false`, so the host redirects `/forge/`
-to `/forge` — at which point a relative `assets/…` resolves against `/` and 404s, and the
-page deploys unstyled. Root-absolute paths are stable under both URL forms.
+`forge/` is its own deployable site root — it has its own `vercel.json` and deploys as
+the Vercel project **forge-gym**, so the site is served at `/`, not under a subpath.
 
-The consequence: **this site must be served at `/forge/`.** If you ever relocate it or
-deploy `forge/` as its own project root, rewrite those prefixes. The `@font-face` URLs in
+Asset URLs in `index.html` and `forge.js` are **root-absolute** (`/assets/...`) rather
+than relative. `vercel.json` sets `trailingSlash: false`; relative paths break the moment
+a host serves the page at a subpath without a trailing slash, because they then resolve
+against `/`. Root-absolute paths hold regardless. The `@font-face` URLs in
 `forge-fonts.css` are stylesheet-relative and resolve correctly either way.
+
+Serve this directory as the root — not the repository root. The site is no longer
+reachable at `/forge` on the repo's other deployment.
 
 ## Design
 
