@@ -748,10 +748,32 @@ PAGES = {
 }
 
 
+def sitemap():
+    """An eight-page site should tell crawlers what it has."""
+    from datetime import date
+    today = date.today().isoformat()
+    urls = ""
+    for filename in PAGES:
+        slug = "" if filename == "index.html" else "/" + filename[:-5]
+        priority = "1.0" if filename == "index.html" else "0.8"
+        urls += (f"  <url><loc>{P.BASE_URL}{slug}</loc>"
+                 f"<lastmod>{today}</lastmod><priority>{priority}</priority></url>\n")
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            f"{urls}</urlset>\n")
+
+
+def robots():
+    return f"User-agent: *\nAllow: /\n\nSitemap: {P.BASE_URL}/sitemap.xml\n"
+
+
 def build():
     for filename, fn in PAGES.items():
         (ROOT / filename).write_text(fn())
         print(f"  {filename}")
+    (ROOT / "sitemap.xml").write_text(sitemap())
+    (ROOT / "robots.txt").write_text(robots())
+    print("  sitemap.xml\n  robots.txt")
     print(f"{len(PAGES)} pages -> {ROOT}")
 
 
