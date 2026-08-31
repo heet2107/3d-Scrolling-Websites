@@ -116,6 +116,19 @@ the curtain; Framer Motion (38 kB) only when a phone opens the chapter index.
 survive Vite's CommonJS interop for React, and React ended up inside the three chunk,
 which put the whole WebGL bundle on the critical path.
 
+Measured in Chromium at 1440×900, descending the full 30,000px document in twelve seconds
+with five films scrubbing:
+
+| | mean | p50 | p95 | p99 | worst | frames > 32 ms |
+| --- | --- | --- | --- | --- | --- | --- |
+| DOM + film scrub | 16.67 ms (60.0 fps) | 16.7 | 16.8 | 16.8 | 16.8 | 0 of 689 |
+
+A locked 60 with no dropped frame anywhere in the descent. The WebGL layer is excluded
+from that figure on purpose: this container has no GPU and falls back to SwiftShader, a
+CPU rasteriser, where the same run reports ~15 fps. That number says nothing about the
+site — it is worth re-measuring on real hardware rather than trusting either figure.
+The scroll layer standing alone at 60 is the part this proves.
+
 ## Type
 
 **Instrument Serif** stands in for Canela / PP Editorial, **Inter** for Neue Montreal.
