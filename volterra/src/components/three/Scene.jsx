@@ -32,6 +32,12 @@ function Composition({ compact }) {
   const hh = viewport.height / 2
   const at = (nx, ny, z = 0) => [nx * hw, ny * hh, z]
 
+  // The box every floating object is held inside, in world units. Narrower
+  // vertically than horizontally because the top of the frame carries the
+  // nav and the bottom carries each chapter's type — the sides are the only
+  // part of the screen this layer can use without landing on something.
+  const bounds = [hw * 0.8, hh * 0.56]
+
   return (
     <>
       <FrameState />
@@ -54,44 +60,41 @@ function Composition({ compact }) {
           thing that would make this layer read as decoration. */}
 
       {/* Overture — stone high left, brass out right. */}
-      <MarbleSphere chapters={['hero']} home={at(-0.82, 0.46, 0)} radius={0.54} seed={0} />
-      <BrassRing chapters={['hero']} home={at(0.88, -0.12, -1)} radius={0.66} seed={1} />
+      <MarbleSphere bounds={bounds} chapters={['hero']} home={at(-0.78, 0.22, 0)} radius={0.54} seed={0} />
+      <BrassRing bounds={bounds} chapters={['hero']} home={at(0.88, -0.12, -1)} radius={0.66} seed={1} />
 
       {/* Living Room — glass hanging where the room would have a window,
           and stone above it, both clear of the copy at lower left. */}
-      <GlassPanes chapters={['living']} home={at(0.8, -0.05, -0.4)} seed={4} />
+      <GlassPanes bounds={bounds} chapters={['living']} home={at(0.8, -0.05, -0.4)} seed={4} />
       {!compact && (
-        <MarbleSphere chapters={['living']} home={at(0.86, 0.52, -1.2)} radius={0.3} seed={5} />
+        <MarbleSphere bounds={bounds} chapters={['living']} home={at(0.86, 0.52, -1.2)} radius={0.3} seed={5} />
       )}
 
       {/* Light — the chapter is nearly black, so this is mostly dust. */}
       <Motes chapters={['light', 'blueprint', 'finale']} count={compact ? 110 : 230} />
-      <BrassRing chapters={['light']} home={at(-0.76, 0.46, -0.6)} radius={0.82} seed={6} />
+      <BrassRing bounds={bounds} chapters={['light']} home={at(-0.76, 0.46, -0.6)} radius={0.82} seed={6} />
 
       {/* Kitchen — both high, flanking the floating island. */}
-      <BrassRing chapters={['kitchen']} home={at(-0.86, 0.5, 0)} radius={0.58} seed={7} />
+      <BrassRing bounds={bounds} chapters={['kitchen']} home={at(-0.8, 0.24, 0)} radius={0.58} seed={7} />
       {!compact && (
-        <MarbleSphere chapters={['kitchen']} home={at(0.9, 0.5, -0.8)} radius={0.34} seed={8} />
+        <MarbleSphere bounds={bounds} chapters={['kitchen']} home={at(0.9, 0.5, -0.8)} radius={0.34} seed={8} />
       )}
 
       {/* Bedroom — one soft stone, far out on the right. The chapter is
           meant to be the calmest thing on the page. */}
-      <MarbleSphere chapters={['bedroom']} home={at(0.92, 0.44, -0.5)} radius={0.4} seed={9} />
+      <MarbleSphere bounds={bounds} chapters={['bedroom']} home={at(0.92, 0.44, -0.5)} radius={0.4} seed={9} />
 
-      {/* Materials — the specimen, low and outside the plate. Dropped on a
-          phone, where the chapter already fills the screen edge to edge and
-          a floating object would land on the list. */}
-      {!compact && (
-        <MaterialCube chapters={['materials']} home={at(-0.9, -0.6, 0)} size={0.5} seed={2} />
-      )}
+      {/* Materials has no floating object of its own: the film in that
+          chapter is a turning material cube, and a second one beside it
+          read as a duplicate rather than as depth. */}
 
       {/* Blueprint — the massing model, in line with the datum marks. */}
-      <WireVilla chapters={['blueprint']} home={at(0.7, 0.4, 0)} seed={3} scale={0.72} />
+      <WireVilla bounds={bounds} chapters={['blueprint']} home={at(0.7, 0.4, 0)} seed={3} scale={0.72} />
 
       {/* Finale — everything the house is made of, together. */}
-      <MaterialCube chapters={['finale']} home={at(0.86, 0.5, -1)} size={0.5} seed={10} />
+      <MaterialCube bounds={bounds} chapters={['finale']} home={at(0.86, 0.5, -1)} size={0.5} seed={10} />
       {!compact && (
-        <MarbleSphere chapters={['finale']} home={at(-0.9, 0.44, -1.4)} radius={0.32} seed={11} />
+        <MarbleSphere bounds={bounds} chapters={['finale']} home={at(-0.9, 0.44, -1.4)} radius={0.32} seed={11} />
       )}
     </>
   )

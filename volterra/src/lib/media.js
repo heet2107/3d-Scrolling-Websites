@@ -77,3 +77,32 @@ export function filmSource(film, compact) {
   if (preferredCodec() === 'vp9') return film.srcWebm
   return compact ? film.srcSm : film.src
 }
+
+/* ------------------------------------------------------------------ *
+ *  Isolated product stills, shot against a neutral ground.
+ *
+ *  Two of the twelve the brief asks for. Higgsfield's account limit turned
+ *  out to be five generations a day, and the three missing films took
+ *  priority over the stills — a chapter with no film has nothing to show,
+ *  where the stills have no section waiting on them yet.
+ *
+ *  The remaining ten are listed here as the manifest they will slot into.
+ *  Uncomment each as its file lands; the gallery that uses them is worth
+ *  building once the set is complete, not around a third of it.
+ * ------------------------------------------------------------------ */
+const still = (file) => `/assets/img/${file}.webp`
+
+export const stills = {
+  chair: still('lounge-chair'),
+  pendant: still('pendant-light'),
+  // coffeeTable:  travertine-coffee-table
+  // island:       marble-kitchen-island
+  // bed:          king-size-bed
+  // faucet:       brass-faucet
+  // olive:        olive-tree
+  // floorLamp:    floor-lamp
+  // sculptures:   sculpture-set
+  // cube:         material-cube
+  // blueprint:    architectural-blueprint
+  // villaModel:   villa-scale-model
+}

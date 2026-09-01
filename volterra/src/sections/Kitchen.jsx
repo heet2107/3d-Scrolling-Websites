@@ -89,13 +89,17 @@ export default function Kitchen() {
     <Chapter id="kitchen" length={compact ? 3.2 : 4} ground="#EFEAE3" figure="#151515">
       {({ trackRef }) => (
         <div ref={stageRef} className="relative h-full w-full" style={{ background: '#EFEAE3' }}>
-          <div className="absolute inset-0 flex items-center justify-center">
+          {/* The plate sits above centre, not on it. The chapter's type runs
+              along the bottom — heading left, spec block right — and at a
+              centred 64svh the film's lower corners printed straight through
+              the spec rows. */}
+          <div className="absolute inset-0 flex items-start justify-center pt-[14svh] md:pt-[13svh]">
             <div
               ref={plateRef}
               className="gpu relative overflow-hidden"
               style={{
-                width: compact ? '92vw' : '68vw',
-                height: compact ? '46svh' : '64svh',
+                width: compact ? '92vw' : '64vw',
+                height: compact ? '42svh' : '54svh',
                 borderRadius: '2px',
                 // A single long shadow is what lifts the plate off the
                 // page. No border, no gradient — just distance.

@@ -7,7 +7,7 @@ import { marbleShader } from './shaders.js'
 /* A block of Calacatta, turned slowly. The veining is generated in the
    fragment shader (see shaders.js) rather than sampled from a texture, so
    it costs nothing to download and never tiles visibly. */
-export default function MarbleSphere({ home, chapters, radius = 0.62, seed = 0 }) {
+export default function MarbleSphere({ home, chapters, radius = 0.62, seed = 0, bounds }) {
   const group = useRef(null)
 
   const material = useMemo(() => {
@@ -27,6 +27,7 @@ export default function MarbleSphere({ home, chapters, radius = 0.62, seed = 0 }
   useFloat(group, {
     chapters,
     home,
+    bounds,
     seed,
     drift: 0.2,
     travel: 2.1,

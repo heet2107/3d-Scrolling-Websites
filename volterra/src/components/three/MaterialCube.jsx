@@ -17,7 +17,7 @@ const FACES = [
   { color: '#4A4A4A', metalness: 0.35, roughness: 0.08 }, // smoked glass
 ]
 
-export default function MaterialCube({ home, chapters, size = 0.92, seed = 2 }) {
+export default function MaterialCube({ home, chapters, size = 0.92, seed = 2, bounds }) {
   const group = useRef(null)
 
   const materials = useMemo(
@@ -38,6 +38,7 @@ export default function MaterialCube({ home, chapters, size = 0.92, seed = 2 }) 
   useFloat(group, {
     chapters,
     home,
+    bounds,
     seed,
     drift: 0.12,
     travel: 1.9,

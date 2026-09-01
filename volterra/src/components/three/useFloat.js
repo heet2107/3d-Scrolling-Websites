@@ -41,6 +41,9 @@ export function useFloat(
     /** Constant rotation, radians per second, per axis. */
     spin = [0, 0.05, 0],
     seed = 0,
+    /** Half-extents of the safe box, in world units, that this object is
+        kept inside. Supplied by the Scene from the live viewport. */
+    bounds = null,
     onVisibility,
   }
 ) {
@@ -76,6 +79,18 @@ export function useFloat(
     o.position.x = home[0] + Math.cos(p * 0.83 + seed) * drift + pointer.ex * parallax * 2.4
     o.position.y = home[1] + Math.sin(p + seed) * drift + rise + pointer.ey * parallax * -1.5
     o.position.z = home[2] + Math.sin(p * 0.61 + seed) * drift * 0.6
+
+    // Keep the object inside the frame. A home position alone is not
+    // enough: the chapter rise moves an object up to half its travel above
+    // where it was placed, which is how a sphere parked at a comfortable
+    // 0.46 of the half-height ended up over the wordmark in the nav at the
+    // top of its chapter. Clamping here bounds the sum of every term —
+    // drift, rise and pointer lean — rather than trying to budget for them
+    // one at a time at each call site.
+    if (bounds) {
+      o.position.x = Math.min(Math.max(o.position.x, -bounds[0]), bounds[0])
+      o.position.y = Math.min(Math.max(o.position.y, -bounds[1]), bounds[1])
+    }
 
     o.rotation.x += spin[0] * dt
     o.rotation.y += spin[1] * dt

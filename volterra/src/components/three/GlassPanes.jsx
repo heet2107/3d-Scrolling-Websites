@@ -13,7 +13,7 @@ const PANES = [
   { size: [0.8, 1.2], rot: [0.1, 0.9, 0.02], z: 0.55 },
 ]
 
-export default function GlassPanes({ home, chapters, seed = 4 }) {
+export default function GlassPanes({ home, chapters, seed = 4, bounds }) {
   const group = useRef(null)
 
   const materials = useMemo(
@@ -37,6 +37,7 @@ export default function GlassPanes({ home, chapters, seed = 4 }) {
   useFloat(group, {
     chapters,
     home,
+    bounds,
     seed,
     drift: 0.18,
     travel: 2.4,

@@ -4,13 +4,14 @@ import { useFloat } from './useFloat.js'
 /* Unlacquered brass, caught edge-on. A torus reads as a ring only while
    it is near-edge-on to camera, so the idle spin is kept on one axis and
    the pointer lean supplies the rest. */
-export default function BrassRing({ home, chapters, radius = 0.78, tube = 0.035, seed = 1 }) {
+export default function BrassRing({ home, chapters, radius = 0.78, tube = 0.035, seed = 1, bounds }) {
   const group = useRef(null)
   const material = useRef(null)
 
   useFloat(group, {
     chapters,
     home,
+    bounds,
     seed,
     drift: 0.14,
     travel: 2.6,

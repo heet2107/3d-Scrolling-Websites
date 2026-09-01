@@ -17,7 +17,7 @@ const MASSING = [
   [0.42, 0.3, 0.42, -0.95, -0.1, 0.75],
 ]
 
-export default function WireVilla({ home, chapters, seed = 3, scale = 1 }) {
+export default function WireVilla({ home, chapters, seed = 3, scale = 1, bounds }) {
   const group = useRef(null)
   const material = useRef(null)
 
@@ -39,6 +39,7 @@ export default function WireVilla({ home, chapters, seed = 3, scale = 1 }) {
   useFloat(group, {
     chapters,
     home,
+    bounds,
     seed,
     drift: 0.1,
     travel: 1.4,

@@ -64,7 +64,8 @@ alone they run on three separate loops and the film ends up a frame behind the t
 
 ## Films
 
-Generated with Higgsfield (Seedance 2.5, 1080p, 16:9, silent, 8s), then re-encoded:
+All eight generated with Higgsfield (Seedance 2.5, 1080p, 16:9, silent, 8s), then
+re-encoded:
 
 ```bash
 ./build/encode-films.sh <dir-of-source-mp4s>
@@ -128,6 +129,19 @@ from that figure on purpose: this container has no GPU and falls back to SwiftSh
 CPU rasteriser, where the same run reports ~15 fps. That number says nothing about the
 site — it is worth re-measuring on real hardware rather than trusting either figure.
 The scroll layer standing alone at 60 is the part this proves.
+
+## Stills
+
+`public/assets/img/` holds two of the twelve isolated product stills the brief calls
+for — the lounge chair and the pendant. The account's Higgsfield limit turned out to be
+**five generations a day**, not a large daily budget: five films on day one, then one
+still, three films and one more still on day two before it closed again. The three
+missing films took the day-two allowance ahead of the stills, because a chapter without
+its film has nothing to show at all.
+
+`stills` in `src/lib/media.js` carries the remaining ten as commented entries. The
+gallery that uses them is worth building once the set is complete rather than around a
+sixth of it, so nothing renders them yet.
 
 ## Type
 
