@@ -77,17 +77,35 @@ function splitIntoLines(host, text) {
 function splitIntoChars(host, text) {
   host.textContent = ''
   const out = []
-  Array.from(text).forEach((ch) => {
-    if (ch === ' ') {
-      host.appendChild(document.createTextNode(' '))
+
+  // Split on whitespace and keep each word in an inline-block wrapper.
+  //
+  // Two things went wrong in the first version and they compounded. Every
+  // character was its own inline-block, which lets a line break between
+  // any two letters; and the separator between words was a non-breaking
+  // space, which forbade breaking at the one place a break belongs. The
+  // result was a headline reading "We Design E / xperiences."
+  //
+  // A normal space restores the legal break, and the wrapper makes each
+  // word an unbreakable unit so no other break can happen.
+  text.split(/(\s+)/).forEach((chunk) => {
+    if (!chunk) return
+    if (/^\s+$/.test(chunk)) {
+      host.appendChild(document.createTextNode(' '))
       return
     }
-    const span = document.createElement('span')
-    span.style.display = 'inline-block'
-    span.style.willChange = 'transform, opacity, filter'
-    span.textContent = ch
-    host.appendChild(span)
-    out.push(span)
+    const word = document.createElement('span')
+    word.style.display = 'inline-block'
+    word.style.whiteSpace = 'nowrap'
+    Array.from(chunk).forEach((ch) => {
+      const span = document.createElement('span')
+      span.style.display = 'inline-block'
+      span.style.willChange = 'transform, opacity, filter'
+      span.textContent = ch
+      word.appendChild(span)
+      out.push(span)
+    })
+    host.appendChild(word)
   })
   return out
 }

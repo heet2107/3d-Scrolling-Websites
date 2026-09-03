@@ -78,6 +78,14 @@ export function filmSource(film, compact) {
   return compact ? film.srcSm : film.src
 }
 
+/** The other codec, for one retry when the chosen source errors.
+    canPlayType is a claim, not a guarantee: a browser can advertise
+    H.264 and still fail on a particular file, driver or build. */
+export function alternateSource(film, compact) {
+  if (preferredCodec() === 'vp9') return compact ? film.srcSm : film.src
+  return film.srcWebm
+}
+
 /* ------------------------------------------------------------------ *
  *  Isolated product stills, shot against a neutral ground.
  *

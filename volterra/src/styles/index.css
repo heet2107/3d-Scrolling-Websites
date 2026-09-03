@@ -172,10 +172,26 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Video decode lives on its own layer so text compositing above it
-       never forces a repaint of the frame. */
-    transform: translateZ(0);
-    backface-visibility: hidden;
+    /* No transform, and no backface-visibility, on purpose.
+       Both were here to force the video onto its own compositor layer.
+       A <video> already gets one, so it bought nothing — and forcing
+       layer promotion on a hardware-decoded video renders the element
+       blank on some Chrome and GPU driver combinations, which is exactly
+       what it did: every chapter showed its background colour instead of
+       its film. It never reproduced in testing because this container
+       has no GPU and falls back to software decode, where the bug does
+       not exist. */
+  }
+
+  /* The poster, painted on the element behind the video. If the video
+     fails for any reason — codec, driver, decode, an extension — the
+     chapter still shows its opening frame instead of an empty box. */
+  .film-bed {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 
   /* Two scrims: one lifts type off the frame, one keeps the edges dark
