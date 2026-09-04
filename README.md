@@ -7,12 +7,17 @@ Two independent static sites, each deployed as its own Vercel project:
 | repository root | Monga Brothers Ltd. | `monga-brothers-website` | `/` |
 | [`forge/`](forge/) | FORGE — strength gym, Detroit | `forge-gym` | `/` (root directory `forge`) |
 | [`meridian/`](meridian/) | MERIDIAN — wellness practice, Ojai | `meridian-wellness` | `/` (root directory `meridian`) |
+| [`volterra/`](volterra/) | VOLTERRA — luxury interior studio | `volterra-studio` | `/` (root directory `volterra`) |
 
 Each subdirectory carries its own `vercel.json` and is served as a site root, not under
-a subpath. See [`forge/README.md`](forge/README.md) for its build notes — in particular,
-its scroll-scrubbed hero needs a server that honours HTTP Range — and
+a subpath. The first three are static and need no build step; **`volterra/` is a Vite
+app** and is the only one that does.
+
+See [`forge/README.md`](forge/README.md) for its build notes — in particular, its
+scroll-scrubbed hero needs a server that honours HTTP Range —
 [`meridian/README.md`](meridian/README.md) for the eight-page generator and the
-procedural artwork.
+procedural artwork, and [`volterra/README.md`](volterra/README.md) for the scroll-scrub
+mechanics, the two-codec film pipeline and the WebGL layer.
 
 ---
 

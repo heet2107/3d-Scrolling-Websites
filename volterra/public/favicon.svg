@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="VOLTERRA">
+  <!-- Ink ground so the mark holds against light and dark browser chrome
+       alike, with the studio's brass as the only other colour. -->
+  <rect width="32" height="32" rx="4" fill="#151515"/>
+  <path d="M6 7h5.2l4.8 12.6L20.8 7H26l-7.4 19h-5.2z" fill="#A98D67"/>
+</svg>
