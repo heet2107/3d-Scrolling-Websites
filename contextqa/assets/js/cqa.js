@@ -734,7 +734,7 @@
       // holds under the pointer or keyboard focus, while the tab is hidden, and
       // while the deck is off screen. A manual turn restarts the dwell so an
       // automatic one cannot arrive on top of it.
-      var DWELL = 5000;
+      var DWELL = 3800;
       var timer = null, onScreen = false, held = false;
       var hold = function () { if (timer) { clearInterval(timer); timer = null; } };
       var run = function () {
@@ -764,12 +764,12 @@
       });
       window.addEventListener('resize', function () { measure(); place(); });
 
-      ['pointerenter', 'focusin'].forEach(function (ev) {
-        stage.addEventListener(ev, function () { held = true; hold(); });
-      });
-      ['pointerleave', 'focusout'].forEach(function (ev) {
-        stage.addEventListener(ev, function () { held = false; run(); });
-      });
+      // Only keyboard focus holds the deck. Hovering used to, but the stage is a
+      // 600px band across the full width, so a pointer resting anywhere near it
+      // stopped the deck and it read as broken. A click restarts the dwell, which
+      // is the interaction that actually means "I am reading this one".
+      stage.addEventListener('focusin', function () { held = true; hold(); });
+      stage.addEventListener('focusout', function () { held = false; run(); });
       document.addEventListener('visibilitychange', run);
       new IntersectionObserver(function (entries) {
         entries.forEach(function (e) { onScreen = e.isIntersecting; });
