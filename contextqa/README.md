@@ -21,6 +21,18 @@ python3 -m http.server 8002 --directory contextqa
 Asset URLs are root absolute (`/assets/...`) so they hold whether or not the host serves
 the page with a trailing slash.
 
+## Live
+
+Vercel project **`contextqa-site`** (root directory `contextqa`), linked to this repository.
+
+**Public:** <https://contextqa-site.vercel.app>
+
+The project's very first build came from this branch and Vercel marked it production, so
+the public alias serves that build. Later pushes to a non production branch create
+*preview* deployments, which sit behind the team's deployment protection (a Vercel login)
+and do not move the public alias. Merging to `main` promotes automatically; to promote
+sooner, use *Promote to Production* on the latest build in the project's Deployments tab.
+
 ## Design
 
 "Signal" theme. Near black ground (`#05070B`), one cyan accent (`#3DDCFF`) for order and
