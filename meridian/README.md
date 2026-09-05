@@ -92,13 +92,37 @@ biographies, and attaching those to a photograph of a real, identifiable person
 misrepresents them. Shoot or commission real portraits and point those four slots at them.
 
 ```bash
-python3 build/art.py     # regenerate the four guide artworks
-python3 build/build.py   # regenerate the eight pages, sitemap and robots.txt
+python3 build/art.py       # regenerate the four guide artworks
+python3 build/build.py     # regenerate the eight pages, sitemap and robots.txt
+bash    build/stamp_assets.sh  # stamp a content hash into every css and js URL
 ```
+
+The stamping step has to come last: regenerating the pages rewrites their tags and drops
+the hashes.
 
 Run both **from this directory**, never from the repository root — the root has its own
 `build/build.py` for the other site, and running that one strips the image dimensions
 `stamp_dimensions.py` adds.
+
+## Caching
+
+Pages revalidate on every load, but their stylesheets and scripts are cached. When those
+lag behind the markup, a returning visitor runs new HTML against an old stylesheet, and
+the page paints blank sections and unstyled icons. Two things prevent that.
+
+`vercel.json` serves `/assets/css` and `/assets/js` with `max-age=0, must-revalidate`, so
+they are checked on every load and cost a 304 rather than a download. Fonts, artwork and images keep a
+year of `immutable` caching, since those never change in place.
+
+Every stylesheet and script URL also carries a short content hash, so a changed file gets
+a new URL and any copy already sitting in a browser cache is bypassed at once. **Run this
+after touching anything under `assets/css` or `assets/js`, and commit the result:**
+
+```bash
+bash build/stamp_assets.sh
+```
+
+The generator does not write the hashes, so this runs after `build/build.py`.
 
 ## Motion
 

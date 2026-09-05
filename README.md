@@ -67,7 +67,11 @@ Pages are generated so the chrome is written once:
 ```bash
 python3 build/build.py            # writes the nine HTML files
 python3 build/stamp_dimensions.py # stamps intrinsic image sizes (no layout shift)
+bash    build/stamp_assets.sh     # stamps a content hash into every css and js URL
 ```
+
+Run all three, in that order. Regenerating a page rewrites its tags, so the two stamping
+steps have to follow the generator.
 
 - `build/partials.py` — header, footer, nav, contact details, icons.
 - `build/build.py` — the content of each page.
@@ -78,6 +82,27 @@ python3 build/stamp_dimensions.py # stamps intrinsic image sizes (no layout shif
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
+
+## Caching
+
+Pages revalidate on every load, but their stylesheets and scripts are cached. When those
+lag behind the markup, a returning visitor runs new HTML against an old stylesheet, and
+the page paints blank sections and unstyled icons. Two things prevent that.
+
+`vercel.json` serves `/assets/css` and `/assets/js` with `max-age=0, must-revalidate`, so
+they are checked on every load and cost a 304 rather than a download. Video and images keep a
+year of `immutable` caching, since those never change in place.
+
+Every stylesheet and script URL also carries a short content hash, so a changed file gets
+a new URL and any copy already sitting in a browser cache is bypassed at once. **Run this
+after touching anything under `assets/css` or `assets/js`, and commit the result:**
+
+```bash
+bash build/stamp_assets.sh
+```
+
+The generator does not write the hashes, so this runs after `build.py`, the same way
+`stamp_dimensions.py` does.
 
 ## Deployment
 

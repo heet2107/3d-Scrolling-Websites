@@ -29,6 +29,26 @@ against `/`. Root-absolute paths hold regardless. The `@font-face` URLs in
 Serve this directory as the root — not the repository root. The site is no longer
 reachable at `/forge` on the repo's other deployment.
 
+## Caching
+
+Pages revalidate on every load, but their stylesheets and scripts are cached. When those
+lag behind the markup, a returning visitor runs new HTML against an old stylesheet, and
+the page paints blank sections and unstyled icons. Two things prevent that.
+
+`vercel.json` serves `/assets/css` and `/assets/js` with `max-age=0, must-revalidate`, so
+they are checked on every load and cost a 304 rather than a download. Fonts, video and images keep a
+year of `immutable` caching, since those never change in place.
+
+Every stylesheet and script URL also carries a short content hash, so a changed file gets
+a new URL and any copy already sitting in a browser cache is bypassed at once. **Run this
+after touching anything under `assets/css` or `assets/js`, and commit the result:**
+
+```bash
+bash build/stamp_assets.sh
+```
+
+There is no generator here, so this is the only step.
+
 ## Design
 
 Charcoal ground (`#0B0C0D`), bone-white type (`#EDE6DA`), one blood-red accent
