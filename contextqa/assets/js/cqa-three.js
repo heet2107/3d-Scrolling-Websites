@@ -18,6 +18,9 @@ const CYAN = new THREE.Color('#3DDCFF');
 const VIOLET = new THREE.Color('#8B5CF6');
 const MAGENTA = new THREE.Color('#C084FC');
 const WHITE = new THREE.Color('#EAF0F8');
+const LIGHT_CYAN = new THREE.Color('#0891B2');
+const LIGHT_HI = new THREE.Color('#22D3EE');
+const isLight = () => document.documentElement.getAttribute('data-theme') === 'light';
 
 function webglOK() {
   try {
@@ -195,8 +198,9 @@ function initGyro() {
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
   camera.position.set(0, 0.2, 7.4);
 
-  scene.add(new THREE.AmbientLight(0x3a4658, 2.2));
-  scene.add(new THREE.HemisphereLight(0x3ddcff, 0x8b5cf6, 0.9));
+  const ambient = new THREE.AmbientLight(0x3a4658, 2.2);
+  const hemi = new THREE.HemisphereLight(0x3ddcff, 0x8b5cf6, 0.9);
+  scene.add(ambient, hemi);
   const keyLight = new THREE.PointLight(CYAN.getHex(), 260, 20);
   keyLight.position.set(3, 3, 4);
   const fillLight = new THREE.PointLight(VIOLET.getHex(), 160, 20);
@@ -245,6 +249,30 @@ function initGyro() {
   new ResizeObserver(resize).observe(host);
   host.classList.add('is-webgl');
 
+  // Additive glow reads as light on a dark ground and vanishes on a pale one,
+  // so the light theme swaps to normal blending and deeper teals.
+  let glowBase = CYAN, glowHi = WHITE;
+  const applyTheme = () => {
+    const light = isLight();
+    glowBase = light ? LIGHT_CYAN : CYAN;
+    glowHi = light ? LIGHT_HI : WHITE;
+    rings.forEach((r) => {
+      r.glow.material.blending = light ? THREE.NormalBlending : THREE.AdditiveBlending;
+      r.glow.material.needsUpdate = true;
+      r.body.material.color.set(light ? 0x2a3547 : 0x1b2330);
+      r.body.material.emissive.set(light ? 0x0b1a24 : 0x06101a);
+    });
+    core.material.color.set(light ? 0x0e7490 : 0xffffff);
+    halo.material.blending = light ? THREE.NormalBlending : THREE.AdditiveBlending;
+    halo.material.color.copy(light ? LIGHT_CYAN : CYAN);
+    halo.material.opacity = light ? 0.5 : 0.9;
+    halo.material.needsUpdate = true;
+    ambient.intensity = light ? 3.4 : 2.2;
+    hemi.color.set(light ? 0xffffff : 0x3ddcff);
+  };
+  applyTheme();
+  document.addEventListener('cqa:theme', applyTheme);
+
   let stage = 0, progress = 0, targetYaw = 0;
   window.__cqaGyro = {
     setStage(i, p) { stage = i; progress = p; targetYaw = p * Math.PI * 1.5; }
@@ -268,7 +296,7 @@ function initGyro() {
       const state = i < stage ? 0.6 : i === stage ? 1 : 0.28;
       const pulse = i === stage ? 0.85 + 0.15 * Math.sin(t * 3) : 1;
       r.glow.material.opacity += (state * pulse - r.glow.material.opacity) * 0.08;
-      r.glow.material.color.lerpColors(CYAN, WHITE, i === stage ? 0.35 : 0);
+      r.glow.material.color.lerpColors(glowBase, glowHi, i === stage ? 0.35 : 0);
     });
     const glowScale = 1.3 + 0.5 * Math.min(1, progress) + 0.08 * Math.sin(t * 2.2);
     halo.scale.set(glowScale, glowScale, 1);

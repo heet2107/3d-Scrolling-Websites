@@ -34,7 +34,13 @@
     var burger = document.getElementById('burger');
     if (!nav) return;
 
-    var onScroll = function () { nav.classList.toggle('is-stuck', window.scrollY > 40); };
+    var hero = document.querySelector('.hero');
+    var onScroll = function () {
+      var y = window.scrollY;
+      nav.classList.toggle('is-stuck', y > 40);
+      // While the nav floats over the film it keeps the dark palette in both themes.
+      if (hero) nav.classList.toggle('is-over-hero', y < hero.offsetHeight - 80);
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -49,6 +55,27 @@
         nav.classList.remove('is-open');
         if (burger) burger.setAttribute('aria-expanded', 'false');
       });
+    });
+  }
+
+  /* ---------- Theme: light by default, toggled from the nav, remembered ---- */
+  function initTheme() {
+    var btn = document.getElementById('themeToggle');
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var apply = function (theme, persist) {
+      doc.setAttribute('data-theme', theme);
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#F4F6FB' : '#05070B');
+      if (btn) {
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+        btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+      }
+      if (persist) { try { localStorage.setItem('cqa-theme', theme); } catch (e) {} }
+      // The Three.js gyroscope and the bug hunt canvas recolour themselves on this.
+      document.dispatchEvent(new CustomEvent('cqa:theme', { detail: theme }));
+    };
+    apply(doc.getAttribute('data-theme') === 'dark' ? 'dark' : 'light', false);
+    if (btn) btn.addEventListener('click', function () {
+      apply(doc.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true);
     });
   }
 
@@ -624,6 +651,7 @@
 
   /* ---------- Boot ------------------------------------------------------- */
   function boot() {
+    initTheme();
     initNav();
     initProgress();
     initHeroSequence();

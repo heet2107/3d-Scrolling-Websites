@@ -35,12 +35,47 @@ sooner, use *Promote to Production* on the latest build in the project's Deploym
 
 ## Design
 
-"Signal" theme. Near black ground (`#05070B`), one cyan accent (`#3DDCFF`) for order and
-one violet (`#8B5CF6` to `#C084FC`) for chaos, which is also the film's own palette: a
-turbulent violet stream of unvalidated code enters a six ring gyroscope and leaves as calm
-cyan beams. Type is **Space Grotesk** (display), **Inter** (body) and **JetBrains Mono**
-(labels), self hosted as variable woff2 subsets (224 KB total) so there is no CDN
-dependency.
+"Signal" theme. One cyan accent for order and one violet for chaos, which is also the
+film's own palette: a turbulent violet stream of unvalidated code enters a six ring
+gyroscope and leaves as calm cyan beams. Type is **Space Grotesk** (display), **Inter**
+(body) and **JetBrains Mono** (labels), self hosted as variable woff2 subsets (224 KB
+total) so there is no CDN dependency.
+
+### Light and dark
+
+Two themes, switched by the toggle in the nav and remembered per visitor in
+`localStorage` (`cqa-theme`). **Light is the default**; change the `t="light"` fallback
+in the inline script in `index.html`'s head to flip that. The script runs before the
+stylesheet so there is no flash of the wrong theme.
+
+Every colour in `cqa.css` is a token on `:root`, restated under `:root[data-theme="light"]`
+with the accents deepened for contrast on the pale ground (`#3DDCFF` becomes `#0891B2`,
+and so on). Three places stay dark in both themes because they are built on dark
+imagery: the hero film, the closing call to action, and the nav while it floats over the
+film. They redeclare the dark tokens on themselves (`.hero`, `.cta`, `.nav.is-over-hero`)
+so everything inside inherits the cinematic palette without any per element overrides.
+The Three.js gyroscope and the bug hunt canvas listen for the `cqa:theme` event and
+recolour themselves; the gyroscope also swaps its additive glow for normal blending,
+since additive light disappears on a white ground.
+
+### The ambient layer
+
+The page is never flat. Behind every section sit, in order:
+
+- a dot grid on the body,
+- `.aurora`, three soft radial washes of violet, cyan and magenta that drift on a 52 second
+  loop,
+- `#bugs`, a fixed canvas running **the bug hunt**: a dozen beetle glyphs crawl across the
+  viewport; every few seconds a cyan reticle locks onto one, it bursts into sparks and
+  fragments, and a green check mark is left where it was, while a faint scan band sweeps
+  the screen. It is the product story as ambient motion, and the footer keeps a tally of
+  bugs caught on this visit.
+
+Sections sit above these layers with translucent glass panels, so the motion shows
+through the gaps but never behind body copy. The canvas pauses while the hero film covers
+the viewport and while the tab is hidden, caps its pixel ratio at 1.5, and does not run at
+all under `prefers-reduced-motion`. Line icons for the cards live in one inline SVG
+sprite at the top of `index.html`.
 
 ## The film (Higgsfield)
 

@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ContextQA · Autonomous Quality Engineering for the agentic SDLC</title>
 <meta name="description" content="ContextQA is the autonomous quality layer around your software development lifecycle. It understands every change, reproduces every bug, finds the root cause and hands engineers a fix ready issue. Ship faster, introduce fewer defects, spend less to validate every release.">
-<meta name="theme-color" content="#05070B">
+<meta name="theme-color" content="#F4F6FB">
+<meta name="color-scheme" content="light dark">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="ContextQA · Autonomous Quality Engineering">
@@ -19,6 +20,7 @@
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
 
 <script>document.documentElement.className="js";</script>
+<script>(function(){var t="light";try{var s=localStorage.getItem("cqa-theme");if(s==="dark"||s==="light")t=s;}catch(e){}document.documentElement.setAttribute("data-theme",t);})();</script>
 
 <link rel="preload" href="/assets/fonts/space-grotesk-var-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -64,6 +66,25 @@
 </head>
 <body>
 
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-bug" viewBox="0 0 24 24"><ellipse cx="12" cy="14" rx="5" ry="6"/><circle cx="12" cy="6.5" r="2.5"/><path d="M12 9v11M7 12l-4-2M7 15H2M7 18l-4 2M17 12l4-2M17 15h5M17 18l4 2M10.5 4.5 9 2.5M13.5 4.5 15 2.5"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M10 3 8 21M16 3l-2 18"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 7.5v9M18 10.5c0 4-4 5-8 5.5"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M2 12h4l3-7 4 14 3-9 2 2h4"/></symbol>
+  <symbol id="i-diamond" viewBox="0 0 24 24"><path d="M12 2l10 10-10 10L2 12z"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="4.5" transform="rotate(-30 12 12)"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l6-6"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M11 9v6l4-3z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M21 21l-5.5-5.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-handoff" viewBox="0 0 24 24"><path d="M4 12h12M12 7l5 5-5 5M20 5v14"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+</svg>
+<div class="aurora" aria-hidden="true"></div>
+<canvas class="bugs" id="bugs" aria-hidden="true"></canvas>
+
 <div class="progress" id="progress" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
@@ -91,6 +112,11 @@
         <li><a href="#faq">FAQ</a></li>
       </ul>
     </nav>
+
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+      <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
 
     <a class="nav__cta" href="#cta">Book a walkthrough</a>
 
@@ -234,12 +260,12 @@
       </div>
 
       <ul class="deck" id="deck" aria-label="What gets harder">
-        <li class="card3d"><span class="card3d__n">01</span><p>The blast radius of every change is harder to understand.</p></li>
-        <li class="card3d"><span class="card3d__n">02</span><p>Test suites are harder to keep current.</p></li>
-        <li class="card3d"><span class="card3d__n">03</span><p>Regressions are easier to introduce.</p></li>
-        <li class="card3d"><span class="card3d__n">04</span><p>Bugs are harder to reproduce and triage manually at scale.</p></li>
-        <li class="card3d"><span class="card3d__n">05</span><p>Traditional test execution gets increasingly expensive.</p></li>
-        <li class="card3d"><span class="card3d__n">06</span><p>Engineering teams spend more time understanding changes than generating them.</p></li>
+        <li class="card3d"><span class="card3d__n">01</span><svg class="card3d__icon" aria-hidden="true"><use href="#i-bug"/></svg><p>The blast radius of every change is harder to understand.</p></li>
+        <li class="card3d"><span class="card3d__n">02</span><svg class="card3d__icon" aria-hidden="true"><use href="#i-bug"/></svg><p>Test suites are harder to keep current.</p></li>
+        <li class="card3d"><span class="card3d__n">03</span><svg class="card3d__icon" aria-hidden="true"><use href="#i-bug"/></svg><p>Regressions are easier to introduce.</p></li>
+        <li class="card3d"><span class="card3d__n">04</span><svg class="card3d__icon" aria-hidden="true"><use href="#i-bug"/></svg><p>Bugs are harder to reproduce and triage manually at scale.</p></li>
+        <li class="card3d"><span class="card3d__n">05</span><svg class="card3d__icon" aria-hidden="true"><use href="#i-bug"/></svg><p>Traditional test execution gets increasingly expensive.</p></li>
+        <li class="card3d"><span class="card3d__n">06</span><svg class="card3d__icon" aria-hidden="true"><use href="#i-bug"/></svg><p>Engineering teams spend more time understanding changes than generating them.</p></li>
       </ul>
 
       <p class="villain__quote">
@@ -272,36 +298,42 @@
         <ol class="rail" id="rail" aria-label="The six stages">
           <li class="stage" data-stage="0">
             <p class="stage__n">01</p>
+            <svg class="stage__icon" aria-hidden="true"><use href="#i-eye"/></svg>
             <h3 class="stage__title">Understands</h3>
             <p class="stage__text">Reads more than the repository. Documentation, past bugs, tickets, product requirements, designs, existing tests and production sessions, so it knows what the product is supposed to do, not just what the code appears to do.</p>
             <ul class="tags"><li>Context graph</li><li>Docs</li><li>Tickets</li><li>Sessions</li></ul>
           </li>
           <li class="stage" data-stage="1">
             <p class="stage__n">02</p>
+            <svg class="stage__icon" aria-hidden="true"><use href="#i-radar"/></svg>
             <h3 class="stage__title">Detects</h3>
             <p class="stage__text">Starts from the triggers your team already recognizes. A pull request opened. A bug posted in Slack. A Linear issue created. A production anomaly detected.</p>
             <ul class="tags"><li>PR opened</li><li>#bugs</li><li>Linear</li><li>Anomaly</li></ul>
           </li>
           <li class="stage" data-stage="2">
             <p class="stage__n">03</p>
+            <svg class="stage__icon" aria-hidden="true"><use href="#i-replay"/></svg>
             <h3 class="stage__title">Reproduces</h3>
             <p class="stage__text">Drives the deployed product the way a real user would, on the real journey, and captures the evidence as it goes. Replay, console, network, screenshots.</p>
             <ul class="tags"><li>Real user journeys</li><li>Evidence</li><li>Deployed PR</li></ul>
           </li>
           <li class="stage" data-stage="3">
             <p class="stage__n">04</p>
+            <svg class="stage__icon" aria-hidden="true"><use href="#i-search"/></svg>
             <h3 class="stage__title">Diagnoses</h3>
             <p class="stage__text">Identifies the likely root cause, surfaces the relevant code and the change that introduced it, and calculates the blast radius across customer journeys.</p>
             <ul class="tags"><li>Root cause</li><li>Blast radius</li><li>Changed files</li></ul>
           </li>
           <li class="stage" data-stage="4">
             <p class="stage__n">05</p>
+            <svg class="stage__icon" aria-hidden="true"><use href="#i-shield"/></svg>
             <h3 class="stage__title">Validates</h3>
             <p class="stage__text">Maps code changes to existing tests, flags the tests that should change, runs the journeys at risk and tells the engineer what is safe and what is not. After a first successful run, journeys replay as deterministic steps that cost no tokens.</p>
             <ul class="tags"><li>Regression intelligence</li><li>Test mapping</li><li>Safe / unsafe</li></ul>
           </li>
           <li class="stage" data-stage="5">
             <p class="stage__n">06</p>
+            <svg class="stage__icon" aria-hidden="true"><use href="#i-handoff"/></svg>
             <h3 class="stage__title">Hands off</h3>
             <p class="stage__text">Files a structured Jira or Linear issue with reproduction steps, evidence and root cause, then hands the whole investigation to Claude or Codex so the fix starts with context, not from scratch.</p>
             <ul class="tags"><li>Jira</li><li>Linear</li><li>Claude</li><li>Codex</li></ul>
@@ -334,7 +366,7 @@
 
       <div class="flow__grid">
         <div class="panel trigger" data-step="0">
-          <p class="panel__kicker">Trigger <i aria-hidden="true"></i> #bugs in Slack</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-hash"/></svg>Trigger <i aria-hidden="true"></i> #bugs in Slack</p>
           <div class="msg">
             <span class="msg__avatar" aria-hidden="true">PR</span>
             <div>
@@ -345,7 +377,7 @@
         </div>
 
         <div class="panel work">
-          <p class="panel__kicker">ContextQA <i aria-hidden="true"></i> working</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-ring"/></svg>ContextQA <i aria-hidden="true"></i> working</p>
           <ol class="worklog">
             <li data-step="1"><i></i><span>Read the report and matched it to two similar past bugs</span></li>
             <li data-step="2"><i></i><span>Reproduced on Safari 17 with code SPRING20 at checkout step 3</span></li>
@@ -357,7 +389,7 @@
         </div>
 
         <div class="panel artifact" data-step="5">
-          <p class="panel__kicker">Artifact <i aria-hidden="true"></i> Linear issue <em>example investigation</em></p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg>Artifact <i aria-hidden="true"></i> Linear issue <em>example investigation</em></p>
           <div class="ticket">
             <p class="ticket__id">ENG 2231 <b>Bug</b> <b class="hi">High</b></p>
             <h3 class="ticket__title">Checkout fails on Safari after applying a promo code</h3>
@@ -393,7 +425,7 @@
 
       <div class="flow__grid">
         <div class="panel trigger" data-step="0">
-          <p class="panel__kicker">Trigger <i aria-hidden="true"></i> Pull request on GitHub</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-branch"/></svg>Trigger <i aria-hidden="true"></i> Pull request on GitHub</p>
           <div class="pr">
             <p class="pr__title"><b>#4826</b> Refactor pricing service into a shared module</p>
             <p class="pr__meta">14 files changed <span class="add">+612</span> <span class="del">−388</span> <i aria-hidden="true"></i> opened by an agent, reviewed by Mira</p>
@@ -401,7 +433,7 @@
         </div>
 
         <div class="panel work">
-          <p class="panel__kicker">ContextQA <i aria-hidden="true"></i> working</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-ring"/></svg>ContextQA <i aria-hidden="true"></i> working</p>
           <ol class="worklog">
             <li data-step="1"><i></i><span>Read the change: normalisation and proration moved to a shared service</span></li>
             <li data-step="2"><i></i><span>Mapped the diff to three customer journeys: Checkout, Renewal, Invoice export</span></li>
@@ -413,7 +445,7 @@
         </div>
 
         <div class="panel artifact" data-step="5">
-          <p class="panel__kicker">Artifact <i aria-hidden="true"></i> Blast radius report <em>example investigation</em></p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg>Artifact <i aria-hidden="true"></i> Blast radius report <em>example investigation</em></p>
           <div class="report">
             <ul class="journeys">
               <li class="ok"><span>Checkout</span><b>Passed</b></li>
@@ -450,7 +482,7 @@
 
       <div class="flow__grid">
         <div class="panel trigger" data-step="0">
-          <p class="panel__kicker">Trigger <i aria-hidden="true"></i> Production anomaly</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-pulse"/></svg>Trigger <i aria-hidden="true"></i> Production anomaly</p>
           <div class="alert">
             <p class="alert__title">Error rate on <b>/api/export</b></p>
             <p class="alert__num"><span>0.4%</span> → <b>18%</b></p>
@@ -459,7 +491,7 @@
         </div>
 
         <div class="panel work">
-          <p class="panel__kicker">ContextQA <i aria-hidden="true"></i> working</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-ring"/></svg>ContextQA <i aria-hidden="true"></i> working</p>
           <ol class="worklog">
             <li data-step="1"><i></i><span>Received session context for the 312 affected sessions</span></li>
             <li data-step="2"><i></i><span>Reconstructed the common path: Reports → Export → CSV over a long date range</span></li>
@@ -471,7 +503,7 @@
         </div>
 
         <div class="panel artifact" data-step="5">
-          <p class="panel__kicker">Artifact <i aria-hidden="true"></i> Triage in Slack <em>example investigation</em></p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg>Artifact <i aria-hidden="true"></i> Triage in Slack <em>example investigation</em></p>
           <div class="msg msg--bot">
             <span class="msg__avatar msg__avatar--bot" aria-hidden="true">C</span>
             <div>
@@ -505,7 +537,7 @@
 
       <div class="flow__grid">
         <div class="panel trigger" data-step="0">
-          <p class="panel__kicker">Trigger <i aria-hidden="true"></i> Issue created in Linear</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-diamond"/></svg>Trigger <i aria-hidden="true"></i> Issue created in Linear</p>
           <div class="ticket ticket--plain">
             <p class="ticket__id">ENG 2210 <b>Bug</b> <b>Medium</b></p>
             <h3 class="ticket__title">Dashboard filters reset on refresh</h3>
@@ -514,7 +546,7 @@
         </div>
 
         <div class="panel work">
-          <p class="panel__kicker">ContextQA <i aria-hidden="true"></i> working</p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-ring"/></svg>ContextQA <i aria-hidden="true"></i> working</p>
           <ol class="worklog">
             <li data-step="1"><i></i><span>Read the ticket and the dashboard spec in your docs</span></li>
             <li data-step="2"><i></i><span>Found one related past bug and the design for filter persistence</span></li>
@@ -526,7 +558,7 @@
         </div>
 
         <div class="panel artifact" data-step="5">
-          <p class="panel__kicker">Artifact <i aria-hidden="true"></i> Investigation added to the issue <em>example investigation</em></p>
+          <p class="panel__kicker"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg>Artifact <i aria-hidden="true"></i> Investigation added to the issue <em>example investigation</em></p>
           <div class="ticket">
             <p class="ticket__id">ENG 2210 <b>Investigation by ContextQA</b></p>
             <dl class="ticket__meta">
@@ -622,18 +654,21 @@
 
     <ul class="versus" id="versus">
       <li class="vs tilt reveal">
+        <svg class="vs__icon" aria-hidden="true"><use href="#i-handoff"/></svg>
         <p class="vs__label">With Claude and Codex</p>
         <h3 class="vs__title">They implement. We make the issue ready for them.</h3>
         <p class="vs__text">ContextQA handles the quality workflow: detect, gather context, reproduce, diagnose, validate, package, hand off. Claude and Codex handle implementation. The last step being a handoff is intentional. Coding agents are only as useful as the context you hand them.</p>
         <p class="vs__line">Claude can fix the bug. ContextQA reproduces it first.</p>
       </li>
       <li class="vs tilt reveal">
+        <svg class="vs__icon" aria-hidden="true"><use href="#i-replay"/></svg>
         <p class="vs__label">With Playwright</p>
         <h3 class="vs__title">Playwright runs tests. ContextQA operates the quality workflow.</h3>
         <p class="vs__text">Browser automation executes instructions. It does not decide what should be tested after a PR, which journeys are at risk, which tests need updating, whether an anomaly is a regression or what the likely root cause is. ContextQA decides, and can use browser automation as part of the engine underneath.</p>
         <p class="vs__line">Browser automation is not the bottleneck anymore. Knowing what to validate is.</p>
       </li>
       <li class="vs tilt reveal">
+        <svg class="vs__icon" aria-hidden="true"><use href="#i-search"/></svg>
         <p class="vs__label">With CodeRabbit and Greptile</p>
         <h3 class="vs__title">They ask if the code looks right. We ask if the product still works.</h3>
         <p class="vs__text">Code review tools operate at the code and PR layer. ContextQA operates at the behavior and end to end quality layer, testing the deployed PR like a real user and owning bug reproduction, session intelligence and RCA. Complementary, not substitutes.</p>
@@ -701,6 +736,7 @@
     <div class="footer__brand">
       <p class="footer__logo">Context<b>QA</b></p>
       <p class="footer__tag">Autonomous Quality Engineering. Code generation is becoming autonomous. Quality operations need to become autonomous too.</p>
+      <p class="footer__tally"><svg class="ico" aria-hidden="true"><use href="#i-zap"/></svg>Bugs caught on this page <b id="bugTally">0</b></p>
     </div>
     <nav class="footer__nav" aria-label="Footer">
       <a href="#flows">Flows</a>
@@ -716,6 +752,7 @@
 <script src="/assets/js/vendor/gsap.min.js" defer></script>
 <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="/assets/js/cqa.js" defer></script>
+<script src="/assets/js/cqa-bugs.js" defer></script>
 <script type="module" src="/assets/js/cqa-three.js"></script>
 </body>
 </html>
