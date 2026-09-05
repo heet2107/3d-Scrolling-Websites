@@ -109,6 +109,8 @@ Higgsfield.
 | Hero keyframe (start frame) | Nano Banana Pro, 16:9, 2K | Three concepts were rendered (obsidian icosahedron, tilted six ring gyroscope, front facing rings). The gyroscope won: six rings for the six stages of the loop. |
 | Hero film | Seedance 2.0, std, 1080p, high bitrate, 15 s, silent | One single continuous take from the keyframe: slow push in and orbit, rings rotating on their own axes, the stream resolving ring by ring, a brief exploded beat, then a front on settle with one beam toward the lens. Locked exposure, no cuts, no text. |
 | Backup film | Seedance 2.5, omni reference, 1080p, 15 s | Same prompt. Steadier but subtler; not used on the page. |
+| Journey keyframes (4) | Nano Banana Pro, 16:9, 2K | One establishing still per act, each written to the scroll scrub contract: dark seamless room, locked exposure, no legible text. Act one, the developer at 2am against a wall of red; act two, the quality engineer buried in floating windows; act three, the cyan layer arriving; act four, three colleagues in front of a green board. |
+| Journey films (4) | Cinema Studio Video 3.0, 1080p, 6 s, silent | Each act animated from its own keyframe as one continuous take: a slow push in, a slow arc, a slow push toward the ring, a slow pull back. Silent by design, since the page never plays audio. |
 | Section stills | Nano Banana Pro | The icosahedron concept backs the closing call to action; the front facing rings are the no WebGL fallback in the engine section. |
 
 The prompt obeys the scroll scrub footage contract: one hero subject, centered, dark
@@ -125,11 +127,17 @@ deterministic on every engine (Safari included) and frames never tear.
 | `assets/frames/d/` | 240 · 1440×810 · 16 fps | 14M | landscape screens |
 | `assets/frames/m/` | 180 · 640×853 · 12 fps | 5.5M | portrait screens (a 3:4 centre crop, so no bandwidth goes to pixels the phone never shows) |
 
+| `assets/journey/a1…a4/` | 4 x 73 - 1120x630 - 12 fps | 7.9M | the four act journey, one directory per act |
+
 Regenerate both sets and the poster with:
 
 ```bash
 FFMPEG=/path/to/ffmpeg bash build/extract_frames.sh film.mp4
+bash build/extract_journey.sh act1.mp4 act2.mp4 act3.mp4 act4.mp4
 ```
+
+`extract_journey.sh` prints the frame count each act ended up with; those numbers
+have to match the `data-frames` attributes in `index.html`.
 
 Loading is progressive: frame one, then every 12th, 6th, 3rd, then the rest, six at a
 time. The scrub works after the first pass and only gets smoother. Until a frame arrives
@@ -152,6 +160,18 @@ GSAP + ScrollTrigger (vendored in `assets/js/vendor/`, no CDN) and Three.js r185
   inner gaps so the halves are exactly equal and a -50% translate lands one full row
   along with no seam. Pure CSS keyframes, paused on hover and focus, and hidden below
   900px.
+- **The journey** — the narrative spine of the page, and the first thing under the
+  hero. Four acts from one release, each a 220vh pinned stage whose film is
+  scrubbed frame by frame as you scroll: the developer at 2am against a wall of
+  red, the quality engineer reproducing a bug by hand, the moment the quality
+  layer arrives, and the team shipping. Frames load only once an act is within a
+  screen of the viewport, in a widening comb (every 12th, then 6th, 3rd, 2nd,
+  then the rest) so the scrub is coarse immediately and fills in rather than
+  arriving all at once. Until a frame is decoded the nearest neighbour is
+  painted, preferring the past, so motion never appears to run backwards. On
+  phones the acts stop pinning and each one plays once as it enters view. With
+  JavaScript blocked or under reduced motion each act is its poster plus its
+  words, which is the whole story in still form.
 - **Three.js particle field** over the hero: additive bokeh, sine drift, twinkle in the
   vertex shader, pointer parallax on the camera, thinning as the film resolves.
 - **Three.js gyroscope** in the engine section: six torus rings on different axes, each
@@ -242,6 +262,10 @@ frame set.
 - The testimonials in the Voices section are **illustrative**, written in the voice of
   the target persona and labelled as such on the page. Replace them with real,
   attributable customer quotes before launch.
+- The four journey films are **an illustration, not documentary footage**. The
+  people in them are AI generated and are not customers, employees or real
+  engineers, and the screens in shot carry no readable text on purpose. Say so
+  in any press or sales use, and replace them if you ever want real footage.
 - The signup form is front end only; wire it to a mail handler or CRM before going live.
 - No external domain is assumed: canonical URLs, social links and the contact route are
   left for the owner to set.

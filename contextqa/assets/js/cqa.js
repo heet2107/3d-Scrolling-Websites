@@ -481,6 +481,128 @@
     setActive(0, 0);
   }
 
+  /* ---------- The journey: four acts scrubbed by scroll ------------------ */
+  /* Each act owns a frame sequence painted on a canvas. Frames load
+     progressively and out of order, so the scrub works long before the whole
+     act has arrived, and nothing downloads until the act is close. */
+  function initJourney() {
+    var acts = Array.prototype.slice.call(document.querySelectorAll('[data-act]'));
+    if (!acts.length) return;
+
+    acts.forEach(function (act) {
+      var canvas = act.querySelector('.act__canvas');
+      var total = parseInt(act.getAttribute('data-frames'), 10) || 0;
+      var dir = act.getAttribute('data-dir') || '';
+      if (!canvas || !total || !dir) return;
+
+      var ctx = canvas.getContext('2d', { alpha: false });
+      var frames = new Array(total);      // sparse: only decoded frames land here
+      var shown = -1;
+      var want = 0;
+      var raf = 0;
+
+      var nearest = function (i) {
+        if (frames[i]) return i;
+        // Prefer a frame from the past: motion that jumps backwards reads as a
+        // glitch, motion that lags reads as slow.
+        for (var back = i; back >= 0; back--) if (frames[back]) return back;
+        for (var fwd = i; fwd < total; fwd++) if (frames[fwd]) return fwd;
+        return -1;
+      };
+
+      var paint = function () {
+        raf = 0;
+        var i = nearest(want);
+        if (i < 0 || i === shown) return;
+        ctx.drawImage(frames[i], 0, 0, canvas.width, canvas.height);
+        shown = i;
+        act.classList.add('is-painted');
+      };
+      var request = function () { if (!raf) raf = requestAnimationFrame(paint); };
+
+      var seek = function (p) {
+        var i = Math.max(0, Math.min(total - 1, Math.round(p * (total - 1))));
+        if (i === want) return;
+        want = i;
+        request();
+      };
+
+      // Load order: first frame, then a widening comb, so the scrub is coarse
+      // immediately and fills in rather than arriving all at once at the end.
+      var loaded = false;
+      var load = function () {
+        if (loaded) return;
+        loaded = true;
+        var order = [], seen = {};
+        [1, 12, 6, 3, 2, 1].forEach(function (step) {
+          for (var i = 0; i < total; i += step) if (!seen[i]) { seen[i] = 1; order.push(i); }
+        });
+        var at = 0, inflight = 0;
+        var pump = function () {
+          while (inflight < 6 && at < order.length) {
+            (function (i) {
+              inflight++;
+              var img = new Image();
+              img.decoding = 'async';
+              img.onload = function () {
+                frames[i] = img; inflight--;
+                if (i === want || shown < 0) request();
+                pump();
+              };
+              img.onerror = function () { inflight--; pump(); };
+              img.src = dir + '/' + String(i + 1).padStart(4, '0') + '.webp';
+            })(order[at++]);
+          }
+        };
+        pump();
+      };
+
+      if (REDUCED) return;   // the poster and the copy are the whole act
+
+      // Nothing downloads until the act is within a screen of the viewport.
+      new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) { if (e.isIntersecting) { load(); obs.disconnect(); } });
+      }, { rootMargin: '100% 0px' }).observe(act);
+
+      // Reveal the words once the act is genuinely on screen. This watches the
+      // sticky stage, not the act: the act is over two screens tall, so it can
+      // never reach a high visibility ratio and the copy would flicker on and
+      // off around the threshold as you scrolled through it.
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { act.classList.toggle('is-telling', e.intersectionRatio > 0.5); });
+      }, { threshold: [0, 0.5, 1] }).observe(act.querySelector('.act__stage'));
+
+      if (MOBILE.matches || !hasGSAP) {
+        // No pinning, so there is no scroll range to scrub against: play the
+        // act once, at its own pace, when it comes into view.
+        var played = false;
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting || played) return;
+            played = true;
+            var t0 = 0;
+            var step = function (t) {
+              if (!t0) t0 = t;
+              var p = Math.min(1, (t - t0) / 5200);
+              seek(p);
+              if (p < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+          });
+        }, { threshold: 0.4 }).observe(act);
+        return;
+      }
+
+      var proxy = { p: 0 };
+      gsap.to(proxy, {
+        p: 1, ease: 'none',
+        scrollTrigger: { trigger: act, start: 'top top', end: 'bottom bottom', scrub: 0.35 },
+        onUpdate: function () { seek(proxy.p); }
+      });
+      seek(0);
+    });
+  }
+
   /* ---------- Live activity terminal ------------------------------------ */
   /* The log is in the markup already, so it reads fine with JavaScript blocked.
      Here it is hidden and replayed line by line, looping, and only while the
@@ -852,6 +974,7 @@
     initStatement();
     initDeck();
     initEngine();
+    initJourney();
     initTerminal();
     initFlows();
     initImpact();
