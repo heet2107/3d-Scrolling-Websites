@@ -18,6 +18,7 @@
   --ink-2: #C9D2DF;
   --muted: #8B95A7;
   --ink-rgb: 234, 240, 248;
+  --dot: .085;
   --line: rgba(var(--ink-rgb), .10);
   --line-2: rgba(var(--ink-rgb), .18);
   --cyan: #3DDCFF;
@@ -62,6 +63,7 @@
   --ink-2: #2A3446;
   --muted: #5C6879;
   --ink-rgb: 11, 18, 32;
+  --dot: .15;
   --cyan: #0891B2;
   --cyan-2: #0EA5C9;
   --cyan-ink: #FFFFFF;
@@ -111,7 +113,7 @@ body {
   margin: 0;
   font: 400 1rem/1.6 var(--font-body);
   background: var(--bg);
-  background-image: radial-gradient(rgba(var(--ink-rgb), .085) 1px, transparent 1.4px);
+  background-image: radial-gradient(rgba(var(--ink-rgb), var(--dot, .085)) 1px, transparent 1.4px);
   background-size: 26px 26px;
   color: var(--ink);
   overflow-x: hidden;
@@ -780,8 +782,22 @@ section { position: relative; }
 .deck__stage.is-live .toolcard__edge { display: block; position: absolute; right: 0; top: 46px; width: 66px; height: 2px; background: var(--line-2); transform-origin: top right; transform: rotate(45deg); }
 .deck__stage.is-live .toolcard__what { position: absolute; left: 32px; right: 32px; bottom: 32px; margin: 0; }
 .deck__stage.is-live .toolcard.is-center {
-  z-index: 10; background: var(--cyan); border-color: var(--cyan); color: var(--cyan-ink);
-  box-shadow: 0 8px 0 4px var(--line-2);
+  z-index: 10; border-color: var(--cyan); color: var(--cyan-ink);
+  /* The violet sits in the bottom right corner, away from the quote, so the
+     card gains depth without dropping contrast under the text. */
+  background:
+    radial-gradient(115% 90% at 106% 112%, rgba(var(--violet-rgb), .5), transparent 60%),
+    linear-gradient(145deg, var(--cyan-2) 0%, var(--cyan) 58%);
+  box-shadow: 0 8px 0 4px var(--line-2), 0 26px 60px -28px rgba(var(--cyan-rgb), .75);
+}
+/* White on the light theme's cyan measures 3.68:1, under AA for body text, so
+   this card deepens it rather than the token, which stays right for buttons and
+   large type elsewhere. Measured 4.81:1 at the light end, 5.36:1 at the dark. */
+:root[data-theme="light"] .deck__stage.is-live .toolcard.is-center {
+  background:
+    radial-gradient(115% 90% at 106% 112%, rgba(var(--violet-rgb), .5), transparent 60%),
+    linear-gradient(145deg, #127C99 0%, #0E7490 58%);
+  border-color: #0E7490;
 }
 /* The accent ground needs its own contrast for everything inside the card. */
 .deck__stage.is-live .toolcard.is-center .toolcard__what { color: rgba(var(--cyan-ink-rgb), .8); }
