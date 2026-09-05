@@ -481,73 +481,108 @@
     setActive(0, 0);
   }
 
-  /* ---------- Four hero flows: steps reveal with scroll (or play on view) - */
+  /* ---------- Four hero flows: one tabbed panel ------------------------- */
+  /* Each flow used to own a 300vh pinned track, so the section cost 1200vh of
+     scrolling through four copies of the same layout. They share one panel now.
+     A flow ticks through its investigation the first time it is shown, so the
+     work still plays out rather than arriving finished. */
   function initFlows() {
     var flows = Array.prototype.slice.call(document.querySelectorAll('.flow'));
+    var tablist = document.querySelector('.flowtabs');
     if (!flows.length) return;
 
-    flows.forEach(function (flow) {
+    var players = flows.map(function (flow) {
       var stepped = Array.prototype.slice.call(flow.querySelectorAll('[data-step]'));
       var log = Array.prototype.slice.call(flow.querySelectorAll('.worklog li'));
       var maxStep = 0;
       stepped.forEach(function (el) { maxStep = Math.max(maxStep, parseInt(el.getAttribute('data-step'), 10) || 0); });
 
-      var apply = function (step) {
-        stepped.forEach(function (el) {
-          var s = parseInt(el.getAttribute('data-step'), 10) || 0;
-          el.classList.toggle('is-on', step >= s);
-        });
+      var mark = function (step) {
         log.forEach(function (li) {
           var s = parseInt(li.getAttribute('data-step'), 10) || 0;
           li.classList.toggle('is-done', step > s);
           li.classList.toggle('is-live', step === s);
         });
       };
+      var settle = function () {
+        stepped.forEach(function (el) { el.classList.add('is-on'); });
+        mark(maxStep + 1);
+      };
 
-      if (REDUCED) { apply(maxStep + 1); return; }
-
-      if (MOBILE.matches || !hasGSAP) {
-        // Without pinning there is no scroll range to scrub: the panels stay
-        // visible and the investigation ticks through once the flow is in view.
-        stepped.forEach(function (el) { if (!el.closest('.worklog')) el.classList.add('is-on'); });
-        var played = false;
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (e) {
-            if (!e.isIntersecting || played) return;
-            played = true;
-            var step = 1;
-            var tick = function () {
-              log.forEach(function (li) {
-                var s = parseInt(li.getAttribute('data-step'), 10) || 0;
-                li.classList.toggle('is-done', step > s);
-                li.classList.toggle('is-live', step === s);
-              });
-              if (step <= maxStep) { step++; setTimeout(tick, 420); }
-            };
-            tick();
-            io.disconnect();
-          });
-        }, { threshold: 0.15 });
-        io.observe(flow);
-        return;
-      }
-
-      var hook = flow.querySelector('.flow__hook');
-      var tabs = flow.querySelector('.flow__tabs');
-      gsap.set([tabs, hook], { opacity: 0, y: 20 });
-
-      var proxy = { s: 0 };
-      var tl = gsap.timeline({
-        scrollTrigger: { trigger: flow, start: 'top top', end: 'bottom bottom', scrub: 0.4 }
-      });
-      tl.to([tabs, hook], { opacity: 1, y: 0, stagger: 0.05, duration: 0.18, ease: 'power3.out' }, 0)
-        .to(proxy, {
-          s: maxStep + 1, duration: 1, ease: 'none',
-          onUpdate: function () { apply(Math.floor(proxy.s)); }
-        }, 0.08)
-        .to({}, { duration: 0.22 });
-      apply(0);
+      var timer = null, played = false;
+      return {
+        el: flow,
+        play: function () {
+          if (played) return;
+          played = true;
+          if (REDUCED) { settle(); return; }
+          stepped.forEach(function (el) { if (!el.closest('.worklog')) el.classList.add('is-on'); });
+          var step = 1;
+          var tick = function () {
+            mark(step);
+            if (step <= maxStep) { step++; timer = setTimeout(tick, 380); }
+          };
+          timer = setTimeout(tick, 260);
+        },
+        stop: function () { if (timer) { clearTimeout(timer); timer = null; } },
+        settle: settle
+      };
     });
+
+    if (!tablist) { players.forEach(function (p) { p.settle(); }); return; }
+
+    var tabs = Array.prototype.slice.call(tablist.querySelectorAll('[role="tab"]'));
+    var glide = tablist.querySelector('.flowtabs__glide');
+    if (tabs.length !== players.length) { players.forEach(function (p) { p.settle(); }); return; }
+
+    var current = -1;
+
+    var moveGlide = function () {
+      if (!glide || current < 0) return;
+      var t = tabs[current];
+      glide.style.width = t.offsetWidth + 'px';
+      glide.style.transform = 'translateX(' + t.offsetLeft + 'px)';
+      glide.style.opacity = '1';
+    };
+
+    var show = function (i, focus) {
+      if (i === current) return;
+      if (current >= 0) players[current].stop();
+      current = i;
+      tabs.forEach(function (t, k) {
+        var on = k === i;
+        t.classList.toggle('is-on', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      players.forEach(function (p, k) {
+        p.el.hidden = k !== i;
+        p.el.classList.toggle('is-live', k === i);
+      });
+      moveGlide();
+      players[i].play();
+      if (focus) tabs[i].focus();
+    };
+
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { show(i, false); });
+    });
+    tablist.addEventListener('keydown', function (e) {
+      var k = e.key, next = -1;
+      if (k === 'ArrowRight') next = (current + 1) % tabs.length;
+      else if (k === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+      else if (k === 'Home') next = 0;
+      else if (k === 'End') next = tabs.length - 1;
+      if (next < 0) return;
+      e.preventDefault();
+      show(next, true);
+    });
+    window.addEventListener('resize', moveGlide);
+
+    show(0, false);
+    // The glide needs a laid out tab row; fonts can still be swapping in.
+    requestAnimationFrame(moveGlide);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveGlide);
   }
 
   /* ---------- Impact: chart draws with scroll, counters count ----------- */

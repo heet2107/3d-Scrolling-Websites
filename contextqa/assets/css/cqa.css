@@ -300,6 +300,39 @@ main > section, .footer { position: relative; z-index: 1; }
 .chapter__text { margin-top: 14px; color: var(--ink-2); font-size: clamp(.96rem, 1.1vw, 1.06rem); text-wrap: pretty; }
 .chapter--center .chapter__title { font-size: clamp(1.7rem, 3.6vw, 3.1rem); }
 
+/* ---- Hero logo marquee -------------------------------------------------- */
+/* Two identical rows sliding as one track. Each row carries a trailing gap the
+   same size as its inner gaps, so the two are exactly equal in width and a
+   -50% translate lands one full row along: the loop has no seam. */
+.logos { margin-top: clamp(26px, 3.8vh, 42px); }
+.logos__title {
+  margin-bottom: 14px; color: var(--ink-2); opacity: .72;
+  font: 500 .68rem/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase;
+}
+.logos__viewport {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.logos__track { display: flex; width: max-content; }
+.js:not(.reduced) .logos__track { animation: logos-scroll 38s linear infinite; }
+.logos__viewport:hover .logos__track,
+.logos__viewport:focus-within .logos__track { animation-play-state: paused; }
+.logos__row {
+  --logo-gap: clamp(26px, 3.2vw, 44px);
+  display: flex; align-items: center; gap: var(--logo-gap);
+  margin: 0; padding: 0 var(--logo-gap) 0 0; list-style: none;
+}
+.logos__item { display: grid; place-items: center; }
+/* Both axes are pinned, so a mark can never fall back to the SVG default box. */
+.logos__item svg {
+  width: clamp(18px, 1.7vw, 22px); height: clamp(18px, 1.7vw, 22px);
+  fill: var(--ink-2); opacity: .6; transition: opacity .25s ease;
+}
+.logos__item:hover svg { opacity: 1; }
+@keyframes logos-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (max-width: 900px) { .logos { display: none; } }
+
 .hero__meta {
   position: absolute; left: var(--gutter); right: var(--gutter); bottom: 22px; z-index: 3;
   display: flex; justify-content: space-between; align-items: center; gap: 16px;
@@ -457,15 +490,49 @@ section { position: relative; }
 /* ---------- Four hero flows: the product doing real work ------------- */
 .flows { padding-top: clamp(96px, 12vw, 180px); }
 .flows__head { margin-bottom: 40px; }
-.flow { height: 300vh; position: relative; }
+.flow { position: relative; }
 .flow__stage {
-  position: sticky; top: 0; min-height: 100vh; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; gap: 18px;
-  padding: 86px var(--gutter) 28px; max-width: var(--wrap); margin-inline: auto;
+  display: grid; align-content: start; gap: clamp(18px, 2.4vw, 28px);
+  padding: clamp(18px, 2.6vw, 30px) var(--gutter) clamp(24px, 3vw, 36px);
+  max-width: var(--wrap); margin-inline: auto;
 }
+/* ---- Flow tabs ---------------------------------------------------------- */
+/* The four flows used to be four 300vh pinned stages, which meant scrolling
+   1200vh through the same layout four times. They are one panel now, switched
+   by a real tablist. The glide is a single element moved to the active tab, so
+   the highlight travels instead of blinking from one pill to the next. */
+.flowtabs {
+  position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: clamp(20px, 2.6vw, 32px);
+}
+.no-js .flowtabs { display: none; }
+.flowtabs__glide {
+  position: absolute; left: 0; top: 0; height: 100%; width: 0; border-radius: 999px;
+  background: var(--cyan); opacity: 0; pointer-events: none;
+}
+.js:not(.reduced) .flowtabs__glide { transition: transform .42s var(--ease-out), width .42s var(--ease-out), opacity .3s; }
+.flowtabs__tab {
+  position: relative; z-index: 1; padding: 9px 15px; border-radius: 999px;
+  border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer;
+  font: 500 .72rem/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+  transition: color .3s, border-color .3s;
+}
+.flowtabs__tab b { font-weight: 500; opacity: .6; }
+.flowtabs__tab:hover { color: var(--ink); }
+.flowtabs__tab.is-on { color: var(--cyan-ink); border-color: transparent; }
+.flowtabs__tab.is-on b { opacity: .75; }
+.flowtabs__tab:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+/* Only the live panel is shown, and only once the controller is running: with
+   no JavaScript every panel stays in the page and readable. */
+.js .flow[hidden] { display: none; }
+.js:not(.reduced) .flow.is-live { animation: flow-in .45s var(--ease-out) both; }
+@keyframes flow-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) {
+  .flowtabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .flowtabs::-webkit-scrollbar { display: none; }
+  .flowtabs__tab { white-space: nowrap; }
+}
+
 .flow__bar { display: grid; gap: 12px; }
-.flow__tabs { display: flex; gap: 6px; font: 500 .72rem/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.flow__tabs li { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; }
-.flow__tabs li.on { color: var(--cyan-ink); background: var(--cyan); border-color: var(--cyan); }
 .flow__hook { font: 500 clamp(1.5rem, 3vw, 2.5rem)/1.08 var(--font-display); letter-spacing: -.02em; max-width: 24ch; text-wrap: balance; }
 
 .flow__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1.1fr); gap: 16px; align-items: start; min-height: 0; }
@@ -576,7 +643,6 @@ section { position: relative; }
 }
 @media (max-width: 900px) {
   .flow { height: auto; }
-  .flow__stage { position: static; height: auto; padding: 48px var(--gutter) 24px; gap: 16px; }
   .flow__grid { grid-template-columns: 1fr; }
   .flow__tabs { overflow-x: auto; scrollbar-width: none; }
   .flow__tabs li { white-space: nowrap; }
@@ -604,7 +670,7 @@ section { position: relative; }
   box-shadow: 0 18px 50px -20px rgba(var(--cyan-rgb), .5); backdrop-filter: blur(8px);
   color: var(--ink);
 }
-.orbit__core svg { width: 58%; height: 58%; }
+.orbit__core svg { width: clamp(43px, 5.2vw, 56px); height: clamp(43px, 5.2vw, 56px); }
 .orbit__ring {
   position: absolute; width: var(--ring); aspect-ratio: 1; border-radius: 50%;
   border: 2px dotted rgba(var(--ink-rgb), .22);
@@ -617,8 +683,14 @@ section { position: relative; }
   box-shadow: 0 10px 24px -14px rgba(0, 0, 0, .6); backdrop-filter: blur(6px);
 }
 /* The wrapper holds the position; the inner mark undoes the ring's rotation. */
-.orbit__icon svg { width: 54%; height: 54%; fill: var(--brand); transition: fill .35s; }
-:root[data-theme="dark"] .orbit__icon svg { fill: var(--brand-dark); }
+.orbit__icon svg {
+  /* Both axes pinned: a percentage of an aspect-ratio box gives an SVG no
+     definite height on engines without aspect-ratio, and it falls back to the
+     300x150 default. */
+  width: clamp(18px, 2.4vw, 25px); height: clamp(18px, 2.4vw, 25px);
+  fill: var(--brand-dark); transition: fill .35s;
+}
+:root[data-theme="light"] .orbit__icon svg { fill: var(--brand); }
 .js:not(.reduced) .orbit__icon svg { animation: orbit-spin var(--spin) linear infinite reverse; }
 @keyframes orbit-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -676,8 +748,6 @@ section { position: relative; }
 }
 .toolcard:hover { border-color: rgba(var(--cyan-rgb), .5); }
 .toolcard__edge { display: none; }
-.toolcard__logo { width: 38px; height: 38px; fill: var(--brand); transition: fill .35s; }
-:root[data-theme="dark"] .toolcard__logo { fill: var(--brand-dark); }
 .toolcard__name { margin-top: 20px; font: 500 clamp(1.3rem, 1.8vw, 1.75rem)/1.1 var(--font-display); letter-spacing: -.02em; }
 .toolcard__what { margin-top: 12px; font-size: .92rem; color: var(--muted); text-wrap: pretty; }
 /* Testimonial variant of the same card: a monogram instead of a brand mark. */
@@ -715,7 +785,6 @@ section { position: relative; }
 }
 /* The accent ground needs its own contrast for everything inside the card. */
 .deck__stage.is-live .toolcard.is-center .toolcard__what { color: rgba(var(--cyan-ink-rgb), .8); }
-.deck__stage.is-live .toolcard.is-center .toolcard__logo { fill: var(--cyan-ink); }
 .deck__stage.is-live .toolcard.is-center .toolcard__edge { background: rgba(var(--cyan-ink-rgb), .3); }
 .deck__stage.is-live .deck__nav { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); margin: 0; z-index: 20; }
 
