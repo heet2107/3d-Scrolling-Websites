@@ -586,6 +586,93 @@
     });
   }
 
+  /* ---------- Voices: staggered testimonial deck ------------------------ */
+  /* Ported from a React component. The markup ships as a plain grid; this
+     upgrades it to the carousel, so the quotes are readable with JS blocked
+     and under reduced motion, where a moving deck would be the wrong answer. */
+  function initVoices() {
+    var stage = document.getElementById('voicesStage');
+    var deck = document.getElementById('voicesDeck');
+    var nav = document.getElementById('voicesNav');
+    if (!stage || !deck) return;
+
+    var cards = Array.prototype.slice.call(deck.querySelectorAll('.voice'));
+    if (cards.length < 3) return;
+    if (REDUCED) { if (nav) nav.hidden = true; return; }
+
+    // The notch on each card is drawn by a rotated rule, added here so the
+    // static grid stays clean markup.
+    cards.forEach(function (card) {
+      var edge = document.createElement('span');
+      edge.className = 'voice__edge';
+      edge.setAttribute('aria-hidden', 'true');
+      card.insertBefore(edge, card.firstChild);
+    });
+
+    var order = cards.slice();            // rotates; index 0 is the leftmost card
+    var centre = Math.floor(cards.length / 2);
+    var counter = document.getElementById('voicesNow');
+    var size = 365, stageH = 600;
+
+    var measure = function () {
+      var wide = window.matchMedia('(min-width: 640px)').matches;
+      size = wide ? 365 : 290;
+      stageH = wide ? 600 : 520;
+      stage.style.setProperty('--card', size + 'px');
+      stage.style.setProperty('--stage-h', stageH + 'px');
+    };
+
+    var place = function () {
+      order.forEach(function (card, i) {
+        var pos = i - centre;
+        var isCentre = pos === 0;
+        card.classList.toggle('is-center', isCentre);
+        card.style.zIndex = isCentre ? 10 : 5 - Math.abs(pos);
+        card.style.transform =
+          'translate(-50%, -50%)' +
+          ' translateX(' + (size / 1.5) * pos + 'px)' +
+          ' translateY(' + (isCentre ? -70 : (pos % 2 ? 15 : -15)) + 'px)' +
+          ' rotate(' + (isCentre ? 0 : (pos % 2 ? 2.5 : -2.5)) + 'deg)';
+        // Only the centre quote is in the reading order for assistive tech.
+        card.setAttribute('aria-hidden', isCentre ? 'false' : 'true');
+        card.tabIndex = isCentre ? -1 : 0;
+      });
+      if (counter) {
+        var live = cards.indexOf(order[centre]);
+        counter.textContent = String(live + 1);
+      }
+    };
+
+    // Rotating the array, rather than re-indexing, is what makes it endless.
+    var move = function (steps) {
+      if (steps > 0) for (var i = 0; i < steps; i++) order.push(order.shift());
+      else for (var k = 0; k < -steps; k++) order.unshift(order.pop());
+      place();
+    };
+
+    measure();
+    stage.classList.add('is-live');
+    place();
+
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        var pos = order.indexOf(card) - centre;
+        if (pos) move(pos);
+      });
+    });
+    var prev = document.getElementById('voicesPrev');
+    var next = document.getElementById('voicesNext');
+    if (prev) prev.addEventListener('click', function () { move(-1); });
+    if (next) next.addEventListener('click', function () { move(1); });
+    stage.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { move(-1); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { move(1); e.preventDefault(); }
+    });
+
+    var resize = function () { measure(); place(); };
+    window.addEventListener('resize', resize);
+  }
+
   /* ---------- Pointer tilt on the comparison cards ---------------------- */
   function initTilt() {
     if (REDUCED || COARSE) return;
@@ -662,6 +749,7 @@
     initEngine();
     initFlows();
     initImpact();
+    initVoices();
     initTilt();
     initReveals();
     initParallax();
