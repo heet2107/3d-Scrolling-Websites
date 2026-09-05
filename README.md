@@ -1,18 +1,20 @@
 # 3d-Scrolling-Websites
 
-Two independent static sites, each deployed as its own Vercel project:
+Independent static sites, each deployed as its own Vercel project:
 
 | Directory | Site | Vercel project | Serves at |
 | --- | --- | --- | --- |
 | repository root | Monga Brothers Ltd. | `monga-brothers-website` | `/` |
 | [`forge/`](forge/) | FORGE — strength gym, Detroit | `forge-gym` | `/` (root directory `forge`) |
 | [`meridian/`](meridian/) | MERIDIAN — wellness practice, Ojai | `meridian-wellness` | `/` (root directory `meridian`) |
+| [`contextqa/`](contextqa/) | ContextQA — Autonomous Quality Engineering | `contextqa-site` (root directory `contextqa`) | `/` |
 
 Each subdirectory carries its own `vercel.json` and is served as a site root, not under
 a subpath. See [`forge/README.md`](forge/README.md) for its build notes — in particular,
-its scroll-scrubbed hero needs a server that honours HTTP Range — and
+its scroll-scrubbed hero needs a server that honours HTTP Range —
 [`meridian/README.md`](meridian/README.md) for the eight-page generator and the
-procedural artwork.
+procedural artwork, and [`contextqa/README.md`](contextqa/README.md) for the
+Higgsfield film to frame sequence pipeline and the Three.js layers.
 
 ---
 
