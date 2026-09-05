@@ -160,7 +160,17 @@ GSAP + ScrollTrigger (vendored in `assets/js/vendor/`, no CDN) and Three.js r185
 - **The shift** — three era cards rise out of perspective; code output bars outrun
   validation capacity bars. Then a word by word statement scrub on a 260vh track.
 - **The villain** — six consequence cards fly out of a stacked deck into a grid in 3D.
-- **The engine** — pinned horizontal rail of the six stages, feeding the gyroscope.
+- **The engine** — pinned horizontal rail of the six stages, feeding the gyroscope,
+  closing on a **live activity terminal**: a window that replays an illustrative
+  ContextQA run line by line, opening a pull request check, selecting impacted
+  tests, catching a regression, isolating the cause, verifying the fix across
+  three browsers and reporting a session anomaly. The gaps between lines are
+  uneven on purpose, since a metronome reads as a loading spinner rather than as
+  work happening. It replays only while on screen and while the tab is visible,
+  and the whole log ships in the markup, so with JavaScript blocked or under
+  reduced motion every line is simply there to read. It is labelled
+  *illustrative stream* on the page: **replace it with real telemetry, or keep
+  the label, before launch.**
 - **Four hero flows** — one tabbed panel. Each flow shows a trigger card, a work log that
   ticks through ContextQA's steps, the artifact (ticket, blast radius report, Slack
   triage) and the metrics. The four used to be four 300vh pinned stages, which cost
@@ -180,7 +190,10 @@ GSAP + ScrollTrigger (vendored in `assets/js/vendor/`, no CDN) and Three.js r185
   and the whole thing is one `role="img"` with a screen reader list of the tool names
   beside it.
 - **Impact** — the north star chart draws with scroll; counters count up on entry.
-- **Voices** — a staggered testimonial deck. Cards fan out from the centre with
+- **Voices** — a staggered testimonial deck that turns on its own every five
+  seconds, holding under the pointer or keyboard focus, while the tab is hidden
+  and while it is off screen. The centre card carries a cyan gradient with a
+  violet bloom in the corner away from the quote. Cards fan out from the centre with
   alternating tilt, the middle one lifts and takes the accent colour, and previous
   and next rotate the deck endlessly. Ported from a React and shadcn component into
   this site's stack, so it needs no build step. Arrow keys work, clicking a card

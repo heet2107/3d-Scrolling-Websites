@@ -26,7 +26,7 @@
 <link rel="preload" href="/assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/img/hero-poster.jpg" as="image">
 <link rel="stylesheet" href="/assets/css/cqa-fonts.css?v=51db20b5">
-<link rel="stylesheet" href="/assets/css/cqa.css?v=b3211806">
+<link rel="stylesheet" href="/assets/css/cqa.css?v=cc5356fd">
 
 <script type="application/ld+json">
 {
@@ -385,6 +385,33 @@
       </div>
 
     </div>
+  </div>
+
+  <div class="wrap">
+    <div class="term" id="term" role="img" aria-labelledby="termCaption">
+      <div class="term__bar">
+        <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="term__title">contextqa &mdash; activity</span>
+      </div>
+      <div class="term__body">
+        <p class="term__cmd"><span class="term__prompt" aria-hidden="true">&#10095;</span> contextqa watch --all</p>
+        <ol class="term__log" id="termLog">
+        <li class="term__line"><span class="term__time">12:25:11</span><span class="term__tag term__tag--pr">PR</span><span class="term__msg">PR #4826 opened <i aria-hidden="true">·</i> <span class="term__dim">mapping affected user journeys</span></span></li>
+        <li class="term__line"><span class="term__time">12:25:12</span><span class="term__tag term__tag--test">TEST</span><span class="term__msg">Selected 23 impacted tests <i aria-hidden="true">·</i> <span class="term__dim">starting parallel runners</span></span></li>
+        <li class="term__line"><span class="term__time">12:25:14</span><span class="term__tag term__tag--bug">BUG</span><span class="term__msg">Detected a mobile regression <i aria-hidden="true">·</i> <span class="term__dim">address field hidden on Safari</span></span></li>
+        <li class="term__line"><span class="term__time">12:25:15</span><span class="term__tag term__tag--rca">RCA</span><span class="term__msg">Isolated the layout change to commit 7f3a9c2</span></li>
+        <li class="term__line"><span class="term__time">12:25:17</span><span class="term__tag term__tag--fix">FIX</span><span class="term__msg">Shared the screenshot diff and failing assertion <i aria-hidden="true">·</i> <span class="term__dim">with the engineer</span></span></li>
+        <li class="term__line"><span class="term__time">12:25:18</span><span class="term__tag term__tag--test">TEST</span><span class="term__msg">Verified the fix for ENG 2231 <i aria-hidden="true">·</i> <span class="term__dim">passes on Chromium, Firefox and WebKit</span></span></li>
+        <li class="term__line"><span class="term__time">12:25:20</span><span class="term__tag term__tag--pass">PASS</span><span class="term__msg">148 of 148 tests passed <i aria-hidden="true">·</i> <span class="term__dim">deployment checks complete</span></span></li>
+        <li class="term__line"><span class="term__time">12:25:21</span><span class="term__tag term__tag--session">SESSION</span><span class="term__msg">New session anomaly <i aria-hidden="true">·</i> <span class="term__dim">unexpected redirect after sign in</span></span></li>
+        </ol>
+      </div>
+      <div class="term__foot">
+        <span class="term__status"><i aria-hidden="true"></i> Watching for changes<b class="term__caret" aria-hidden="true"></b></span>
+        <span class="term__badge">illustrative stream</span>
+      </div>
+    </div>
+    <p class="sr-only" id="termCaption">An illustrative activity log: ContextQA opens a pull request check, selects impacted tests, detects a regression, isolates the cause, shares the evidence, verifies the fix across three browsers, and reports a new session anomaly.</p>
   </div>
 </section>
 
@@ -946,7 +973,7 @@
 
 <script src="/assets/js/vendor/gsap.min.js?v=28033e44" defer></script>
 <script src="/assets/js/vendor/ScrollTrigger.min.js?v=ad33c2df" defer></script>
-<script src="/assets/js/cqa.js?v=889dfd78" defer></script>
+<script src="/assets/js/cqa.js?v=aa43050e" defer></script>
 <script src="/assets/js/cqa-bugs.js?v=b00b28be" defer></script>
 <script type="module" src="/assets/js/cqa-three.js?v=96d3b020"></script>
 </body>
