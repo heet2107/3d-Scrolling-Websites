@@ -294,7 +294,7 @@ section { position: relative; }
 /* ---------- The villain: 3D card deck --------------------------------- */
 .villain__track { height: 340vh; }
 .villain__stage {
-  position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; grid-template-rows: auto 1fr auto;
+  position: sticky; top: 0; min-height: 100vh; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto;
   gap: 24px; padding: 96px var(--gutter) 36px; max-width: var(--wrap); margin-inline: auto;
 }
 .villain__head .h2 { max-width: 18ch; }
@@ -323,7 +323,7 @@ section { position: relative; }
 .engine { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 50%, var(--bg) 100%); }
 .engine__track { height: 480vh; }
 .engine__stage {
-  position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; grid-template-rows: auto 1fr;
+  position: sticky; top: 0; min-height: 100vh; min-height: 100svh; display: grid; grid-template-rows: auto 1fr;
   gap: 24px; padding: 96px var(--gutter) 32px; max-width: var(--wrap); margin-inline: auto; overflow: hidden;
 }
 .engine__head .h2 { max-width: 20ch; }
@@ -368,7 +368,7 @@ section { position: relative; }
 .flows__head { margin-bottom: 40px; }
 .flow { height: 300vh; position: relative; }
 .flow__stage {
-  position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; grid-template-rows: auto 1fr auto; gap: 18px;
+  position: sticky; top: 0; min-height: 100vh; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; gap: 18px;
   padding: 86px var(--gutter) 28px; max-width: var(--wrap); margin-inline: auto;
 }
 .flow__bar { display: grid; gap: 12px; }
@@ -460,6 +460,24 @@ section { position: relative; }
 .flow__metrics p { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line); background: rgba(10, 14, 22, .6); font-size: .88rem; color: var(--muted); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .flow__metrics b { font: 500 1.25rem/1 var(--font-display); color: var(--cyan); letter-spacing: -.01em; }
 
+@media (max-height: 840px) and (min-width: 901px) {
+  .flow__stage { padding-top: 72px; padding-bottom: 20px; gap: 12px; }
+  .flow__bar { gap: 8px; }
+  .flow__hook { font-size: clamp(1.3rem, 2.3vw, 1.9rem); }
+  .panel { padding: 14px 14px 16px; }
+  .panel__kicker { margin-bottom: 10px; }
+  .worklog { gap: 6px; }
+  .worklog li { font-size: .88rem; }
+  .ticket__meta { margin-top: 10px; gap: 6px 12px; font-size: .84rem; }
+  .ticket__title { font-size: 1.02rem; }
+  .flow__metrics p { padding: 10px 12px; }
+  .engine__stage { padding-top: 72px; padding-bottom: 20px; gap: 14px; }
+  .engine__head .h2 { font-size: clamp(1.7rem, 3.2vw, 2.7rem); }
+  .engine__head .lede { margin-top: 10px; font-size: .98rem; }
+  .engine__gyro { width: min(100%, 46vh); }
+  .villain__stage { padding-top: 72px; gap: 16px; }
+  .card3d { min-height: 0; padding: 16px 18px 18px; }
+}
 @media (max-width: 1100px) {
   .flow__grid { grid-template-columns: 1fr 1fr; }
   .flow__grid .artifact { grid-column: 1 / -1; }
