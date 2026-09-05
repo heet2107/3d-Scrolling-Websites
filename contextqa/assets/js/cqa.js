@@ -481,6 +481,57 @@
     setActive(0, 0);
   }
 
+  /* ---------- Live activity terminal ------------------------------------ */
+  /* The log is in the markup already, so it reads fine with JavaScript blocked.
+     Here it is hidden and replayed line by line, looping, and only while the
+     terminal is on screen and the tab is visible. */
+  function initTerminal() {
+    var term = document.getElementById('term');
+    if (!term) return;
+    var lines = Array.prototype.slice.call(term.querySelectorAll('.term__line'));
+    if (!lines.length || REDUCED) return;
+
+    term.classList.add('is-live');
+
+    var i = 0, timer = null, onScreen = false;
+
+    var reset = function () {
+      lines.forEach(function (li) { li.classList.remove('is-shown', 'is-newest'); });
+      i = 0;
+    };
+
+    var step = function () {
+      if (i >= lines.length) {
+        // Hold the finished log for a beat, then run it again.
+        timer = setTimeout(function () { reset(); step(); }, 2600);
+        return;
+      }
+      var li = lines[i];
+      lines.forEach(function (o) { o.classList.remove('is-newest'); });
+      li.classList.add('is-shown', 'is-newest');
+      i++;
+      // Uneven gaps read like real activity; a metronome reads like a loader.
+      timer = setTimeout(step, 520 + Math.round(Math.random() * 560));
+    };
+
+    var stop = function () { if (timer) { clearTimeout(timer); timer = null; } };
+    var run = function () {
+      stop();
+      if (!onScreen || document.hidden) return;
+      step();
+    };
+
+    reset();
+    document.addEventListener('visibilitychange', run);
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting === onScreen) return;
+        onScreen = e.isIntersecting;
+        if (onScreen) { reset(); run(); } else { stop(); }
+      });
+    }, { threshold: 0.3 }).observe(term);
+  }
+
   /* ---------- Four hero flows: one tabbed panel ------------------------- */
   /* Each flow used to own a 300vh pinned track, so the section cost 1200vh of
      scrolling through four copies of the same layout. They share one panel now.
@@ -679,6 +730,20 @@
         place();
       };
 
+      // The deck turns on its own, but never while somebody is reading it: it
+      // holds under the pointer or keyboard focus, while the tab is hidden, and
+      // while the deck is off screen. A manual turn restarts the dwell so an
+      // automatic one cannot arrive on top of it.
+      var DWELL = 5000;
+      var timer = null, onScreen = false, held = false;
+      var hold = function () { if (timer) { clearInterval(timer); timer = null; } };
+      var run = function () {
+        hold();
+        if (!onScreen || held || document.hidden) return;
+        timer = setInterval(function () { move(1); }, DWELL);
+      };
+      var turn = function (steps) { move(steps); run(); };
+
       measure();
       stage.classList.add('is-live');
       place();
@@ -686,18 +751,30 @@
       cards.forEach(function (card) {
         card.addEventListener('click', function () {
           var pos = order.indexOf(card) - centre;
-          if (pos) move(pos);
+          if (pos) turn(pos);
         });
       });
       var prev = stage.querySelector('[data-deck-prev]');
       var next = stage.querySelector('[data-deck-next]');
-      if (prev) prev.addEventListener('click', function () { move(-1); });
-      if (next) next.addEventListener('click', function () { move(1); });
+      if (prev) prev.addEventListener('click', function () { turn(-1); });
+      if (next) next.addEventListener('click', function () { turn(1); });
       stage.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft') { move(-1); e.preventDefault(); }
-        else if (e.key === 'ArrowRight') { move(1); e.preventDefault(); }
+        if (e.key === 'ArrowLeft') { turn(-1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { turn(1); e.preventDefault(); }
       });
       window.addEventListener('resize', function () { measure(); place(); });
+
+      ['pointerenter', 'focusin'].forEach(function (ev) {
+        stage.addEventListener(ev, function () { held = true; hold(); });
+      });
+      ['pointerleave', 'focusout'].forEach(function (ev) {
+        stage.addEventListener(ev, function () { held = false; run(); });
+      });
+      document.addEventListener('visibilitychange', run);
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { onScreen = e.isIntersecting; });
+        run();
+      }, { threshold: 0.25 }).observe(stage);
     });
   }
 
@@ -775,6 +852,7 @@
     initStatement();
     initDeck();
     initEngine();
+    initTerminal();
     initFlows();
     initImpact();
     initDecks();
