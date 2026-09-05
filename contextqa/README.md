@@ -33,6 +33,27 @@ the public alias serves that build. Later pushes to a non production branch crea
 and do not move the public alias. Merging to `main` promotes automatically; to promote
 sooner, use *Promote to Production* on the latest build in the project's Deployments tab.
 
+## Caching
+
+The page's HTML revalidates on every load, so a deploy reaches visitors immediately.
+Its stylesheets and scripts must not lag behind it: when they do, a returning visitor
+runs new markup against an old stylesheet, and the page paints blank sections and
+unstyled icons. Two things prevent that.
+
+`vercel.json` serves `/assets/css` and `/assets/js` with `max-age=0, must-revalidate`,
+so they are checked on every load and cost a 304 rather than a download. Fonts, frames,
+images and the vendored libraries keep a year of `immutable` caching, since those never
+change in place.
+
+Every stylesheet and script URL also carries a short content hash, so a changed file
+gets a new URL and any copy already sitting in a browser cache is bypassed at once.
+**Run this after touching anything under `assets/css` or `assets/js`, and commit the
+result:**
+
+```bash
+bash build/stamp_assets.sh
+```
+
 ## Design
 
 "Signal" theme. One cyan accent for order and one violet for chaos, which is also the
@@ -126,6 +147,11 @@ GSAP + ScrollTrigger (vendored in `assets/js/vendor/`, no CDN) and Three.js r185
 - **Hero** — a 520vh track scrubs the 240 frames while the stage stays sticky. Four
   chapters (the shift, the bottleneck, the quality layer, the outcome) fade in and out of
   their slice of the film. The lockup punches in on load and rides out as the film starts.
+  Under the call to action sits a **logo marquee**: two identical rows of the twelve
+  integration marks slide as one track, each row carrying a trailing gap equal to its
+  inner gaps so the halves are exactly equal and a -50% translate lands one full row
+  along with no seam. Pure CSS keyframes, paused on hover and focus, and hidden below
+  900px.
 - **Three.js particle field** over the hero: additive bokeh, sine drift, twinkle in the
   vertex shader, pointer parallax on the camera, thinning as the film resolves.
 - **Three.js gyroscope** in the engine section: six torus rings on different axes, each
@@ -135,10 +161,16 @@ GSAP + ScrollTrigger (vendored in `assets/js/vendor/`, no CDN) and Three.js r185
   validation capacity bars. Then a word by word statement scrub on a 260vh track.
 - **The villain** — six consequence cards fly out of a stacked deck into a grid in 3D.
 - **The engine** — pinned horizontal rail of the six stages, feeding the gyroscope.
-- **Four hero flows** — each flow is a 300vh sticky stage: trigger card, a work log that
+- **Four hero flows** — one tabbed panel. Each flow shows a trigger card, a work log that
   ticks through ContextQA's steps, the artifact (ticket, blast radius report, Slack
-  triage) and the metrics, all keyed to scroll. On phones each flow plays once when it
-  enters view instead.
+  triage) and the metrics. The four used to be four 300vh pinned stages, which cost
+  1200vh of scrolling through the same layout four times; they now share a single
+  panel switched by a real tablist, and the section is about 1400px tall. The
+  highlight behind the active tab is one element that slides, so it travels rather
+  than blinking across. Clicking or arrow keys switch flows, Home and End jump to the
+  ends, and a flow ticks through its investigation the first time it is shown. With
+  JavaScript blocked the tablist is hidden and all four flows stay in the page and
+  readable.
 - **Stack** — the integrations section: a checklist of what ContextQA touches beside an
   **orbit**, three dotted rings of integration marks turning around the ContextQA core at
   26, 34 and 44 seconds a revolution, each mark counter spinning at its ring's own rate so
@@ -167,10 +199,11 @@ motion is skipped under `prefers-reduced-motion`.
 
 ## Mobile
 
-Below 900px the deck, engine and flows stop pinning and read as ordinary sections; the
+Below 900px the deck and engine stop pinning and read as ordinary sections; the
 stage rail becomes a native swipe rail with scroll snap, and the closest card to centre
-drives the gyroscope. The hero keeps its scrub on a 420vh track with the portrait frame
-set.
+drives the gyroscope. The flow tablist becomes a horizontal swipe rail, and the hero
+logo marquee is hidden. The hero keeps its scrub on a 420vh track with the portrait
+frame set.
 
 ## Content
 

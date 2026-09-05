@@ -26,7 +26,7 @@
 <link rel="preload" href="/assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/img/hero-poster.jpg" as="image">
 <link rel="stylesheet" href="/assets/css/cqa-fonts.css?v=51db20b5">
-<link rel="stylesheet" href="/assets/css/cqa.css?v=d2c9c77b">
+<link rel="stylesheet" href="/assets/css/cqa.css?v=e35bab8f">
 
 <script type="application/ld+json">
 {
@@ -396,13 +396,20 @@
     <p class="lede reveal">Every flow starts from something you already recognize, shows ContextQA reading, reasoning and reproducing, and ends with an artifact an engineer would normally have spent hours producing.</p>
   </div>
 
+  <div class="wrap">
+    <div class="flowtabs" role="tablist" aria-label="Four hero flows">
+      <span class="flowtabs__glide" aria-hidden="true"></span>
+      <button class="flowtabs__tab is-on" type="button" role="tab" id="tab-flow-bug" aria-controls="flow-bug" aria-selected="true" tabindex="0"><b>01</b> Bug</button>
+      <button class="flowtabs__tab" type="button" role="tab" id="tab-flow-pr" aria-controls="flow-pr" aria-selected="false" tabindex="-1"><b>02</b> Pull request</button>
+      <button class="flowtabs__tab" type="button" role="tab" id="tab-flow-anomaly" aria-controls="flow-anomaly" aria-selected="false" tabindex="-1"><b>03</b> Anomaly</button>
+      <button class="flowtabs__tab" type="button" role="tab" id="tab-flow-linear" aria-controls="flow-linear" aria-selected="false" tabindex="-1"><b>04</b> Linear</button>
+    </div>
+  </div>
+
   <!-- Flow 1 -->
-  <article class="flow" id="flow-bug" data-flow="1">
+  <article class="flow" id="flow-bug" data-flow="1" role="tabpanel" aria-labelledby="tab-flow-bug">
     <div class="flow__stage">
       <header class="flow__bar">
-        <ol class="flow__tabs" aria-hidden="true">
-          <li class="on">01 Bug</li><li>02 Pull request</li><li>03 Anomaly</li><li>04 Linear</li>
-        </ol>
         <p class="flow__hook">Your engineers should never reproduce another bug manually.</p>
       </header>
 
@@ -456,12 +463,9 @@
   </article>
 
   <!-- Flow 2 -->
-  <article class="flow" id="flow-pr" data-flow="2">
+  <article class="flow" id="flow-pr" data-flow="2" role="tabpanel" aria-labelledby="tab-flow-pr">
     <div class="flow__stage">
       <header class="flow__bar">
-        <ol class="flow__tabs" aria-hidden="true">
-          <li>01 Bug</li><li class="on">02 Pull request</li><li>03 Anomaly</li><li>04 Linear</li>
-        </ol>
         <p class="flow__hook">Before you merge this PR, here is everything it could break.</p>
       </header>
 
@@ -513,12 +517,9 @@
   </article>
 
   <!-- Flow 3 -->
-  <article class="flow" id="flow-anomaly" data-flow="3">
+  <article class="flow" id="flow-anomaly" data-flow="3" role="tabpanel" aria-labelledby="tab-flow-anomaly">
     <div class="flow__stage">
       <header class="flow__bar">
-        <ol class="flow__tabs" aria-hidden="true">
-          <li>01 Bug</li><li>02 Pull request</li><li class="on">03 Anomaly</li><li>04 Linear</li>
-        </ol>
         <p class="flow__hook">Imagine waking up to the RCA, not the alert.</p>
       </header>
 
@@ -568,12 +569,9 @@
   </article>
 
   <!-- Flow 4 -->
-  <article class="flow" id="flow-linear" data-flow="4">
+  <article class="flow" id="flow-linear" data-flow="4" role="tabpanel" aria-labelledby="tab-flow-linear">
     <div class="flow__stage">
       <header class="flow__bar">
-        <ol class="flow__tabs" aria-hidden="true">
-          <li>01 Bug</li><li>02 Pull request</li><li>03 Anomaly</li><li class="on">04 Linear</li>
-        </ol>
         <p class="flow__hook">File the bug. ContextQA does the detective work.</p>
       </header>
 
@@ -948,7 +946,7 @@
 
 <script src="/assets/js/vendor/gsap.min.js?v=28033e44" defer></script>
 <script src="/assets/js/vendor/ScrollTrigger.min.js?v=ad33c2df" defer></script>
-<script src="/assets/js/cqa.js?v=83e906f2" defer></script>
+<script src="/assets/js/cqa.js?v=e54a2f89" defer></script>
 <script src="/assets/js/cqa-bugs.js?v=b00b28be" defer></script>
 <script type="module" src="/assets/js/cqa-three.js?v=96d3b020"></script>
 </body>

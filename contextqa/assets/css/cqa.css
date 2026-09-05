@@ -490,15 +490,49 @@ section { position: relative; }
 /* ---------- Four hero flows: the product doing real work ------------- */
 .flows { padding-top: clamp(96px, 12vw, 180px); }
 .flows__head { margin-bottom: 40px; }
-.flow { height: 300vh; position: relative; }
+.flow { position: relative; }
 .flow__stage {
-  position: sticky; top: 0; min-height: 100vh; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; gap: 18px;
-  padding: 86px var(--gutter) 28px; max-width: var(--wrap); margin-inline: auto;
+  display: grid; align-content: start; gap: clamp(18px, 2.4vw, 28px);
+  padding: clamp(18px, 2.6vw, 30px) var(--gutter) clamp(24px, 3vw, 36px);
+  max-width: var(--wrap); margin-inline: auto;
 }
+/* ---- Flow tabs ---------------------------------------------------------- */
+/* The four flows used to be four 300vh pinned stages, which meant scrolling
+   1200vh through the same layout four times. They are one panel now, switched
+   by a real tablist. The glide is a single element moved to the active tab, so
+   the highlight travels instead of blinking from one pill to the next. */
+.flowtabs {
+  position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: clamp(20px, 2.6vw, 32px);
+}
+.no-js .flowtabs { display: none; }
+.flowtabs__glide {
+  position: absolute; left: 0; top: 0; height: 100%; width: 0; border-radius: 999px;
+  background: var(--cyan); opacity: 0; pointer-events: none;
+}
+.js:not(.reduced) .flowtabs__glide { transition: transform .42s var(--ease-out), width .42s var(--ease-out), opacity .3s; }
+.flowtabs__tab {
+  position: relative; z-index: 1; padding: 9px 15px; border-radius: 999px;
+  border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer;
+  font: 500 .72rem/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+  transition: color .3s, border-color .3s;
+}
+.flowtabs__tab b { font-weight: 500; opacity: .6; }
+.flowtabs__tab:hover { color: var(--ink); }
+.flowtabs__tab.is-on { color: var(--cyan-ink); border-color: transparent; }
+.flowtabs__tab.is-on b { opacity: .75; }
+.flowtabs__tab:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+/* Only the live panel is shown, and only once the controller is running: with
+   no JavaScript every panel stays in the page and readable. */
+.js .flow[hidden] { display: none; }
+.js:not(.reduced) .flow.is-live { animation: flow-in .45s var(--ease-out) both; }
+@keyframes flow-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) {
+  .flowtabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .flowtabs::-webkit-scrollbar { display: none; }
+  .flowtabs__tab { white-space: nowrap; }
+}
+
 .flow__bar { display: grid; gap: 12px; }
-.flow__tabs { display: flex; gap: 6px; font: 500 .72rem/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.flow__tabs li { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; }
-.flow__tabs li.on { color: var(--cyan-ink); background: var(--cyan); border-color: var(--cyan); }
 .flow__hook { font: 500 clamp(1.5rem, 3vw, 2.5rem)/1.08 var(--font-display); letter-spacing: -.02em; max-width: 24ch; text-wrap: balance; }
 
 .flow__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1.1fr); gap: 16px; align-items: start; min-height: 0; }
@@ -609,7 +643,6 @@ section { position: relative; }
 }
 @media (max-width: 900px) {
   .flow { height: auto; }
-  .flow__stage { position: static; height: auto; padding: 48px var(--gutter) 24px; gap: 16px; }
   .flow__grid { grid-template-columns: 1fr; }
   .flow__tabs { overflow-x: auto; scrollbar-width: none; }
   .flow__tabs li { white-space: nowrap; }
