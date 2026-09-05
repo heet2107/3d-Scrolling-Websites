@@ -139,8 +139,14 @@ GSAP + ScrollTrigger (vendored in `assets/js/vendor/`, no CDN) and Three.js r185
   ticks through ContextQA's steps, the artifact (ticket, blast radius report, Slack
   triage) and the metrics, all keyed to scroll. On phones each flow plays once when it
   enters view instead.
-- **Stack** — the integrations section: a checklist of what ContextQA touches beside a
-  dashed grid of the tools it plugs into.
+- **Stack** — the integrations section: a checklist of what ContextQA touches beside an
+  **orbit**, three dotted rings of integration marks turning around the ContextQA core at
+  26, 34 and 44 seconds a revolution, each mark counter spinning at its ring's own rate so
+  every logo stays upright. Ported from a React component into plain CSS keyframes, so it
+  needs no build step and no JavaScript at all. The rings stop under
+  `prefers-reduced-motion` and with JS blocked, where the marks simply sit still in place,
+  and the whole thing is one `role="img"` with a screen reader list of the tool names
+  beside it.
 - **Impact** — the north star chart draws with scroll; counters count up on entry.
 - **Voices** — a staggered testimonial deck. Cards fan out from the centre with
   alternating tilt, the middle one lifts and takes the accent colour, and previous
@@ -181,7 +187,7 @@ set.
 - A recorded customer demo call was used only to understand the product (context graph,
   MCP driven workflows, bug reproduction, auto heal, RCA, integrations). Nothing from the
   recording, its transcript or its participants appears on the page.
-- The twelve integration tiles in the Stack section are the surfaces named in the
+- The twelve marks orbiting in the Stack section are the surfaces named in the
   playbook plus the ones raised on the demo call. Confirm the list against the real
   integration catalogue before launch, and drop any tool that is not actually
   supported. Their marks are vendored from [Simple Icons](https://simpleicons.org)

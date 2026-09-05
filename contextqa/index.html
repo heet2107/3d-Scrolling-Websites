@@ -590,7 +590,7 @@
 
 <!-- ===================== STACK — where ContextQA plugs in ===================== -->
 <section class="stack" id="stack" aria-labelledby="stackTitle">
-  <div class="wrap stack__grid">
+  <div class="wrap stack__head">
     <div class="stack__lead">
       <p class="eyebrow reveal">Works where you work</p>
       <h2 class="h2 reveal" id="stackTitle">ContextQA joins your existing stack.</h2>
@@ -621,44 +621,61 @@
       </ul>
     </div>
 
-    <ul class="stack__tiles reveal" aria-label="Tools ContextQA integrates with">
-      <li class="tile" style="--brand: #181717; --brand-dark: #F0F6FC;">
-        <svg class="tile__logo" role="img" aria-label="GitHub"><use href="#b-github"/></svg>
-      </li>
-      <li class="tile" style="--brand: #2088FF; --brand-dark: #58A6FF;">
-        <svg class="tile__logo" role="img" aria-label="GitHub Actions"><use href="#b-actions"/></svg>
-      </li>
-      <li class="tile" style="--brand: #D24939; --brand-dark: #E4685D;">
-        <svg class="tile__logo" role="img" aria-label="Jenkins"><use href="#b-jenkins"/></svg>
-      </li>
-      <li class="tile" style="--brand: #0052CC; --brand-dark: #4C9AFF;">
-        <svg class="tile__logo" role="img" aria-label="Jira"><use href="#b-jira"/></svg>
-      </li>
-      <li class="tile" style="--brand: #5E6AD2; --brand-dark: #8B95F0;">
-        <svg class="tile__logo" role="img" aria-label="Linear"><use href="#b-linear"/></svg>
-      </li>
-      <li class="tile" style="--brand: #172B4D; --brand-dark: #79A9F5;">
-        <svg class="tile__logo" role="img" aria-label="Confluence"><use href="#b-confl"/></svg>
-      </li>
-      <li class="tile" style="--brand: #4A154B; --brand-dark: #D9A7DA;">
-        <svg class="tile__logo" role="img" aria-label="Slack"><use href="#b-slack"/></svg>
-      </li>
-      <li class="tile" style="--brand: #03363D; --brand-dark: #78C2CC;">
-        <svg class="tile__logo" role="img" aria-label="Zendesk"><use href="#b-zendesk"/></svg>
-      </li>
-      <li class="tile" style="--brand: #362D59; --brand-dark: #9E86FF;">
-        <svg class="tile__logo" role="img" aria-label="Sentry"><use href="#b-sentry"/></svg>
-      </li>
-      <li class="tile" style="--brand: #F24E1E; --brand-dark: #F4784F;">
-        <svg class="tile__logo" role="img" aria-label="Figma"><use href="#b-figma"/></svg>
-      </li>
-      <li class="tile" style="--brand: #D97757; --brand-dark: #E39877;">
-        <svg class="tile__logo" role="img" aria-label="Claude"><use href="#b-claude"/></svg>
-      </li>
-      <li class="tile" style="--brand: #412991; --brand-dark: #A78BFA;">
-        <svg class="tile__logo" role="img" aria-label="Codex"><use href="#b-openai"/></svg>
-      </li>
-    </ul>
+    <div class="orbit" role="img" aria-labelledby="orbitNames">
+      <div class="orbit__core">
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <ellipse cx="16" cy="16" rx="13" ry="6.5" fill="none" stroke="currentColor" stroke-width="1.2" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="13" ry="6.5" fill="none" stroke="currentColor" stroke-width="1.2" transform="rotate(30 16 16)"/>
+          <circle cx="16" cy="16" r="2.4" fill="var(--cyan)"/>
+        </svg>
+      </div>
+      <div class="orbit__ring" style="--ring: 38%; --spin: 26s;">
+        <span class="orbit__icon" style="left: 97.55%; top: 34.55%; --brand: #181717; --brand-dark: #F0F6FC; --spin: 26s;">
+          <svg viewBox="0 0 24 24"><use href="#b-github"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 65.45%; top: 97.55%; --brand: #2088FF; --brand-dark: #58A6FF; --spin: 26s;">
+          <svg viewBox="0 0 24 24"><use href="#b-actions"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 2.45%; top: 65.45%; --brand: #D24939; --brand-dark: #E4685D; --spin: 26s;">
+          <svg viewBox="0 0 24 24"><use href="#b-jenkins"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 34.55%; top: 2.45%; --brand: #0052CC; --brand-dark: #4C9AFF; --spin: 26s;">
+          <svg viewBox="0 0 24 24"><use href="#b-jira"/></svg>
+        </span>
+      </div>
+      <div class="orbit__ring" style="--ring: 62%; --spin: 34s;">
+        <span class="orbit__icon" style="left: 94.94%; top: 71.92%; --brand: #5E6AD2; --brand-dark: #8B95F0; --spin: 34s;">
+          <svg viewBox="0 0 24 24"><use href="#b-linear"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 28.08%; top: 94.94%; --brand: #172B4D; --brand-dark: #79A9F5; --spin: 34s;">
+          <svg viewBox="0 0 24 24"><use href="#b-confl"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 5.06%; top: 28.08%; --brand: #4A154B; --brand-dark: #D9A7DA; --spin: 34s;">
+          <svg viewBox="0 0 24 24"><use href="#b-slack"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 71.92%; top: 5.06%; --brand: #03363D; --brand-dark: #78C2CC; --spin: 34s;">
+          <svg viewBox="0 0 24 24"><use href="#b-zendesk"/></svg>
+        </span>
+      </div>
+      <div class="orbit__ring" style="--ring: 84%; --spin: 44s;">
+        <span class="orbit__icon" style="left: 99.51%; top: 56.96%; --brand: #362D59; --brand-dark: #9E86FF; --spin: 44s;">
+          <svg viewBox="0 0 24 24"><use href="#b-sentry"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 43.04%; top: 99.51%; --brand: #F24E1E; --brand-dark: #F4784F; --spin: 44s;">
+          <svg viewBox="0 0 24 24"><use href="#b-figma"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 0.49%; top: 43.04%; --brand: #D97757; --brand-dark: #E39877; --spin: 44s;">
+          <svg viewBox="0 0 24 24"><use href="#b-claude"/></svg>
+        </span>
+        <span class="orbit__icon" style="left: 56.96%; top: 0.49%; --brand: #412991; --brand-dark: #A78BFA; --spin: 44s;">
+          <svg viewBox="0 0 24 24"><use href="#b-openai"/></svg>
+        </span>
+      </div>
+    </div>
+    <p class="sr-only" id="orbitNames">ContextQA integrates with</p>
+    <ul class="sr-only"><li>GitHub</li> <li>GitHub Actions</li> <li>Jenkins</li> <li>Jira</li> <li>Linear</li> <li>Confluence</li> <li>Slack</li> <li>Zendesk</li> <li>Sentry</li> <li>Figma</li> <li>Claude</li> <li>Codex</li></ul>
+
   </div>
 </section>
 
@@ -725,7 +742,7 @@
   </div>
 </section>
 
-<!-- ===================== VOICES — staggered testimonial deck ===================== -->
+<!-- ===================== VOICES — the same deck, holding testimonials ===================== -->
 <section class="voices" id="voices" aria-labelledby="voicesTitle">
   <div class="wrap">
     <p class="eyebrow reveal">Voices</p>
@@ -733,56 +750,56 @@
     <p class="lede reveal">Illustrative quotes written in the voice of the people ContextQA is built for. Replace them with real customer words before launch.</p>
   </div>
 
-  <div class="voices__stage" id="voicesStage" role="group" aria-roledescription="carousel" aria-label="Testimonials from engineering leaders">
-    <div class="voices__deck" id="voicesDeck">
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">AO</span>
-        <p class="voice__quote">Our engineers stopped reproducing bugs by hand. That alone gave the team a day back every week.</p>
-        <p class="voice__by">Amara Osei, VP Engineering at Northwind Pay</p>
+  <div class="deck__stage" data-deck role="group" aria-roledescription="carousel" aria-label="Testimonials from engineering leaders">
+    <div class="deck__rail" data-deck-rail>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">AO</span>
+        <p class="toolcard__quote">Our engineers stopped reproducing bugs by hand. That alone gave the team a day back every week.</p>
+        <p class="toolcard__what toolcard__what--by">Amara Osei, VP Engineering at Northwind Pay</p>
       </button>
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">TB</span>
-        <p class="voice__quote">I used to approve merges on faith. Now every pull request arrives with its blast radius attached.</p>
-        <p class="voice__by">Tomas Berg, CTO at Halden Logistics</p>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">TB</span>
+        <p class="toolcard__quote">I used to approve merges on faith. Now every pull request arrives with its blast radius attached.</p>
+        <p class="toolcard__what toolcard__what--by">Tomas Berg, CTO at Halden Logistics</p>
       </button>
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">RS</span>
-        <p class="voice__quote">The first investigation landed before the walkthrough finished. That ended the evaluation right there.</p>
-        <p class="voice__by">Rina Shah, Director of Engineering at Cadence Health</p>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">RS</span>
+        <p class="toolcard__quote">The first investigation landed before the walkthrough finished. That ended the evaluation right there.</p>
+        <p class="toolcard__what toolcard__what--by">Rina Shah, Director of Engineering at Cadence Health</p>
       </button>
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">EW</span>
-        <p class="voice__quote">Median root cause went from most of an afternoon to minutes. Nobody on the team misses the afternoon.</p>
-        <p class="voice__by">Ellis Warner, Engineering Manager at Portside</p>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">EW</span>
+        <p class="toolcard__quote">Median root cause went from most of an afternoon to minutes. Nobody misses the afternoon.</p>
+        <p class="toolcard__what toolcard__what--by">Ellis Warner, Engineering Manager at Portside</p>
       </button>
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">JP</span>
-        <p class="voice__quote">Our agents write more code than ever. This is the only thing that kept review honest at that pace.</p>
-        <p class="voice__by">Jonah Pike, Head of Platform at Verity Labs</p>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">JP</span>
+        <p class="toolcard__quote">Our agents write more code than ever. This is the only thing that kept review honest at that pace.</p>
+        <p class="toolcard__what toolcard__what--by">Jonah Pike, Head of Platform at Verity Labs</p>
       </button>
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">MC</span>
-        <p class="voice__quote">It caught a regression on a journey no test covered. My team now spends its judgment where it counts.</p>
-        <p class="voice__by">Mei Lin Chow, QA Lead at Orbital Retail</p>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">MC</span>
+        <p class="toolcard__quote">It caught a regression on a journey no test covered. My team spends its judgment where it counts now.</p>
+        <p class="toolcard__what toolcard__what--by">Mei Lin Chow, QA Lead at Orbital Retail</p>
       </button>
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">DF</span>
-        <p class="voice__quote">We stopped shipping mysteries into the backlog. Every issue arrives reproduction ready.</p>
-        <p class="voice__by">Daniel Ferreira, VP Engineering at Kestrel</p>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">DF</span>
+        <p class="toolcard__quote">We stopped shipping mysteries into the backlog. Every issue arrives reproduction ready.</p>
+        <p class="toolcard__what toolcard__what--by">Daniel Ferreira, VP Engineering at Kestrel</p>
       </button>
-      <button class="voice" type="button">
-        <span class="voice__avatar" aria-hidden="true">AK</span>
-        <p class="voice__quote">Cost per release went down while releases went up. Our CFO noticed before I did.</p>
-        <p class="voice__by">Ada Kowalski, CTO at Lumen Freight</p>
+      <button class="toolcard" type="button" data-deck-card>
+        <span class="toolcard__avatar" aria-hidden="true">AK</span>
+        <p class="toolcard__quote">Cost per release went down while releases went up. Our CFO noticed before I did.</p>
+        <p class="toolcard__what toolcard__what--by">Ada Kowalski, CTO at Lumen Freight</p>
       </button>
     </div>
 
-    <div class="voices__nav" id="voicesNav">
-      <button class="voices__btn" id="voicesPrev" type="button" aria-label="Previous testimonial">
+    <div class="deck__nav" data-deck-nav>
+      <button class="deck__btn" data-deck-prev type="button" aria-label="Previous testimonial">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
-      <p class="voices__count"><span id="voicesNow">1</span> / 8</p>
-      <button class="voices__btn" id="voicesNext" type="button" aria-label="Next testimonial">
+      <p class="deck__count"><span data-deck-now>1</span> / 8</p>
+      <button class="deck__btn" data-deck-next type="button" aria-label="Next testimonial">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>
       </button>
     </div>
