@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img"
+     aria-label="Heet Barot">
+  <!-- Drawn as geometry rather than set in Anton: a favicon is rendered at
+       16px with no webfont available, so a text element would fall back to
+       whatever the platform picks and stop being the same mark on every
+       machine. Three bars read as an H at any size. -->
+  <rect width="32" height="32" fill="#000"/>
+  <g fill="#f7931e">
+    <rect x="7"  y="7" width="4.5" height="18"/>
+    <rect x="20.5" y="7" width="4.5" height="18"/>
+    <rect x="7"  y="14" width="18" height="4"/>
+  </g>
+  <!-- the ember under the mark, the one thing that ties it to the site -->
+  <rect x="7" y="27" width="18" height="2" fill="#e85500"/>
+</svg>

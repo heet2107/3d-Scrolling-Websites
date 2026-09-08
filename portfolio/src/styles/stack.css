@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Act II — the stack.
+   The room is the supplied film, drawn one still at a time into the canvas and
+   scrubbed by the pin's travel. Everything here is the copy layered over it.
+   ========================================================================== */
+
+.stack {
+  position: relative;
+  /* the height past one viewport IS the film: the pin's travel is the strip,
+     so this number sets how much scrolling one pass through the room costs */
+  height: 320svh;
+}
+
+.stack__pin {
+  position: sticky; top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+#stackStage {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  background: #000;
+  /* held back until a frame has actually landed, so the act never shows a
+     flash of empty canvas over the black the page is already sitting on */
+  opacity: 0;
+  transition: opacity .55s ease;
+}
+.stack.is-live #stackStage { opacity: 1; }
+
+/* the deck is drawn behind the copy, so each block of copy carries its own
+   scrim — without it a card can drift under a paragraph and take it with it */
+.stack__pin::before,
+.stack__pin::after {
+  content: ''; position: absolute; z-index: 2; pointer-events: none;
+  left: 0; width: min(52%, 640px);
+}
+.stack__pin::before {
+  top: 0; height: 46%;
+  background: linear-gradient(105deg, rgba(0,0,0,.94) 0%,
+              rgba(0,0,0,.80) 34%, rgba(0,0,0,0) 82%);
+}
+/* One layer doing two jobs. The bottom left corner is a floor for the lede to
+   sit on. The right edge is a fade, because the film carries its own set
+   corner text and this act should not look like it is quoting someone else's
+   caption. Neither is a crop: the room still runs edge to edge behind them. */
+.stack__pin::after {
+  inset: 0; width: auto; height: auto;
+  background:
+    linear-gradient(75deg, rgba(0,0,0,.97) 0%, rgba(0,0,0,.88) 26%,
+                    rgba(0,0,0,0) 78%)
+      left bottom / min(52%, 640px) 52% no-repeat,
+    linear-gradient(270deg, rgba(0,0,0,.94) 0%, rgba(0,0,0,.55) 42%,
+                    rgba(0,0,0,0) 100%)
+      right center / clamp(90px, 13vw, 210px) 100% no-repeat;
+}
+
+.stack__head {
+  position: absolute;
+  top: clamp(74px, 12vh, 132px);
+  left: var(--edge);
+  z-index: 3;
+  pointer-events: none;
+}
+.stack__over {
+  margin: 0 0 10px;
+  font-size: clamp(9px, .72vw, 11px);
+  letter-spacing: .34em; text-transform: uppercase;
+  color: var(--ink);
+}
+.stack__name {
+  margin: 0;
+  font-family: var(--disp);
+  font-size: clamp(46px, 8.4vw, 132px);
+  line-height: .84;
+  letter-spacing: .01em;
+  color: var(--paper);
+  text-shadow: 0 0 42px rgba(0,0,0,.85);
+}
+.stack__sub {
+  margin: 16px 0 0;
+  font-size: clamp(9px, .74vw, 11.5px);
+  letter-spacing: .26em; text-transform: uppercase;
+  color: var(--dim);
+}
+
+.s-label {
+  position: absolute; z-index: 3; margin: 0;
+  pointer-events: none;
+  text-shadow: 0 0 26px rgba(0,0,0,.9);
+}
+
+.s-label--who {
+  right: var(--edge);
+  top: clamp(74px, 12vh, 132px);
+  text-align: right;
+  font-family: var(--disp);
+  font-size: clamp(20px, 2.5vw, 40px);
+  line-height: .92;
+  color: var(--ink);
+  opacity: .92;
+}
+
+.s-label--bio {
+  left: var(--edge);
+  bottom: clamp(96px, 17vh, 168px);
+  max-width: min(46ch, 40vw);
+  font-size: clamp(11px, .92vw, 14px);
+  font-weight: 300;
+  line-height: 1.85;
+  color: #cfc9c3;
+}
+
+.s-label--hint {
+  right: var(--edge);
+  bottom: clamp(96px, 17vh, 168px);
+  text-align: right;
+  font-size: clamp(9px, .72vw, 11px);
+  letter-spacing: .22em; text-transform: uppercase;
+  line-height: 2.1;
+  color: var(--dim);
+}
+.s-label--hint i {
+  display: block; width: 1px; height: 44px; margin: 12px 0 0 auto;
+  background: linear-gradient(to bottom, var(--ink), transparent);
+}
+
+/* --------------------------------------------------------------------------
+   The marquee at the foot of the act
+   -------------------------------------------------------------------------- */
+
+.s-label--who,
+.s-label--bio,
+.s-label--hint {
+  /* --p is the pin's travel, 0..1, set every frame by boot2. Opacity clamps
+     itself, so this reads as "hold, then fade out over the last eighth". */
+  opacity: calc((0.88 - var(--p, 0)) * 8);
+}
+
+.stack__marquee {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  z-index: 4;
+  overflow: hidden;
+  padding: 16px 0;
+  border-top: 1px solid #241a12;
+  background: linear-gradient(to top, rgba(0,0,0,.92), rgba(0,0,0,0));
+  /* it belongs to the last screen of the act, not to the scroll travel */
+  position: sticky;
+  top: calc(100svh - 58px);
+  margin-top: -58px;
+  height: 58px;
+}
+.stack__marquee > div {
+  display: flex; align-items: center; gap: 22px;
+  white-space: nowrap;
+  width: max-content;
+  animation: marquee 46s linear infinite;
+}
+.stack__marquee span {
+  font-size: clamp(10px, .82vw, 13px);
+  letter-spacing: .24em; text-transform: uppercase;
+  color: #b8b1aa;
+}
+.stack__marquee i { color: var(--ink); font-style: normal; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .stack__marquee > div { animation: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Portrait
+   -------------------------------------------------------------------------- */
+
+@media (max-aspect-ratio: 1/1) {
+  .stack { height: 280svh; }
+  /* Portrait sets the bio full width, so the scrim behind it has to be full
+     width too or the film drifts under the last two lines and eats them.
+     The inset must be undone explicitly: ::after is anchored to all four edges
+     landscape, and top:0 plus bottom:0 plus a height is over-constrained, so
+     the browser drops `bottom` and the FOOT scrim silently becomes a head one
+     with a hard edge across the middle of the frame. */
+  .stack__pin::before, .stack__pin::after {
+    inset: auto; left: 0; width: 100%;
+  }
+  .stack__pin::before {
+    top: 0; height: 38%;
+    background: linear-gradient(to bottom, rgba(0,0,0,.95) 0%,
+                rgba(0,0,0,.72) 52%, rgba(0,0,0,0) 100%);
+  }
+  .stack__pin::after {
+    bottom: 0; height: 42%;
+    background: linear-gradient(to top, rgba(0,0,0,.96) 0%,
+                rgba(0,0,0,.80) 46%, rgba(0,0,0,0) 100%);
+  }
+  .stack__head { top: clamp(66px, 10vh, 96px); }
+  .s-label--who { display: none; }
+  .s-label--bio {
+    right: var(--edge);
+    max-width: none;
+    bottom: clamp(112px, 19vh, 150px);
+    font-size: 12px;
+    line-height: 1.75;
+  }
+  .s-label--hint { display: none; }
+}
+@media (max-width: 520px) {
+  .s-label--bio { font-size: 11.5px; line-height: 1.7; }
+}
