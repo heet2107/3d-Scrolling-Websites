@@ -249,6 +249,29 @@
   clip-path: inset(0 0 0 0);
 }
 
+/* The year's artwork.
+   `alt` is empty on purpose: the panel's own prose is the content and already
+   carries the meaning, so announcing seven generated pictures would only make
+   a screen reader user sit through descriptions of decoration.
+   The tinted ground behind it matters as much as the image: it means a photo
+   that has not decoded yet, or fails outright, leaves a deliberate warm band
+   at the head of the card rather than a white gap or a collapsed layout. */
+.c__shot {
+  display: block;
+  width: 100%;
+  aspect-ratio: 560 / 364;
+  height: auto;
+  object-fit: cover;
+  margin: -15px -17px 13px;
+  width: calc(100% + 34px);
+  background: linear-gradient(160deg, #241a12, #0d0907);
+  border-bottom: 1px solid rgba(247, 147, 30, .22);
+  /* the deck is a dark room and the plates are lit for it; a full-strength
+     photograph at the head of every card would out-shout the prose under it */
+  opacity: .82;
+  filter: saturate(.92) contrast(1.04);
+}
+
 .c__title {
   display: block;
   font-family: var(--disp);

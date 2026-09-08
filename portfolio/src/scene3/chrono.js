@@ -104,6 +104,7 @@ export class Chrono {
     }
     this.qPivot = new Float32Array(toQ(L, L.pivot.x, L.pivot.y));
     this.ballR = L.pivot.r / h;
+    this.qDial = new Float32Array([...toQ(L, L.dial.x, L.dial.y), L.dial.r / h]);
     this.horizon = 1 - L.horizon / h;
     this.sweep = new Float32Array([L.a0, L.a1]);
     // the shaders measure every radius in frame-heights, which a standing
@@ -219,6 +220,10 @@ export class Chrono {
     gl.uniform1f(u.uCore, s.rail);
     gl.uniform1f(u.uHand, s.ball);
     gl.uniform1f(u.uSpread, this.spread);
+    gl.uniform3fv(u.uDial, this.qDial);
+    // the dial draws in with the room rather than with the hand, so the face
+    // is already there for the hand to sweep against
+    gl.uniform1f(u.uFace, s.room);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     gl.useProgram(this.mote.p);
@@ -262,6 +267,8 @@ class Deck {
         <b class="c__year">${y.year}</b>
         <i class="c__tag">${y.tag}</i>
         <span class="c__body">
+          <img class="c__shot" src="public/years/${y.year}.jpg" alt=""
+               width="560" height="364" loading="lazy" decoding="async">
           <strong class="c__title">${y.title}</strong>
           <span class="c__copy">${y.body}</span>
           <span class="c__marks">${y.marks.map((m) => `<i>${m}</i>`).join('')}</span>

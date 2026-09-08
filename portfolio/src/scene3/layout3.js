@@ -138,6 +138,13 @@ function landscape(w, h) {
     // from 2020 to 2026 is a wide, readable arc of the hand rather than a
     // twitch
     pivot: { x: 0.545 * w, y: 0.145 * h, r: px(0.032 * h, 26, 48) },
+    // The dial is a SECOND circle, and an enormous one: its centre sits far
+    // above the frame so only a shallow sweep of its lower rim is ever on
+    // screen. That is the whole trick — a sliver of a dial the size of the
+    // room reads as a timepiece, where a complete ring would read as a logo
+    // parked in the corner. The rim passes just under the ball, so the two
+    // belong to one instrument instead of floating independently.
+    dial: { x: 0.66 * w, y: -1.30 * h, r: 1.50 * h },
     horizon: Math.max(...nodes.map((n) => n.y)) + 0.030 * h,
     spread: 1.0,
   };
@@ -205,6 +212,10 @@ function portraitLayout(w, h) {
   return {
     mode: 'tall', edge, headW, headH, arc, a0, a1, nodes, cards,
     pivot: { x: 0.780 * w, y: 0.185 * h, r: px(0.030 * w, 22, 34) },
+    // Same idea as landscape, at this frame's proportions. A phone is mostly
+    // height, so the dial's radius is measured against the height it actually
+    // has: reusing the landscape figure put the rim off the top of the screen.
+    dial: { x: 0.62 * w, y: -0.76 * h, r: 1.00 * h },
     horizon: Math.max(...nodes.map((n) => n.y)) + 0.045 * h,
     // a tall frame has far more height than width, so light measured in
     // frame-heights has to be pulled in or one flood covers three years

@@ -245,6 +245,8 @@ uniform vec2  uLand;          // where the hot core sits, on the arc
 uniform float uCore;          // 0..1, how hot the core is running
 uniform float uHand;          // 0..1, the hand dropping out of the ball
 uniform float uSpread;        // matches the room's, so the two agree
+uniform vec3  uDial;          // the dial circle: centre.xy, radius
+uniform float uFace;          // 0..1, how much of the dial has drawn in
 ${LIB}
 
 void main() {
@@ -273,14 +275,52 @@ void main() {
   float rung = abs(abs(p.x - uPivot.x) - uBallR * 0.42);
   bool onMount = rung < 0.004 && p.y > uPivot.y;
 
+  // The dial lies outside the beam's wedge too, and across the whole width of
+  // the frame, so like the mount it is measured before the wedge rejects
+  // anything. Its band is thin: everything below it is still rejected.
+  vec2  dRel = p - uDial.xy;
+  float dRad = length(dRel);
+  float out0 = dRad - uDial.z;          // >0 outside the circle, i.e. on screen
+  float BAND = uDial.z * 0.045;         // how far the ticks reach in from it
+  bool  onDial = out0 > -BAND * 0.35 && out0 < BAND;
+
   // The clock otherwise occupies one narrow wedge of the frame — ball, hand,
   // cone and landing core all lie inside it. Everywhere else this pass is a
   // full-screen quad computing a dozen exponentials in order to output zero,
   // which on a software renderer costs more than the room it is drawn over.
-  if (!onMount
+  if (!onMount && !onDial
       && (abs(across) > uBallR * 5.0 || along < -uBallR * 2.4 || along > L * 1.5)) {
     oCol = vec4(0.0);
     return;
+  }
+
+  // ---- the dial ----------------------------------------------------------
+  // A rim line with a graticule of ticks stepping down from it: fine ones all
+  // the way round, a longer one every fifth. Ticks run OUTWARD, away from the
+  // centre — the centre is above the frame, so ticks drawn inward would be
+  // drawn where nobody can see them.
+  if (onDial && uFace > 0.001) {
+    float ang = atan(dRel.y, dRel.x);
+    // 520 around the whole circle. Only a shallow sweep is ever on screen, so
+    // this reads as a fine graticule rather than the fence a coarser count
+    // gives; the ticks are short for the same reason.
+    float k = ang * 520.0 / 6.28318530718;
+    float cell = abs(fract(k) - 0.5) * 2.0;
+    float major = step(fract(floor(k) / 5.0), 0.001);
+    float reach = BAND * mix(0.20, 0.52, major);
+    float mark = smoothstep(0.74, 0.96, cell)
+               * step(0.0, out0) * smoothstep(reach, reach * 0.45, out0);
+    // the rim, plus a second hairline standing off it, so the ticks sit in a
+    // measured band rather than hanging off a single line
+    float rim = smoothstep(0.0026, 0.0, abs(out0))
+              + smoothstep(0.0018, 0.0, abs(out0 - BAND * 0.52)) * 0.30;
+    // the rim is brightest where the hand is pointing, so the dial reads as
+    // belonging to the clock rather than as decoration behind it
+    float landAng = atan(uLand.y - uDial.y, uLand.x - uDial.x);
+    float near = exp(-pow((ang - landAng) * 1.7, 2.0));
+    float f = uFace * (0.30 + 0.70 * near);
+    light += AMBER * rim * 0.52 * f;
+    light += AMBER * mark * mix(0.20, 0.46, major) * f;
   }
 
   // ---- the bracket -------------------------------------------------------
