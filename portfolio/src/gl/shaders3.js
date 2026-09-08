@@ -70,6 +70,7 @@ uniform float uLit;           // how many years have lit, fractional
 uniform vec2  uLand;          // where the beam is landing, on the arc
 uniform float uLandA;         // and its angle on the circle
 uniform float uHorizon;       // the floor line, in vS.y
+uniform float uSpread;        // how wide the light pools are allowed to run
 ${LIB}
 
 /** The angle of a point about the arc's centre; zero hangs straight down. */
@@ -91,6 +92,11 @@ float arcAngle(vec2 p) {
 vec3 timeline(vec2 p, float soft) {
   vec3 col = vec3(0.0);
   float d = abs(length(p - uArc.xy) - uArc.z);
+  // Every radius here is in units of the frame's HEIGHT, which is right for a
+  // landscape frame and far too generous for a tall one: on a phone the same
+  // flood is a fifth of the screen wide and swallows three years at once. One
+  // scalar pulls the pools in for the standing composition.
+  float k = 1.0 / (uSpread * uSpread);
 
   // Every term below falls off as a Gaussian around the circle, so past this
   // radius the whole block contributes less than a thousandth of a level. The
@@ -112,7 +118,7 @@ vec3 timeline(vec2 p, float soft) {
 
     // the rail: a hairline with a narrow, dim bed under it
     col += AMBER * smoothstep(0.0026 + soft * 0.0055, 0.0, d) * band * 0.62;
-    col += EMBER * exp(-d * d * (1400.0 / (1.0 + soft * 2.4))) * band * 0.13;
+    col += EMBER * exp(-d * d * k * (1400.0 / (1.0 + soft * 2.4))) * band * 0.13;
 
     // the light spilling ALONG the rail either side of where the beam lands
     float da = a - uLandA;
@@ -129,7 +135,7 @@ vec3 timeline(vec2 p, float soft) {
         float heat = uHeat[i];
         col += HOT * exp(-r2 * (26000.0 / (1.0 + soft * 5.0)))
                    * (0.55 + 1.6 * heat) * lit;
-        col += AMBER * exp(-r2 * 1400.0) * (0.09 + 0.50 * heat) * lit;
+        col += AMBER * exp(-r2 * k * 1400.0) * (0.09 + 0.50 * heat) * lit;
       }
     }
   }
@@ -138,9 +144,9 @@ vec3 timeline(vec2 p, float soft) {
   vec2 lv = p - uLand;
   float lr2 = dot(lv, lv);
   if (lr2 < 0.12) {
-    col += AMBER * exp(-lr2 * 700.0) * 0.60;
-    col += HOT * exp(-lr2 * 4200.0) * 0.75;
-    col += EMBER * exp(-lr2 * 90.0) * 0.18;
+    col += AMBER * exp(-lr2 * k * 700.0) * 0.60;
+    col += HOT * exp(-lr2 * k * 4200.0) * 0.75;
+    col += EMBER * exp(-lr2 * k * 90.0) * 0.18;
   }
   return col;
 }
@@ -238,6 +244,7 @@ uniform float uBallR;
 uniform vec2  uLand;          // where the hot core sits, on the arc
 uniform float uCore;          // 0..1, how hot the core is running
 uniform float uHand;          // 0..1, the hand dropping out of the ball
+uniform float uSpread;        // matches the room's, so the two agree
 ${LIB}
 
 void main() {
@@ -260,17 +267,24 @@ void main() {
   float across = dot(rel, nrm);
   float run = clamp(along / L, 0.0, 1.0);
 
-  // The clock occupies one narrow wedge of the frame, and the ball, the hand,
-  // the cone and the landing core all lie inside it. Everywhere else this pass
-  // is a full-screen quad computing a dozen exponentials to output zero, which
-  // on a software renderer costs more than the room it is drawn over.
-  if (abs(across) > uBallR * 5.0 || along < -uBallR * 2.4 || along > L * 1.5) {
+  // the bracket the clock hangs from: two hairlines running up out of frame.
+  // It is the one part of this pass that lives outside the beam's wedge, so it
+  // is measured before the wedge is used to reject anything.
+  float rung = abs(abs(p.x - uPivot.x) - uBallR * 0.42);
+  bool onMount = rung < 0.004 && p.y > uPivot.y;
+
+  // The clock otherwise occupies one narrow wedge of the frame — ball, hand,
+  // cone and landing core all lie inside it. Everywhere else this pass is a
+  // full-screen quad computing a dozen exponentials in order to output zero,
+  // which on a software renderer costs more than the room it is drawn over.
+  if (!onMount
+      && (abs(across) > uBallR * 5.0 || along < -uBallR * 2.4 || along > L * 1.5)) {
     oCol = vec4(0.0);
     return;
   }
 
-  // ---- the bracket the clock hangs from ---------------------------------
-  float mount = smoothstep(0.0016, 0.0, abs(abs(p.x - uPivot.x) - uBallR * 0.42))
+  // ---- the bracket -------------------------------------------------------
+  float mount = smoothstep(0.0016, 0.0, rung)
               * smoothstep(0.0, 0.02, p.y - uPivot.y);
   body += vec3(0.10, 0.085, 0.075) * mount;
   bodyA = max(bodyA, mount * 0.85);
@@ -330,12 +344,13 @@ void main() {
 
   // ---- the core landing on the year -------------------------------------
   vec2 lv = p - uLand;
+  float k = 1.0 / (uSpread * uSpread);
   float lr2 = dot(lv, lv);
-  light += HOT * exp(-lr2 * 5200.0) * 1.15 * uCore * uHand;
-  light += AMBER * exp(-lr2 * 620.0) * 0.42 * uCore * uHand;
+  light += HOT * exp(-lr2 * k * 5200.0) * 1.15 * uCore * uHand;
+  light += AMBER * exp(-lr2 * k * 620.0) * 0.42 * uCore * uHand;
   // four short spikes, so the landing reads as a hot point and not a blob
-  float sp = max(exp(-lv.x * lv.x * 9000.0 - lv.y * lv.y * 55.0),
-                 exp(-lv.y * lv.y * 9000.0 - lv.x * lv.x * 55.0));
+  float sp = max(exp(-lv.x * lv.x * 9000.0 - lv.y * lv.y * k * 55.0),
+                 exp(-lv.y * lv.y * 9000.0 - lv.x * lv.x * k * 55.0));
   light += HOT * sp * 0.20 * uCore * uHand;
 
   float a = clamp(bodyA, 0.0, 1.0) * uIn;

@@ -20,9 +20,14 @@ export const PLATE_ASPECT = 1.6;      // matches the atlas tile
 const HALF_W = PLATE_W * 0.5;
 const HALF_H = HALF_W / PLATE_ASPECT;
 
-/** How much of the frame's half-width the active plate is allowed to take. */
+/**
+ * How much of the frame's half-width the active plate takes. Portrait is not
+ * simply "as big as it fits": at 0.9 the plate is wider than the gap the deck
+ * needs to show through, so every neighbour hides exactly behind it and the
+ * act loses the one thing it is about.
+ */
 const FIT = 0.50;
-const FIT_PORTRAIT = 0.84;
+const FIT_PORTRAIT = 0.80;
 
 export function deckConfig(aspect, portrait) {
   const t = Math.tan(FOV * 0.5);
@@ -43,7 +48,7 @@ export function deckConfig(aspect, portrait) {
     // space, not world space: a fixed world offset shrinks with depth, so the
     // deck stacks up dead behind the active plate and the room loses its
     // corridor entirely — which is exactly what a lateral world offset did.
-    swing: portrait ? 0.80 : 1.05,
+    swing: portrait ? 1.18 : 1.05,
     swingK: portrait ? 0.55 : 0.62,
     // the floor sits just under the plate, not at some fixed altitude: the
     // hover gap is what makes the reflection detach and read as a reflection
@@ -51,7 +56,7 @@ export function deckConfig(aspect, portrait) {
     // a lens shift rather than a camera move. The plate stays square to the
     // frame (so its artwork stays readable) while the composition slides over
     // to leave the copy a column of its own.
-    shift: portrait ? [0, 0.36] : [-0.24, -0.08],
+    shift: portrait ? [0, 0.34] : [-0.24, -0.08],
     vis: portrait ? 2.6 : 4.4,
     halfW: HALF_W,
     halfH: HALF_H,

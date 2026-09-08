@@ -74,26 +74,31 @@ void main() {
   // the far wall: a slow breathing haze, brightest behind the deck
   float wall = fbm3(q * 1.9 + vec2(uTime * 0.017, uTime * 0.008));
   col += vec3(0.030, 0.020, 0.014) * wall * (1.0 - ground);
-  col += uTint * 0.020 * exp(-abs(q.x - (uPool.x - 0.5) * aspect) * 1.6)
+
+  // Everything the deck LIGHTS is measured across the frame, not in
+  // aspect-corrected space. Correcting it means the falloff is stretched by
+  // 1/aspect on a portrait viewport, and a pool that reads as a puddle on a
+  // laptop floods the whole lower half of a phone.
+  float dx = s.x - uPool.x;
+  col += uTint * 0.020 * exp(-abs(dx) * 2.6)
        * (1.0 - ground) * smoothstep(-0.1, 0.55, s.y - uHorizon);
 
   // the light overhead that the deck travels under
-  float cone = exp(-pow((q.x - (uPool.x - 0.5) * aspect) / 0.62, 2.0))
-             * smoothstep(1.05, 0.30, s.y);
+  float cone = exp(-pow(dx / 0.30, 2.0)) * smoothstep(1.05, 0.30, s.y);
   col += uTint * cone * 0.030 * (1.0 - ground);
 
   // the ground itself: dark, polished, and darker the further back it goes
   float depth = smoothstep(uHorizon, uHorizon - 0.42, s.y);
-  col += vec3(0.016, 0.011, 0.008) * ground * (0.25 + 0.75 * depth);
+  col += vec3(0.014, 0.010, 0.007) * ground * (0.25 + 0.75 * depth);
   // long vertical smears: a wet floor carries the room down into itself
   float smear = fbm3(vec2(q.x * 5.5, (uHorizon - s.y) * 1.4 + uTime * 0.05));
-  col += uTint * 0.030 * ground * depth * smear;
+  col += uTint * 0.018 * ground * depth * smear;
 
   // the pool of light the active plate throws on the ground beneath it
-  vec2 pd = (s - uPool.xy) * vec2(aspect, 1.0);
-  float pool = exp(-pd.x * pd.x * 2.2) * exp(-abs(pd.y) * 4.6);
-  col += uTint * pool * uPool.z * 0.22 * ground;
-  col += AMBER * exp(-dot(pd, pd) * 4.0) * uPool.z * 0.075;
+  vec2 pd = s - uPool.xy;
+  float pool = exp(-dx * dx * 11.0) * exp(-abs(pd.y) * 4.2);
+  col += uTint * pool * uPool.z * 0.18 * ground;
+  col += AMBER * exp(-(dx * dx * 10.0 + pd.y * pd.y * 26.0)) * uPool.z * 0.075;
 
   oCol = vec4(max(col, 0.0) * uMat, 1.0);
 }`;
@@ -132,8 +137,8 @@ void main() {
   col += uTint * 0.016 * ground * rip
        * smoothstep(uHorizon, uHorizon - 0.30, s.y);
 
-  vec2 pd = (s - uPool.xy) * vec2(aspect, 1.0);
-  col += uTint * exp(-pd.x * pd.x * 1.4) * exp(-abs(pd.y) * 3.2)
+  vec2 pd = s - uPool.xy;
+  col += uTint * exp(-pd.x * pd.x * 7.0) * exp(-abs(pd.y) * 3.0)
        * uPool.z * 0.10 * ground;
 
   float a = clamp(band * 0.55 + ground * 0.10, 0.0, 1.0) * uMat;
