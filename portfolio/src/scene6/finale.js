@@ -129,7 +129,7 @@ export class Finale {
     // the core sits inside the mark's own band, so the embers pour into the
     // name rather than hovering above it
     this.core = {
-      x: portrait ? 0.50 : 0.545,
+      x: portrait ? 0.50 : 0.575,
       y: 1 - (this.markRect.y + capH * 0.44) / h,
     };
     // the bed is centred on the mark and just wide enough to reach past its
@@ -222,7 +222,7 @@ export class Finale {
     gl.uniform2f(u.uTexel, 1 / W.width, 1 / W.height);
     // the ring is set in atlas texels but has to read in device pixels, so it
     // tracks how far the atlas has been stretched to reach the frame
-    gl.uniform1f(u.uRing, Math.max(1.6, 3.4 / (sx * this.dpr)));
+    gl.uniform1f(u.uRing, Math.max(1.6, 4.2 / (sx * this.dpr)));
     gl.uniform1f(u.uOpacity, 0.94);
     gl.uniform1f(u.uLit, state.lit);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

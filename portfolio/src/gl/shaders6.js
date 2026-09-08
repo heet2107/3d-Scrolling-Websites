@@ -187,7 +187,7 @@ void main() {
   // an ember brightens as it arrives: the field is dim while it is adrift and
   // hot once it has collected, which is the whole point of the movement
   float beat = 0.5 + 0.5 * sin(uTime * (0.7 + s * 1.9) + s * 29.0);
-  vGlow = (0.30 + 0.70 * beat * beat) * (0.26 + 1.10 * g);
+  vGlow = (0.30 + 0.70 * beat * beat) * (0.46 + 0.95 * g);
 }`;
 
 export const EMBER_FRAG = `#version 300 es
