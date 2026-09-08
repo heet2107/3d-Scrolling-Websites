@@ -15,8 +15,11 @@
      grid out from under the body copy, so the two must be changed together */
   --rec-w: 1120px;
   --rule: #241a12;
+  --rec-top: clamp(76px, 12vh, 148px);
   --xp-pad-t: clamp(24px, 3.6vh, 44px);
-  padding: clamp(76px, 12vh, 148px) var(--edge) clamp(96px, 15vh, 180px);
+  /* the space above the head is the HEAD's margin, not the section's padding,
+     so the plate below can start at the true top edge of the act */
+  padding: 0 var(--edge) clamp(96px, 15vh, 180px);
 }
 
 #recordStage {
@@ -24,11 +27,14 @@
   top: 0;
   z-index: 0;
   display: block;
-  width: 100%;
+  /* Full bleed: the reading column is inset, the backdrop behind it is not.
+     The width has to be stated — a canvas is a REPLACED element, so width:auto
+     resolves to its intrinsic size, which is the pixel buffer the resize
+     handler just set from clientWidth, and the two feed each other wider on
+     every resize. */
+  width: calc(100% + var(--edge) * 2);
+  margin-inline: calc(var(--edge) * -1);
   height: 100svh;
-  /* the plate is a backdrop the record scrolls over, so it must take no part
-     in the flow — any height here would push the entire act down one screen */
-  margin-bottom: -100svh;
   pointer-events: none;
 }
 
@@ -46,6 +52,12 @@
    -------------------------------------------------------------------------- */
 
 .record__head {
+  /* The plate keeps its full height in the flow and the record is pulled back
+     up over it. Hanging that negative margin on the canvas instead would leave
+     it with a zero-height margin box, and a sticky box is released by its
+     MARGIN box — so the plate would never let go of the viewport and would go
+     on painting over the act that follows.  */
+  margin-top: calc(var(--rec-top) - 100svh);
   padding-bottom: clamp(26px, 4vh, 46px);
   border-bottom: 1px solid var(--rule);
   margin-bottom: clamp(44px, 7vh, 86px);
@@ -159,12 +171,21 @@
 .xp::before {
   content: ''; position: absolute;
   left: 0; top: 0; bottom: 0; width: 1px;
-  background: linear-gradient(to bottom, #7a5522, var(--rule));
+  /* bright where the row hangs off it, cooling downward but never reaching
+     black: a gradient that fades out entirely turns one continuous rail into
+     three floating dashes */
+  background: linear-gradient(to bottom, #8a5f28 0%, #4a3620 20%, #3a2c1d 100%);
   transform: scaleY(0);
   transform-origin: 50% 0;
   transition: transform 1s var(--ease-out);
 }
 .xp.is-lit::before { transform: scaleY(1); }
+/* only the last segment is allowed to end, and it ends by fading rather than
+   by stopping dead under the final chip */
+.xp:last-child::before {
+  background: linear-gradient(to bottom, #8a5f28 0%, #4a3620 18%,
+                              #3a2c1d 62%, rgba(58, 44, 29, 0) 100%);
+}
 
 /* the node the row hangs from */
 .xp::after {

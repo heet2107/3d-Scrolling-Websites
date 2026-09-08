@@ -150,6 +150,23 @@ export class Chrono {
     this.deck.apply(this.pos, state.lit);
   }
 
+  /**
+   * Land on the finished composition and hold it there, with no loop and no
+   * drift. The damping in update() would take a second of frames to arrive, so
+   * everything it would have converged on is written straight in.
+   */
+  settle(state, i) {
+    this.state = state;
+    this.pos = clamp(i, 0, N - 1);
+    this.command = this.pos;
+    this.take = 1;
+    for (let k = 0; k < N; k++) {
+      this.heat[k] = Math.max(0, 1 - Math.abs(k - this.pos));
+    }
+    this.deck.apply(this.pos, state.lit);
+    this.render();
+  }
+
   render() {
     if (!this.ok || !this.L) return;
     const gl = this.gl;
