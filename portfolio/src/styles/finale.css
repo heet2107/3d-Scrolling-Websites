@@ -1,2 +1,339 @@
-/* Act stylesheet — finale. Written with its act; this placeholder exists so the
-   stylesheet index.html links is never a 404 while the act is being built. */
+/* ==========================================================================
+   Act VI — the finale.
+   The ember bed, the gathering field and the wordmark standing in it are all
+   canvas. This file is the poster laid over them: four corner captions, the
+   quote, the contact card and the bar along the foot.
+   ========================================================================== */
+
+.fin {
+  position: relative;
+  /* the height past one viewport is the gather's travel: the field collects
+     over the last screen of the page, so arriving at the card and the field
+     arriving are the same movement */
+  height: 200svh;
+  /* the opening is position:fixed at z-index 1 and this footer sits OUTSIDE
+     .flow, so with no stacking position of its own it would be painted under
+     the hero canvas the moment that canvas is made visible again */
+  z-index: 2;
+}
+
+.fin__pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    'tl    tr'
+    'quote card'
+    'bl    br'
+    'bar   bar';
+  gap: clamp(10px, 1.8vh, 24px) clamp(16px, 3vw, 64px);
+  padding: clamp(22px, 6vh, 58px) var(--edge) clamp(14px, 2.6vh, 28px);
+}
+
+#finStage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+}
+
+.fin__pin > *:not(#finStage) { position: relative; z-index: 2; }
+
+/* --------------------------------------------------------------------------
+   The four corners
+   -------------------------------------------------------------------------- */
+
+.f-cap {
+  margin: 0;
+  font-size: clamp(9px, .72vw, 11.5px);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  line-height: 2.05;
+  color: var(--dim);
+  text-shadow: 0 0 26px rgba(0, 0, 0, .92);
+  opacity: 0;
+  transform: translateY(9px);
+  transition: opacity .8s var(--ease-out), transform .9s var(--ease-out);
+}
+.fin.is-lit .f-cap { opacity: 1; transform: none; }
+
+.f-cap--tl { grid-area: tl; }
+.f-cap--tr { grid-area: tr; justify-self: end; text-align: right; }
+.f-cap--blw { grid-area: bl; align-self: end; }
+.f-cap--br {
+  grid-area: br;
+  align-self: end;
+  justify-self: end;
+  text-align: right;
+}
+
+.fin.is-lit .f-cap--tr  { transition-delay: .08s; }
+.fin.is-lit .f-cap--blw { transition-delay: .16s; }
+.fin.is-lit .f-cap--br  { transition-delay: .24s; }
+
+/* --------------------------------------------------------------------------
+   The quote — four words, four lines, the emotional beat of the frame
+   -------------------------------------------------------------------------- */
+
+.f-cap--quote {
+  grid-area: quote;
+  align-self: center;
+  margin: 0;
+  font-family: var(--disp);
+  font-size: clamp(38px, 5.6vw, 104px);
+  line-height: .87;
+  letter-spacing: .008em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 1;
+  transform: none;
+  text-shadow: 0 0 46px rgba(0, 0, 0, .78);
+}
+.f-cap--quote span {
+  display: block;
+  opacity: 0;
+  /* the lines are clipped rather than faded, so each word arrives as a card
+     being dealt instead of a paragraph turning up its brightness */
+  clip-path: inset(0 0 108% 0);
+  transform: translateY(.14em);
+}
+.fin.is-lit .f-cap--quote span {
+  opacity: 1;
+  clip-path: inset(-25% -12% -25% -12%);
+  transform: none;
+  transition:
+    clip-path .95s var(--ease-out) calc(var(--i) * .11s + .12s),
+    transform .95s var(--ease-out) calc(var(--i) * .11s + .12s),
+    opacity .4s linear calc(var(--i) * .11s + .12s);
+}
+/* the last word is the one the whole page has been arguing for */
+.f-cap--quote span:last-child { color: var(--ink); }
+
+/* --------------------------------------------------------------------------
+   The contact card — the point of the whole page
+   -------------------------------------------------------------------------- */
+
+.fin__card {
+  grid-area: card;
+  align-self: center;
+  justify-self: end;
+  width: min(46ch, 100%);
+  padding: clamp(20px, 2.3vw, 34px) clamp(20px, 2.3vw, 34px)
+           clamp(18px, 2vw, 28px);
+  /* the field gathers directly behind this block and the wordmark runs under
+     it; without its own ground the one paragraph that has to be read sits in
+     the middle of a fire */
+  background: linear-gradient(152deg, rgba(6, 4, 3, .93), rgba(0, 0, 0, .88));
+  border: 1px solid #241a12;
+  /* --g is the gather, written by the act each frame: the card warms as the
+     visitor reaches it rather than glowing from the moment it exists */
+  box-shadow: 0 0 clamp(30px, 5vw, 80px) rgba(232, 85, 0, calc(var(--g, 0) * .20));
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .9s var(--ease-out) .2s,
+              transform 1s var(--ease-out) .2s,
+              box-shadow .6s linear;
+}
+.fin.is-lit .fin__card { opacity: 1; transform: none; }
+
+.fin__title {
+  margin: 0;
+  font-family: var(--disp);
+  font-size: clamp(28px, 3.1vw, 52px);
+  line-height: .94;
+  letter-spacing: .008em;
+  color: var(--paper);
+}
+
+.fin__lede {
+  margin: clamp(12px, 1.4vh, 18px) 0 0;
+  max-width: 34ch;
+  font-size: clamp(12px, .95vw, 15px);
+  font-weight: 300;
+  line-height: 1.8;
+  color: #cfc9c3;
+}
+
+.fin__mail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  /* a phone target, not a link: 60px of height and the full width of the card,
+     so reaching him is a thumb press and never a tap on 14px of text */
+  min-height: 60px;
+  margin: clamp(18px, 2.4vh, 26px) 0 clamp(14px, 1.8vh, 20px);
+  padding: 0 clamp(14px, 1.5vw, 22px);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-size: clamp(13px, 1.15vw, 18px);
+  letter-spacing: .05em;
+  text-decoration: none;
+  -webkit-tap-highlight-color: rgba(247, 147, 30, .22);
+  transition: color .35s var(--ease-out);
+}
+.fin__mail span { position: relative; z-index: 1; overflow-wrap: anywhere; }
+.fin__mail::after {
+  content: '→';
+  position: relative;
+  z-index: 1;
+  font-size: 1.15em;
+  transition: transform .45s var(--ease-out);
+}
+.fin__mail::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .45s var(--ease-in-out);
+}
+.fin__mail:hover { color: #150a00; }
+.fin__mail:hover::before { transform: scaleX(1); }
+.fin__mail:hover::after { transform: translateX(6px); }
+
+.fin__status {
+  display: flex;
+  align-items: center;
+  gap: .8em;
+  margin: 0;
+  font-size: clamp(9.5px, .74vw, 11.5px);
+  letter-spacing: .19em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.fin__status i {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--live);
+  animation: finLive 2.9s var(--ease-out) infinite;
+}
+/* a slow ring leaving the dot — a heartbeat, not a notification badge */
+@keyframes finLive {
+  0%        { box-shadow: 0 0 0 0 rgba(34, 197, 94, .45); }
+  62%, 100% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   The bar along the foot
+   -------------------------------------------------------------------------- */
+
+.fin__bar {
+  grid-area: bar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px clamp(14px, 2.4vw, 34px);
+  padding-top: clamp(12px, 1.8vh, 20px);
+  border-top: 1px solid #241a12;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .8s var(--ease-out) .34s,
+              transform .9s var(--ease-out) .34s;
+}
+.fin.is-lit .fin__bar { opacity: 1; transform: none; }
+
+.fin__mark {
+  font-family: var(--disp);
+  font-size: clamp(12px, 1.05vw, 17px);
+  letter-spacing: .10em;
+  color: var(--paper);
+}
+
+.fin__soc { display: flex; gap: clamp(14px, 1.8vw, 30px); }
+.fin__soc a {
+  position: relative;
+  padding-bottom: 3px;
+  font-size: clamp(9.5px, .74vw, 11.5px);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-decoration: none;
+}
+.fin__soc a::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 100%; bottom: 0;
+  height: 1px;
+  background: var(--ink);
+  transition: right .35s var(--ease-out);
+}
+.fin__soc a:hover { color: var(--paper); }
+.fin__soc a:hover::after { right: 0; }
+
+.fin__c {
+  font-size: clamp(9px, .68vw, 10.5px);
+  letter-spacing: .14em;
+  color: var(--dimmer);
+}
+
+/* --------------------------------------------------------------------------
+   Portrait
+   -------------------------------------------------------------------------- */
+
+@media (max-aspect-ratio: 1/1) {
+  .fin { height: 180svh; }
+
+  .fin__pin {
+    grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+    grid-template-areas:
+      'tl    tr'
+      'quote quote'
+      'card  card'
+      'bl    br'
+      'bar   bar';
+    gap: clamp(12px, 1.6vh, 22px) clamp(14px, 4vw, 40px);
+    padding-top: clamp(20px, 4vh, 40px);
+  }
+
+  .f-cap { font-size: 9.5px; line-height: 1.95; letter-spacing: .18em; }
+
+  .f-cap--quote {
+    font-size: clamp(34px, 12.5vw, 74px);
+    align-self: end;
+    padding-bottom: clamp(6px, 2vh, 20px);
+  }
+
+  .fin__card { justify-self: stretch; width: 100%; }
+  .fin__lede { max-width: none; }
+  .fin__mail { font-size: clamp(13px, 4.1vw, 19px); min-height: 62px; }
+
+  .fin__bar { justify-content: flex-start; gap: 10px 20px; }
+  .fin__c { flex-basis: 100%; }
+}
+
+/* the quote is the first thing to go: on a short landscape window the card
+   has to keep its room, and four lines of display type do not shrink usefully */
+@media (max-aspect-ratio: 1/1) and (max-height: 700px) {
+  .f-cap--quote { font-size: clamp(28px, 9vw, 44px); }
+  .f-cap--blw, .f-cap--br { display: none; }
+}
+@media (min-aspect-ratio: 1/1) and (max-height: 620px) {
+  .f-cap--quote { font-size: clamp(30px, 4.4vw, 58px); }
+  .fin__lede { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fin .f-cap,
+  .fin .f-cap--quote span,
+  .fin__card,
+  .fin__bar {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
+  .fin__status i { animation: none; }
+}
