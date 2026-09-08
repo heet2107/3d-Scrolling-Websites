@@ -24,8 +24,11 @@ const FAR_Z = -11.6;              // depth 1 lands here
 // phone, because apparent size goes as 1/aspect and a portrait aspect is a
 // third of a landscape one — the same deck that reads as a room on a laptop
 // becomes four overlapping billboards on a handset.
-const CARD_NDC = 0.29;            // fraction of frame width, landscape
-const CARD_NDC_PORTRAIT = 0.46;
+// Fraction of frame WIDTH one card fills. The plates are square now, so a card
+// is as tall as it is wide; the old landscape values would have made the deck
+// 1.6x taller overnight and stacked the rows into each other.
+const CARD_NDC = 0.155;           // landscape
+const CARD_NDC_PORTRAIT = 0.255;
 const TRAIL_SECONDS = 6.5;
 const TRAIL_STEPS = 150;
 const EMBERS = 620;
@@ -48,6 +51,13 @@ export class Universe {
     this.atlas = atlas;
     this.art = texture(gl);
     upload(gl, this.art, atlas.canvas);
+    // Every vector mark and monogram is already on that first upload, so the
+    // deck is complete from frame one. Supplied images land later and repaint
+    // their own tile; re-upload only if one actually arrived, so a deck with
+    // no rasters — or a failed fetch — costs nothing.
+    atlas.ready.then((changed) => {
+      if (changed) upload(gl, this.art, atlas.canvas);
+    });
 
     this.proj = new Float32Array(16);
     this.view = identity(new Float32Array(16));
@@ -144,8 +154,17 @@ export class Universe {
     this.cardW = ndc * -NEAR_Z * tanHalf * this.aspect;
     // portrait has far less horizontal room, so the deck is pulled in and the
     // whole composition is nudged up above the copy that sits below it
-    const spread = this.portrait ? 0.46 : 1.0;
-    const rise = this.portrait ? 0.10 : 0.0;
+    // Portrait has a third of the horizontal room and the copy sits below the
+    // deck, so the composition pulls in and lifts. The lift is small on
+    // purpose: at 0.10 it carried the topmost card off the top of the frame,
+    // which is a worse failure than the deck sitting a little low.
+    const spread = this.portrait ? 0.42 : 1.0;
+    const rise = this.portrait ? 0.055 : 0.0;
+    // Vertical squash, portrait only. The authored y values are one set shared
+    // by both orientations, and a phone has far less room per unit of y, so the
+    // extremes of the deck walked off the top and into the copy below. Pulling
+    // them toward the centre keeps the same arrangement at a shorter stride.
+    const squash = this.portrait ? 0.78 : 1.0;
 
     for (const c of this.cards) {
       const z = lerp(NEAR_Z, FAR_Z, c.tool.d);
@@ -157,7 +176,7 @@ export class Universe {
       // wide aspect and the deck still reads as continuing past the frame
       const fx = Math.tanh(c.tool.x * 0.92) * 1.06 * spread;
       c.x = fx * dist * tanHalf * this.aspect;
-      c.y = (c.tool.y + rise) * dist * tanHalf;
+      c.y = (c.tool.y * squash + rise) * dist * tanHalf;
     }
     // painter's order: the depth test is off so the deck is sorted by hand
     this.order = this.cards.map((c, i) => i)

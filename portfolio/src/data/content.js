@@ -54,20 +54,24 @@ export const STACK = [
 // room with things in it rather than a grid pushed back in Z.
 
 export const TOOLS = [
-  { label: 'Claude API',  kind: 'llm',   x: -0.62, y: 0.30, d: 0.20 },
-  { label: 'MCP Servers', kind: 'llm',   x: -0.10, y: 0.46, d: 0.05 },
-  { label: 'RAG',         kind: 'llm',   x: 0.48,  y: 0.34, d: 0.24 },
-  { label: 'LangGraph',   kind: 'llm',   x: 0.92,  y: 0.06, d: 0.52 },
-  { label: 'Next.js',     kind: 'web',   x: -0.95, y: -0.02, d: 0.48 },
+  // x and y are where the card should LAND ON SCREEN, not world coordinates:
+  // universe.js solves the world position that projects here. Authored against
+  // the square plates, the act title (upper left) and the lede column beneath
+  // it, so nothing important hides behind type or gets sliced by the frame.
+  { label: 'Claude API',  kind: 'llm',   x: -0.28, y: 0.25,  d: 0.20 },
+  { label: 'MCP Servers', kind: 'llm',   x: -0.10, y: 0.41,  d: 0.05 },
+  { label: 'RAG',         kind: 'llm',   x: 0.48,  y: 0.34,  d: 0.24 },
+  { label: 'LangGraph',   kind: 'llm',   x: 0.87,  y: 0.06,  d: 0.52 },
+  { label: 'Next.js',     kind: 'web',   x: -0.86, y: -0.02, d: 0.48 },
   { label: 'React',       kind: 'web',   x: -0.44, y: -0.16, d: 0.12 },
   { label: 'TypeScript',  kind: 'web',   x: 0.16,  y: -0.06, d: 0.00 },
-  { label: 'Node.js',     kind: 'web',   x: 0.70,  y: -0.22, d: 0.18 },
+  { label: 'Node.js',     kind: 'web',   x: 0.60,  y: -0.22, d: 0.18 },
   { label: 'Python',      kind: 'lang',  x: -0.72, y: -0.44, d: 0.34 },
   { label: 'PostgreSQL',  kind: 'data',  x: -0.16, y: -0.54, d: 0.28 },
   { label: 'Supabase',    kind: 'data',  x: 0.40,  y: -0.50, d: 0.40 },
   { label: 'AWS',         kind: 'infra', x: 0.88,  y: -0.38, d: 0.58 },
-  { label: 'Docker',      kind: 'infra', x: -1.02, y: 0.44,  d: 0.66 },
-  { label: 'Terraform',   kind: 'infra', x: 1.06,  y: 0.44,  d: 0.70 },
+  { label: 'Docker',      kind: 'infra', x: -0.80, y: 0.10,  d: 0.66 },
+  { label: 'Terraform',   kind: 'infra', x: 0.96,  y: 0.44,  d: 0.70 },
 ];
 
 /** Per-family colour, used for the card rim and the ember it throws. */
