@@ -1,2 +1,497 @@
-/* Act stylesheet — record. Written with its act; this placeholder exists so the
-   stylesheet index.html links is never a 404 while the act is being built. */
+/* ==========================================================================
+   Act V — the record.
+
+   The one act in the film that is a DOCUMENT: normal flow, real headings, a
+   measure you can read at, and a canvas fixed behind it that never asks for
+   attention. Every typographic decision here is settled by "can a recruiter
+   read this on a phone in an airport", and the film language — amber accents,
+   hairlines, outlined index numerals, the instrument-panel ticks — is carried
+   over on top of that rather than in place of it.
+   ========================================================================== */
+
+.record {
+  position: relative;
+  /* the reading column. plate.js reads the same number to keep the canvas
+     grid out from under the body copy, so the two must be changed together */
+  --rec-w: 1120px;
+  --rule: #241a12;
+  --xp-pad-t: clamp(24px, 3.6vh, 44px);
+  padding: clamp(76px, 12vh, 148px) var(--edge) clamp(96px, 15vh, 180px);
+}
+
+#recordStage {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100svh;
+  /* the plate is a backdrop the record scrolls over, so it must take no part
+     in the flow — any height here would push the entire act down one screen */
+  margin-bottom: -100svh;
+  pointer-events: none;
+}
+
+/* the canvas is positioned, so without a stacking order of their own the
+   words would paint UNDER it */
+.record > :not(canvas) {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--rec-w));
+  margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   The head
+   -------------------------------------------------------------------------- */
+
+.record__head {
+  padding-bottom: clamp(26px, 4vh, 46px);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: clamp(44px, 7vh, 86px);
+}
+
+.record__over {
+  margin: 0 0 12px;
+  font-size: clamp(9px, .72vw, 11px);
+  letter-spacing: .34em; text-transform: uppercase;
+  color: var(--ink);
+}
+
+.record__name {
+  margin: 0;
+  font-family: var(--disp);
+  font-size: clamp(42px, 7.6vw, 112px);
+  line-height: .86;
+  letter-spacing: .01em;
+  color: var(--paper);
+}
+
+.record__stats {
+  list-style: none;
+  margin: clamp(28px, 4.4vh, 50px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, .9vh, 11px);
+  opacity: 0;
+  transform: translateY(12px);
+}
+.stat + .stat {
+  margin-left: clamp(20px, 3.6vw, 58px);
+  padding-left: clamp(20px, 3.6vw, 58px);
+  border-left: 1px solid var(--rule);
+}
+.record__stats.is-lit .stat {
+  opacity: 1; transform: none;
+  transition: opacity .7s var(--ease-out), transform .8s var(--ease-out);
+  transition-delay: calc(var(--i) * .1s);
+}
+
+.stat__n {
+  font-family: var(--disp);
+  font-size: clamp(32px, 4.6vw, 66px);
+  line-height: .9;
+  color: var(--ink);
+  /* the count-up runs through 1- and 2-digit values; proportional figures make
+     the label under it twitch sideways for a second */
+  font-variant-numeric: tabular-nums;
+}
+
+.stat__l {
+  font-size: clamp(9px, .74vw, 11.5px);
+  letter-spacing: .2em; text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--dim);
+  max-width: 13ch;
+}
+
+/* --------------------------------------------------------------------------
+   The two section rules
+   -------------------------------------------------------------------------- */
+
+.record__sub {
+  display: flex; align-items: center;
+  gap: clamp(12px, 1.6vw, 22px);
+  margin: 0 0 clamp(24px, 3.8vh, 42px);
+  font-size: clamp(10px, .8vw, 12.5px);
+  font-weight: 500;
+  letter-spacing: .34em; text-transform: uppercase;
+  color: var(--ink);
+}
+.record__sub::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, #3d2c18, rgba(36,26,18,0) 82%);
+}
+
+/* --------------------------------------------------------------------------
+   Experience — three rows hung off one hairline spine
+   -------------------------------------------------------------------------- */
+
+.record__rail {
+  list-style: none;
+  margin: 0 0 clamp(64px, 10vh, 118px);
+  padding: 0;
+}
+
+.xp {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    clamp(50px, 5.4vw, 84px) minmax(0, 1fr) minmax(150px, 20%);
+  grid-template-areas:
+    "no co   meta"
+    "no role meta"
+    "no pts  meta"
+    "no stk  stk";
+  column-gap: clamp(16px, 2.2vw, 38px);
+  padding: var(--xp-pad-t) 0 clamp(32px, 5vh, 60px);
+  padding-left: clamp(18px, 2.4vw, 34px);
+}
+
+/* the spine: one segment per row, drawn top-down as the row resolves. Segments
+   butt against each other, so three rows read as a single line being drawn */
+.xp::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, #7a5522, var(--rule));
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform 1s var(--ease-out);
+}
+.xp.is-lit::before { transform: scaleY(1); }
+
+/* the node the row hangs from */
+.xp::after {
+  content: ''; position: absolute;
+  left: -3.5px; top: calc(var(--xp-pad-t) + 7px);
+  width: 8px; height: 8px;
+  background: #000;
+  border: 1px solid var(--ink);
+  transform: rotate(45deg) scale(0);
+  transition: transform .55s var(--ease-out) .3s;
+}
+.xp.is-lit::after { transform: rotate(45deg) scale(1); }
+
+.xp__no {
+  grid-area: no;
+  margin: 0;
+  font-family: var(--disp);
+  font-size: clamp(30px, 3.6vw, 56px);
+  line-height: .82;
+  color: #7c5525;
+}
+
+.xp__co {
+  grid-area: co;
+  margin: 0;
+  font-family: var(--disp);
+  font-size: clamp(25px, 2.9vw, 44px);
+  line-height: .96;
+  letter-spacing: .012em;
+  color: var(--paper);
+}
+
+.xp__role {
+  grid-area: role;
+  margin: 10px 0 0;
+  font-size: clamp(12px, 1.02vw, 15px);
+  font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--ink);
+}
+
+.xp__meta {
+  grid-area: meta;
+  align-self: start;
+  margin: 0;
+  display: flex; flex-direction: column;
+  gap: 8px;
+  text-align: right;
+  font-size: clamp(10px, .78vw, 12px);
+  letter-spacing: .16em; text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--dim);
+}
+.xp__when { color: #d8d2cc; }
+.xp__where { color: var(--dimmer); }
+
+.xp__points {
+  grid-area: pts;
+  list-style: none;
+  margin: clamp(20px, 2.8vh, 32px) 0 0;
+  padding: 0;
+  /* the right-hand column is left as a margin on purpose: the bullets are the
+     one thing on this page that gets read word for word, and 110 characters
+     of condensed Oswald is a wall, not a line */
+  max-width: 74ch;
+}
+.xp__points li {
+  position: relative;
+  padding-left: clamp(22px, 2vw, 30px);
+  font-size: clamp(13.5px, 1.02vw, 15.5px);
+  font-weight: 300;
+  line-height: 1.82;
+  letter-spacing: .008em;
+  color: #cfc9c3;
+  opacity: 0;
+  transform: translateY(12px);
+}
+.xp__points li + li { margin-top: clamp(11px, 1.6vh, 18px); }
+.xp__points li::before {
+  content: ''; position: absolute;
+  left: 0; top: .93em;
+  width: clamp(11px, 1.2vw, 16px); height: 1px;
+  background: var(--ink);
+  opacity: .85;
+}
+
+.xp__stack {
+  grid-area: stk;
+  list-style: none;
+  margin: clamp(22px, 3vh, 32px) 0 0;
+  padding: 0;
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.xp__stack li {
+  padding: .46em .8em .36em;
+  border: 1px solid #33261a;
+  /* the chips sit over the plate, so they carry their own ground rather than
+     letting an ember drift through the middle of a word */
+  background: rgba(8, 6, 5, .6);
+  font-size: clamp(9.5px, .74vw, 11.5px);
+  letter-spacing: .17em; text-transform: uppercase;
+  color: #ada6a0;
+}
+
+/* the row resolves: numeral, name, dates, then the bullets one after another */
+.xp__no, .xp__co, .xp__role, .xp__meta, .xp__stack {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.xp.is-lit .xp__no,
+.xp.is-lit .xp__co,
+.xp.is-lit .xp__role,
+.xp.is-lit .xp__meta,
+.xp.is-lit .xp__stack,
+.xp.is-lit .xp__points li {
+  opacity: 1;
+  transform: none;
+  transition: opacity .68s var(--ease-out), transform .82s var(--ease-out);
+  transition-delay: var(--d, 0s);
+}
+.xp.is-lit .xp__no      { --d: .10s; }
+.xp.is-lit .xp__co      { --d: .06s; }
+.xp.is-lit .xp__role    { --d: .15s; }
+.xp.is-lit .xp__meta    { --d: .22s; }
+.xp.is-lit .xp__points li { --d: calc(.3s + var(--i) * .075s); }
+.xp.is-lit .xp__stack   { --d: .56s; }
+
+/* --------------------------------------------------------------------------
+   Credentials — a deck of five, in three kinds
+   -------------------------------------------------------------------------- */
+
+.record__creds {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(12px, 1.4vw, 20px);
+}
+
+.cred {
+  --tint: var(--ink);
+  --tint-dim: #5c3f1a;
+  position: relative;
+  display: grid;
+  grid-template-areas: "badge" "title" "issuer" "body";
+  align-content: start;
+  grid-column: span 2;
+  padding: clamp(20px, 2.2vw, 30px);
+  border: 1px solid #1f1812;
+  background: linear-gradient(158deg, rgba(19, 13, 9, .92), rgba(6, 5, 4, .92));
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+}
+/* the last two run the full width in two columns — the set has a rhythm
+   instead of being one grey box repeated five times */
+.cred:nth-child(n+4) {
+  grid-column: span 3;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  grid-template-areas:
+    "badge  body"
+    "title  body"
+    "issuer body";
+  column-gap: clamp(22px, 2.6vw, 44px);
+}
+
+.cred::before {
+  content: ''; position: absolute;
+  left: 0; right: 0; top: 0; height: 2px;
+  background: var(--tint);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform .9s var(--ease-out);
+  transition-delay: calc(var(--i) * .085s + .2s);
+}
+
+.record__creds.is-lit .cred {
+  opacity: 1;
+  transform: none;
+  transition: opacity .7s var(--ease-out), transform .85s var(--ease-out);
+  transition-delay: calc(var(--i) * .085s);
+}
+.record__creds.is-lit .cred::before { transform: scaleX(1); }
+
+.cred__badge {
+  grid-area: badge;
+  justify-self: start;
+  margin: 0;
+  padding: .46em .78em .34em;
+  border: 1px solid var(--tint-dim);
+  font-size: clamp(9px, .7vw, 10.5px);
+  letter-spacing: .22em; text-transform: uppercase;
+  color: var(--tint);
+}
+
+.cred__title {
+  grid-area: title;
+  margin: clamp(16px, 1.8vw, 24px) 0 0;
+  font-family: var(--disp);
+  font-size: clamp(18px, 1.6vw, 26px);
+  line-height: 1.06;
+  letter-spacing: .01em;
+  color: var(--paper);
+}
+
+.cred__issuer {
+  grid-area: issuer;
+  margin: 10px 0 0;
+  font-size: clamp(10px, .78vw, 12px);
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--ink);
+}
+
+.cred__body {
+  grid-area: body;
+  margin: clamp(14px, 1.6vh, 20px) 0 0;
+  font-size: clamp(12.5px, .94vw, 14.5px);
+  font-weight: 300;
+  line-height: 1.78;
+  color: #b6b0aa;
+  max-width: 56ch;
+}
+.cred:nth-child(n+4) .cred__body {
+  align-self: center;
+  margin-top: 0;
+}
+
+/* a watermark, not a label — the ordinal is already in the reading order */
+.cred__no {
+  position: absolute;
+  right: clamp(13px, 1.3vw, 19px);
+  top: clamp(9px, 1vw, 14px);
+  font-family: var(--disp);
+  font-size: clamp(30px, 3vw, 48px);
+  line-height: 1;
+  color: #191209;
+  pointer-events: none;
+}
+
+/* the degree is the anchor of the set: a filled badge, a warmer panel */
+.cred--degree {
+  --tint: var(--ink);
+  background: linear-gradient(158deg, rgba(38, 24, 11, .95), rgba(9, 7, 5, .94));
+  border-color: #322313;
+}
+.cred--degree .cred__badge {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #150a00;
+}
+.cred--degree .cred__no { color: #241806; }
+
+.cred--bootcamp {
+  --tint: var(--ember);
+  --tint-dim: #5e3413;
+}
+.cred--bootcamp .cred__badge { color: var(--ink-hot); }
+
+/* --------------------------------------------------------------------------
+   Narrow — one column, and the meta folds into a single line
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .xp {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "no   co"
+      "no   role"
+      "meta meta"
+      "pts  pts"
+      "stk  stk";
+    column-gap: clamp(12px, 3vw, 18px);
+  }
+  .xp__no { font-size: clamp(26px, 6.4vw, 38px); }
+  .xp__meta {
+    flex-direction: row; flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 clamp(10px, 2.4vw, 16px);
+    text-align: left;
+    margin-top: clamp(14px, 2.2vh, 20px);
+  }
+  .xp__meta span + span::before {
+    content: '·';
+    margin-right: clamp(10px, 2.4vw, 16px);
+    color: var(--dimmer);
+  }
+  .xp__points { max-width: none; }
+
+  .record__creds { grid-template-columns: minmax(0, 1fr); }
+  .cred, .cred:nth-child(n+4) {
+    grid-column: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "badge" "title" "issuer" "body";
+  }
+  .cred:nth-child(n+4) .cred__body {
+    align-self: start;
+    margin-top: clamp(14px, 1.6vh, 20px);
+  }
+}
+
+@media (max-width: 560px) {
+  .record { --rec-w: 100%; }
+  .stat + .stat {
+    margin-left: clamp(14px, 4vw, 22px);
+    padding-left: clamp(14px, 4vw, 22px);
+  }
+  .stat__l { max-width: 10ch; }
+  .xp { padding-left: 16px; }
+  .xp__points li { font-size: 14px; line-height: 1.78; }
+  .cred__body { font-size: 13.5px; }
+}
+
+/* --------------------------------------------------------------------------
+   Motion off: the finished page, immediately
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .stat,
+  .xp__no, .xp__co, .xp__role, .xp__meta, .xp__stack,
+  .xp__points li,
+  .cred {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .xp::before { transform: scaleY(1) !important; transition: none !important; }
+  .xp::after { transform: rotate(45deg) !important; transition: none !important; }
+  .cred::before { transform: scaleX(1) !important; transition: none !important; }
+}
