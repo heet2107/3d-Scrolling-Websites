@@ -202,7 +202,7 @@ void main() {
                 * smoothstep(1.10, 0.0, rr) * step(0.20, rr);
     float mech = (ring * 0.55 + teeth * 0.85 + spoke * 0.30)
                * floorMask * exp(-below * 3.1);
-    col += mix(EMBER, AMBER, 0.35) * mech * 0.28;
+    col += mix(EMBER, AMBER, 0.35) * mech * 0.34;
 
     // the mirror is compressed toward the horizon and rippled, so the floor
     // reads as wet rather than as a second, upside-down room
@@ -405,6 +405,6 @@ void main() {
   vec2 d = gl_PointCoord - 0.5;
   float f = exp(-dot(d, d) * 13.0);
   vec3 col = mix(EMBER, HOT, clamp(vGlow * 0.40, 0.0, 1.0));
-  float a = f * clamp(vGlow, 0.0, 2.2) * 0.30 * uIn;
+  float a = f * clamp(vGlow, 0.0, 2.2) * 0.42 * uIn;
   oCol = vec4(col * a, a);
 }`;

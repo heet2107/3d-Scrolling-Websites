@@ -17,10 +17,20 @@ export async function initWork() {
   const canvas = document.getElementById('workStage');
   if (!section || !canvas) throw new Error('no work section');
 
-  // the plates are TYPE, drawn into a canvas: building the atlas before Anton
+  // The plates are TYPE, drawn into a canvas: building the atlas before Anton
   // and Oswald are usable bakes the fallback face into the texture for good,
-  // and nothing later can repaint it
-  if (document.fonts) await document.fonts.ready.catch(() => {});
+  // and nothing later can repaint it. Waiting on `fonts.ready` alone is not
+  // enough — it resolves immediately for a face nothing has asked for yet —
+  // so the faces the atlas needs are requested here by name.
+  if (document.fonts) {
+    await Promise.all([
+      document.fonts.load('400 60px Anton'),
+      document.fonts.load('600 15px Oswald'),
+      document.fonts.load('500 15px Oswald'),
+      document.fonts.load('400 15px Oswald'),
+      document.fonts.load('300 15px Oswald'),
+    ]).catch(() => { /* fall back to the stack in each font shorthand */ });
+  }
 
   const scene = new Gallery(canvas);
   if (!scene.ok) throw new Error('WebGL unavailable');

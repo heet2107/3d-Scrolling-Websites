@@ -23,7 +23,7 @@ import {
 import { YEARS } from '../data/content.js';
 import { clamp, damp, lerp } from '../lib/ease.js';
 
-const MOTES = 260;
+const MOTES = 300;
 const HAND_LAMBDA = 4.6;     // the hand has weight; it arrives, it does not cut
 const HEAT_LAMBDA = 7.0;
 

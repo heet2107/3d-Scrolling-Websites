@@ -224,6 +224,18 @@ favicon.svg             drawn as geometry, not set in a webfont that a
 Four of the six acts build their DOM from it, so splitting the source of truth
 between a template and a module is how a résumé ends up disagreeing with itself.
 
+## Deploying
+
+Serve this directory. There is nothing to build, so no build command and no
+install step.
+
+On Vercel that means one project with **root directory `portfolio`**, and
+`vercel.json` sets `outputDirectory` to `.` — which is load bearing. Without
+it the zero config build finds `public/` and takes that for the output
+directory, so the deploy carries the six woff2 files and nothing else. Every
+page 404s and the build still reports READY, because from Vercel's side
+nothing went wrong.
+
 ## Robustness
 
 Each act is loaded on its own and is allowed to fail: a scene that cannot start

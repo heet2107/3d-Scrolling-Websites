@@ -103,6 +103,15 @@ export async function initChrono() {
     if (reduced) still();
   }, 150));
 
+  if (reduced) {
+    // Honour the preference fully: land on the settled composition and hold it
+    // with no loop. The observer is not registered at all rather than gated —
+    // its callback fires asynchronously, so a guard placed after it here would
+    // run first and the loop would start anyway.
+    still();
+    return scene;
+  }
+
   new IntersectionObserver(([e]) => {
     if (e.isIntersecting === live) return;
     live = e.isIntersecting;
@@ -113,11 +122,6 @@ export async function initChrono() {
     last = performance.now();
     raf = requestAnimationFrame(frame);
   }, { rootMargin: '12% 0px' }).observe(section);
-
-  if (reduced) {
-    live = false;
-    still();
-  }
 
   return scene;
 }
