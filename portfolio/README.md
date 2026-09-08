@@ -42,10 +42,16 @@ So every asset is *generated*, at runtime, in the browser:
 | --- | --- |
 | Matted video of the subject, clipped inside the wordmark | A procedural **signal field** — streams, filaments and pulsing nodes — clipped inside the wordmark |
 | A supplied film for the tools scene | A **projected room**: cards solved to real world positions, lit by a light-painting ribbon |
-| Photographs behind the year cards | A drawn **clock and timeline**, with the room and its mechanism shaded in GLSL |
+| Photographs behind the year cards | A drawn **clock and timeline** shaded in GLSL, with generated artwork on each year card |
 | Screenshots of each project | **Procedural interface plates**, one per project, drawn to a canvas atlas |
 
-The only binary files in the repository are two open-licensed typefaces.
+Binary files in the repository: two open-licensed typefaces, one supplied
+brand mark (Claude), and seven generated year images. Everything else —
+including ten of the eleven tool logos on the stack deck — is drawn from
+geometry at runtime.
+
+The year images are generated artwork, not photographs. They show no real
+person, workplace or document.
 
 ## Colour
 
@@ -88,6 +94,17 @@ on a phone is either three storeys of empty screen or a strip of hairlines.
 ### Act II — the stack
 
 A room you fly through, holding the fourteen things Heet actually builds with.
+
+**The cards carry real marks.** Ten are drawn from geometry at runtime in
+`scene2/logos/marks.js`, so the deck gains no weight per logo and the project
+keeps its rule of no dependency and no CDN. Claude is the one supplied image,
+decoded off the critical path and repainted onto its own tile when it arrives,
+so the deck is complete from its first frame either way.
+
+**Three tools get a monogram instead.** MCP, RAG and LangGraph are techniques
+and protocols with no mark to draw. A monogram set in the deck's own typeface
+reads as "a tool without a logo", which is true; an invented mark would put a
+false thing on the page.
 
 **Depth is chosen; position is solved.** A card's depth is authored, and its
 world position is then solved so the projection lands it exactly where the
@@ -135,6 +152,22 @@ MCP and ReAct agents in production, BiznezzAI and CaseGenius, and Vanikaar now.
 pivot hangs a beam hand over it whose hot core lands as an amber flood exactly
 on the active year's node, so the clock reads as *projecting light into* the
 timeline rather than merely pointing at it.
+
+**The dial is a second circle, and an enormous one.** Its centre sits far above
+the frame, so only a shallow sweep of its lower rim is ever on screen. That is
+what makes the act read as a room-sized instrument: a complete ring would read
+as a logo parked in the corner. Its graticule runs 520 ticks with every fifth
+long, brightest where the hand is pointing. Two things are easy to get
+backwards — the ticks step *outward*, because the centre is off-frame and
+inward ticks would be drawn where nobody can see them; and the dial is measured
+*before* the beam's wedge early-out, like the mount, because it lies outside
+that wedge and spans the whole frame.
+
+**Each year card carries generated artwork** over a warm tinted ground, so a
+picture that has not decoded, or fails outright, leaves a deliberate band
+rather than a white gap. The images take an empty `alt`: the card's own prose
+is the content, and announcing seven pieces of decoration would only make a
+screen reader user sit through them.
 
 **The year cards are DOM.** Each carries prose that has to stay crisp,
 selectable and reachable, and each is a real `<button>`, so keyboard and touch
