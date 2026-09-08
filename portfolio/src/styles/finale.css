@@ -24,6 +24,9 @@
   overflow: hidden;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  /* the copy hangs off the TOP of the middle row and the slack falls to the
+     bottom of it, because the lower third of the frame is where the wordmark
+     is drawn — the grid has to leave that band empty on purpose */
   grid-template-rows: auto minmax(0, 1fr) auto auto;
   grid-template-areas:
     'tl    tr'
@@ -46,22 +49,30 @@
 .fin__pin > *:not(#finStage) { position: relative; z-index: 2; }
 
 /* --------------------------------------------------------------------------
-   The four corners
+   The four corners.
+
+   These are styled through the four positional classes rather than through
+   .f-cap, which the quote also carries: a shared selector reads tidier right
+   up until a media query redeclares it after .f-cap--quote and silently drops
+   96px of display type to 9.5px with two ems of tracking.
    -------------------------------------------------------------------------- */
 
-.f-cap {
-  margin: 0;
+.f-cap { margin: 0; text-shadow: 0 0 26px rgba(0, 0, 0, .92); }
+
+.f-cap--tl, .f-cap--tr, .f-cap--blw, .f-cap--br {
   font-size: clamp(9px, .72vw, 11.5px);
   letter-spacing: .22em;
   text-transform: uppercase;
   line-height: 2.05;
   color: var(--dim);
-  text-shadow: 0 0 26px rgba(0, 0, 0, .92);
   opacity: 0;
   transform: translateY(9px);
   transition: opacity .8s var(--ease-out), transform .9s var(--ease-out);
 }
-.fin.is-lit .f-cap { opacity: 1; transform: none; }
+.fin.is-lit :is(.f-cap--tl, .f-cap--tr, .f-cap--blw, .f-cap--br) {
+  opacity: 1;
+  transform: none;
+}
 
 .f-cap--tl { grid-area: tl; }
 .f-cap--tr { grid-area: tr; justify-self: end; text-align: right; }
@@ -83,24 +94,19 @@
 
 .f-cap--quote {
   grid-area: quote;
-  /* both blocks hang from the TOP of the middle row rather than centring in
-     it: the lower third of the frame belongs to the wordmark, and a centred
-     quote drops its last line straight through the letters */
   align-self: start;
-  margin: 0;
   font-family: var(--disp);
   font-size: clamp(34px, 4.5vw, 82px);
   line-height: .87;
   letter-spacing: .008em;
   text-transform: uppercase;
   color: var(--paper);
-  opacity: 1;
-  transform: none;
   text-shadow: 0 0 46px rgba(0, 0, 0, .78);
 }
-/* a short rule above the quote, the same mark the other acts open with — it
-   is what stops four words of display type reading as a caption that drifted
-   into the middle of the frame */
+
+/* a short rule above the quote, the same mark the other acts open with — it is
+   what stops four words of display type reading as a caption that drifted into
+   the middle of the frame */
 .f-cap--quote::before {
   content: '';
   display: block;
@@ -124,6 +130,8 @@
 }
 .fin.is-lit .f-cap--quote span {
   opacity: 1;
+  /* the settled inset is negative so the clip never shaves the overshoot of a
+     round letter or a stray accent off its own line */
   clip-path: inset(-25% -12% -25% -12%);
   transform: none;
   transition:
@@ -302,13 +310,18 @@
 
 /* --------------------------------------------------------------------------
    Portrait
+
+   Everything stacks and the slack moves to the row the lower captions sit in:
+   they hang from the TOP of it and the space underneath is the band the
+   wordmark is drawn into. On a phone that band is the only thing standing
+   between the card and the letters running straight through it.
    -------------------------------------------------------------------------- */
 
 @media (max-aspect-ratio: 1/1) {
   .fin { height: 180svh; }
 
   .fin__pin {
-    grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
     grid-template-areas:
       'tl    tr'
       'quote quote'
@@ -319,13 +332,14 @@
     padding-top: clamp(20px, 4vh, 40px);
   }
 
-  .f-cap { font-size: 9.5px; line-height: 1.95; letter-spacing: .18em; }
-
-  .f-cap--quote {
-    font-size: clamp(34px, 12.5vw, 74px);
-    align-self: end;
-    padding-bottom: clamp(6px, 2vh, 20px);
+  .f-cap--tl, .f-cap--tr, .f-cap--blw, .f-cap--br {
+    font-size: 9.5px;
+    line-height: 1.95;
+    letter-spacing: .18em;
   }
+  .f-cap--blw, .f-cap--br { align-self: start; }
+
+  .f-cap--quote { font-size: clamp(34px, 12.5vw, 74px); }
 
   .fin__card { justify-self: stretch; width: 100%; }
   .fin__lede { max-width: none; }
@@ -335,20 +349,20 @@
   .fin__c { flex-basis: 100%; }
 }
 
-/* the quote is the first thing to go: on a short landscape window the card
-   has to keep its room, and four lines of display type do not shrink usefully */
-@media (max-aspect-ratio: 1/1) and (max-height: 700px) {
-  .f-cap--quote { font-size: clamp(28px, 9vw, 44px); }
+/* On a short window the wordmark's band is the first thing the grid eats, and
+   a name cut in half by the contact card is worse than no captions: the two
+   lower corners go so the band survives. */
+@media (max-aspect-ratio: 1/1) and (max-height: 720px) {
+  .f-cap--quote { font-size: clamp(28px, 9.5vw, 46px); }
   .f-cap--blw, .f-cap--br { display: none; }
 }
-@media (min-aspect-ratio: 1/1) and (max-height: 620px) {
+@media (min-aspect-ratio: 1/1) and (max-height: 640px) {
   .f-cap--quote { font-size: clamp(30px, 4.4vw, 58px); }
   .fin__lede { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fin .f-cap,
-  .fin .f-cap--quote::before,
+  .fin :is(.f-cap--tl, .f-cap--tr, .f-cap--blw, .f-cap--br),
   .fin .f-cap--quote span,
   .fin__card,
   .fin__bar {
@@ -357,6 +371,6 @@
     clip-path: none;
     transition: none;
   }
-  .fin .f-cap--quote::before { transform: scaleX(1); }
+  .fin .f-cap--quote::before { transform: scaleX(1); transition: none; }
   .fin__status i { animation: none; }
 }

@@ -262,6 +262,11 @@ class Deck {
 
   place(L) {
     if (!this.el) return;
+    // the stylesheet is told which composition is running rather than deciding
+    // for itself: a media query and layout3's own portrait test would disagree
+    // for one hairline band of aspect ratios, and in that band the cards would
+    // be positioned for one composition and styled for the other
+    this.el.classList.toggle('is-tall', L.portrait);
     this.el.style.setProperty('--hw', L.headW);
     this.el.style.setProperty('--hh', L.headH);
     this.cards.forEach((el, i) => {

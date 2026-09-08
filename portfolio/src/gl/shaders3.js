@@ -83,6 +83,10 @@ float arcAngle(vec2 p) {
  * nodes, and the pool of light the clock is currently throwing. Written as a
  * function because the floor has to evaluate it a second time at the mirrored
  * point; a reflection faked with noise reads as texture, not as a reflection.
+ *
+ * \`soft\` is 0..1 and only ever BLURS: it must not be allowed to widen the
+ * rail, because a hairline smeared to a fifth of the frame stops being a
+ * reflection of a timeline and becomes a fog bank across the floor.
  */
 vec3 timeline(vec2 p, float soft) {
   float a = arcAngle(p);
@@ -99,9 +103,9 @@ vec3 timeline(vec2 p, float soft) {
              * smoothstep(hi + 0.028, hi + 0.004, a) * drawn;
 
   vec3 col = vec3(0.0);
-  // the rail: a hairline with a wide, dim bed under it
-  col += AMBER * smoothstep(0.0028 + soft, 0.0, d) * band * 0.62;
-  col += EMBER * exp(-d * d * (900.0 / (1.0 + soft * 400.0))) * band * 0.16;
+  // the rail: a hairline with a narrow, dim bed under it
+  col += AMBER * smoothstep(0.0026 + soft * 0.0055, 0.0, d) * band * 0.62;
+  col += EMBER * exp(-d * d * (1400.0 / (1.0 + soft * 2.4))) * band * 0.13;
 
   // the years
   for (int i = 0; i < ${N}; i++) {
@@ -110,10 +114,10 @@ vec3 timeline(vec2 p, float soft) {
     vec2 v = p - uNode[i];
     float r2 = dot(v, v);
     float heat = uHeat[i];
-    col += HOT * exp(-r2 * (26000.0 / (1.0 + soft * 6000.0)))
+    col += HOT * exp(-r2 * (26000.0 / (1.0 + soft * 5.0)))
                * (0.55 + 1.6 * heat) * lit;
-    col += AMBER * exp(-r2 * 900.0) * (0.10 + 0.55 * heat) * lit;
-    col += EMBER * exp(-r2 * 140.0) * (0.04 + 0.34 * heat) * lit;
+    col += AMBER * exp(-r2 * 1400.0) * (0.09 + 0.50 * heat) * lit;
+    col += EMBER * exp(-r2 * 220.0) * (0.03 + 0.26 * heat) * lit;
   }
 
   // the flood: the clock does not point at a year, it lights one. A round
@@ -122,10 +126,10 @@ vec3 timeline(vec2 p, float soft) {
   vec2 lv = p - uLand;
   float lr2 = dot(lv, lv);
   float da = a - uLandA;
-  col += AMBER * exp(-lr2 * 420.0) * 0.85;
-  col += HOT * exp(-lr2 * 3400.0) * 0.90;
-  col += EMBER * exp(-lr2 * 46.0) * 0.30;
-  col += AMBER * exp(-da * da * 210.0) * exp(-d * d * 1500.0) * 0.55;
+  col += AMBER * exp(-lr2 * 700.0) * 0.60;
+  col += HOT * exp(-lr2 * 4200.0) * 0.75;
+  col += EMBER * exp(-lr2 * 90.0) * 0.16;
+  col += AMBER * exp(-da * da * 260.0) * exp(-d * d * 2600.0) * 0.50;
   return col;
 }
 
@@ -136,7 +140,9 @@ void main() {
   vec2 q = (s - 0.5) * vec2(aspect, 1.0) - par;
 
   float below = uHorizon - s.y;                 // > 0 on the floor
-  float floorMask = smoothstep(-0.002, 0.030, below);
+  // the horizon is a soft edge: a hard one reads as a seam between two
+  // different pictures rather than as the far end of a room
+  float floorMask = smoothstep(-0.020, 0.052, below);
 
   vec3 col = vec3(0.0105, 0.0082, 0.0072);
 
@@ -156,7 +162,7 @@ void main() {
   vec2 fw = vec2(q.x * depth, depth);
 
   float grain = fbm3(fw * vec2(1.6, 0.9) + vec2(0.0, uTime * 0.05));
-  col += vec3(0.020, 0.014, 0.010) * grain * floorMask * exp(-below * 2.6);
+  col += vec3(0.016, 0.011, 0.008) * grain * floorMask * exp(-below * 3.4);
 
   // the mechanism: three rings and a ring of teeth, turning once every ~70s
   vec2 rp = fw - vec2(0.0, 1.55);
@@ -184,7 +190,8 @@ void main() {
   vec2 qm = (mir - 0.5) * vec2(aspect, 1.0) - par;
   qm.x += (fbm3(vec2(qm.x * 7.0, uTime * 0.30 + below * 26.0)) - 0.5)
         * below * 0.085;
-  col += timeline(qm, below * 0.9) * floorMask * exp(-below * 4.2) * 0.55;
+  col += timeline(qm, clamp(below * 5.0, 0.0, 1.0))
+       * floorMask * exp(-below * 7.0) * 0.40;
 
   // ---- finish ------------------------------------------------------------
   vec2 dv = (s - 0.5) * vec2(1.04, 1.0);
@@ -245,27 +252,33 @@ void main() {
   // it tapers to a point at the landing distance, so the eye is carried down
   // the rod to the year rather than stopping at a blunt end
   float reach = mix(uBallR * 1.4, L, uHand);
-  float halfW = mix(uBallR * 0.20, uBallR * 0.055, run);
+  float halfW = mix(uBallR * 0.30, uBallR * 0.115, run);
   float ends = smoothstep(uBallR * 0.30, uBallR * 0.62, along)
              * smoothstep(reach + 0.008, reach - 0.006, along);
   float rod = smoothstep(halfW, halfW * 0.70, abs(across)) * ends;
   float edge = smoothstep(halfW * 1.10, halfW * 0.88, abs(across))
              - smoothstep(halfW * 0.86, halfW * 0.64, abs(across));
 
-  body += vec3(0.055, 0.043, 0.036) * rod;
+  body += vec3(0.048, 0.038, 0.032) * rod;
   bodyA = max(bodyA, rod * 0.96);
-  light += AMBER * edge * ends * (0.30 + 0.55 * run) * uHand;
+  light += AMBER * edge * ends * (0.34 + 0.62 * run) * uHand;
   // the core the hand carries: cool near the pivot, white hot at the tip
   light += mix(EMBER, HOT, run * run)
-         * exp(-pow(across / (halfW * 0.42), 2.0)) * ends
-         * (0.35 + 1.25 * run) * uHand * uCore;
+         * exp(-pow(across / (halfW * 0.40), 2.0)) * ends
+         * (0.30 + 1.30 * run) * uHand * uCore;
 
   // ---- the cone it projects ---------------------------------------------
-  float coneW = mix(uBallR * 0.10, uBallR * 1.05, run);
-  float cone = exp(-pow(across / coneW, 2.0) * 1.5)
-             * smoothstep(uBallR * 0.5, uBallR * 1.6, along)
-             * (1.0 - smoothstep(L * 0.86, L * 1.28, along));
-  light += AMBER * cone * 0.115 * uHand * uCore;
+  // wide enough to read as a volume of light: without it the hand is a wire
+  // pointing at a year rather than a lamp lighting one
+  float coneW = mix(uBallR * 0.24, uBallR * 1.75, run * run);
+  float cone = exp(-pow(across / coneW, 2.0) * 1.35)
+             * smoothstep(uBallR * 0.5, uBallR * 2.0, along)
+             * (1.0 - smoothstep(L * 0.84, L * 1.26, along));
+  light += mix(EMBER, AMBER, 0.6) * cone * 0.26 * uHand * uCore;
+  // a tighter inner cone, so the volume has a bright spine down its middle
+  light += AMBER * exp(-pow(across / (coneW * 0.34), 2.0))
+         * smoothstep(uBallR * 0.5, uBallR * 2.0, along)
+         * (1.0 - smoothstep(L * 0.92, L * 1.14, along)) * 0.20 * uHand * uCore;
 
   // ---- the ball ----------------------------------------------------------
   vec2 bv = p - uPivot;

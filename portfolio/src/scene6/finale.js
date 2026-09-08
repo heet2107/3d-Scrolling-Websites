@@ -18,11 +18,15 @@ import { buildWord, measureRatio } from '../scene1/type.js';
 
 const EMBERS = 900;
 
-// The mark is set wider than the frame in portrait so it runs off both edges:
-// a phone has no room for a 5.5:1 wordmark that has to fit, and a closing
-// title that bleeds reads as a frame of a film rather than a logo on a page.
-const MARK_W = { landscape: 0.92, portrait: 1.24 };
-const MARK_FOOT = 0.815;        // where the letters sit their baseline, 0..1 h
+// Fraction of the viewport the mark's ink spans. Portrait runs it edge to edge
+// and a hair past: a 5.5:1 wordmark set to fit inside a phone's margins is a
+// caption, and cropping it harder than this costs the H and the T, which reads
+// as a layout bug rather than as a closing title.
+const MARK_W = { landscape: 0.92, portrait: 1.02 };
+// where the letters sit their baseline, as a fraction of viewport height. It
+// is lower in portrait because the stacked copy leaves only a thin band above
+// the bar for the mark to stand in.
+const MARK_FOOT = { landscape: 0.815, portrait: 0.885 };
 
 let RATIO_ONE = 0;              // ink width : cap height of 'HEET BAROT'
 
@@ -119,10 +123,10 @@ export class Finale {
     // to a caption
     let markW = w * (portrait ? MARK_W.portrait : MARK_W.landscape);
     let capH = markW / r;
-    const maxCap = h * (portrait ? 0.150 : 0.235);
+    const maxCap = h * (portrait ? 0.150 : 0.270);
     if (capH > maxCap) { capH = maxCap; markW = capH * r; }
 
-    const foot = h * MARK_FOOT;
+    const foot = h * (portrait ? MARK_FOOT.portrait : MARK_FOOT.landscape);
     this.markRect = { x: (w - markW) * 0.5, y: foot - capH, w: markW, h: capH };
     this.capH = capH;
 
@@ -134,7 +138,10 @@ export class Finale {
     };
     // the bed is centred on the mark and just wide enough to reach past its
     // cap line and its baseline; tighter and the letters float in a stripe
-    this.band = { y: 1 - (this.markRect.y + capH * 0.5) / h, k: h / (capH * 0.72) };
+    this.band = {
+      y: 1 - (this.markRect.y + capH * 0.5) / h,
+      k: h / (capH * (portrait ? 1.05 : 0.72)),
+    };
 
     this.fitWord();
   }

@@ -1,2 +1,322 @@
-/* Act stylesheet — chrono. Written with its act; this placeholder exists so the
-   stylesheet index.html links is never a 404 while the act is being built. */
+/* ==========================================================================
+   Act III — a journey through time.
+   The room, the arc, the clock, the floor and the light are all canvas. The
+   seven year cards are DOM, because they carry the only real prose in the act
+   and it has to stay crisp, selectable and reachable by a screen reader.
+   Every measurement that decides WHERE something sits arrives from layout3.js
+   as a custom property; this file only decides what it looks like.
+   ========================================================================== */
+
+.chrono {
+  position: relative;
+  /* the extra height past one viewport is how long the act holds the frame */
+  height: 220svh;
+}
+
+.chrono__pin {
+  position: sticky; top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+#chronoStage {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+
+/* the furniture arrives with the act rather than sitting on black waiting */
+.chrono__title,
+.chrono__rail,
+.chrono__hint,
+.chrono__note {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .9s var(--ease-out), transform 1s var(--ease-out);
+}
+.chrono.is-on .chrono__title,
+.chrono.is-on .chrono__rail,
+.chrono.is-on .chrono__hint,
+.chrono.is-on .chrono__note { opacity: 1; transform: none; }
+.chrono.is-on .chrono__rail { transition-delay: .30s; }
+.chrono.is-on .chrono__hint { transition-delay: .18s; }
+.chrono.is-on .chrono__note { transition-delay: .42s; }
+
+/* --------------------------------------------------------------------------
+   The title
+   -------------------------------------------------------------------------- */
+
+.chrono__title {
+  position: absolute; z-index: 6; margin: 0;
+  top: clamp(62px, 8.6vh, 100px);
+  left: var(--edge);
+  font-family: var(--disp);
+  font-size: clamp(27px, min(3.5vw, 6.1vh), 54px);
+  line-height: .88;
+  letter-spacing: .012em;
+  color: var(--paper);
+  text-shadow: 0 0 44px rgba(0,0,0,.92);
+  pointer-events: none;
+}
+.chrono__title span + span { margin-left: .26em; }
+/* the break is forced rather than left to wrapping: the title has to be two
+   lines at every width, or it slides under the first year's panel */
+.chrono__title span:nth-child(3) { margin-left: 0; }
+.chrono__title span:nth-child(3)::before { content: '\A'; white-space: pre; }
+.chrono__title span:first-child { color: var(--ink); }
+.chrono__title span:last-child { color: var(--ink-hot); }
+
+/* --------------------------------------------------------------------------
+   Marginalia
+   -------------------------------------------------------------------------- */
+
+.chrono__hint,
+.chrono__note {
+  position: absolute; z-index: 4; margin: 0;
+  font-size: clamp(8.5px, .68vw, 10.5px);
+  letter-spacing: .21em; text-transform: uppercase;
+  line-height: 2.05;
+  color: var(--dim);
+  pointer-events: none;
+  text-shadow: 0 0 22px rgba(0,0,0,.9);
+}
+.chrono__hint {
+  right: var(--edge);
+  top: clamp(64px, 8.8vh, 102px);
+  text-align: right;
+}
+.chrono__hint i,
+.chrono__note--br i {
+  display: block; width: 1px; height: 40px; margin: 12px 0 0 auto;
+  background: linear-gradient(to bottom, var(--ink), transparent);
+}
+.chrono__note { color: var(--dimmer); }
+.chrono__note--bl { left: var(--edge); bottom: clamp(58px, 9vh, 104px); }
+.chrono__note--br {
+  right: var(--edge); bottom: clamp(58px, 9vh, 104px);
+  text-align: right;
+}
+
+.chrono__rail {
+  position: absolute; z-index: 4; margin: 0;
+  left: 50%; transform: translateX(-50%);
+  bottom: clamp(16px, 3vh, 32px);
+  display: flex; align-items: center;
+  gap: clamp(9px, 1.4vw, 24px);
+  font-size: clamp(8px, .64vw, 10px);
+  letter-spacing: .26em; text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.chrono__rail i {
+  width: clamp(18px, 4vw, 70px); height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dimmer));
+}
+.chrono__rail i:last-child {
+  background: linear-gradient(90deg, var(--dimmer), transparent);
+}
+
+/* --------------------------------------------------------------------------
+   The deck
+   -------------------------------------------------------------------------- */
+
+.chrono__deck {
+  position: absolute; inset: 0; z-index: 5;
+  /* the container spans the whole pin so the cards can be placed anywhere in
+     it, but it must not swallow the pointer before the section sees it */
+  pointer-events: none;
+}
+
+.c {
+  position: absolute;
+  left: calc(var(--x) * 1px);
+  top: calc(var(--y) * 1px);
+  width: calc(var(--hw) * 1px);
+  height: calc(var(--hh) * 1px);
+  /* placed by its FOOT, which is the end the timeline is at */
+  transform: translate(-50%, -100%);
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; text-align: left;
+  overflow: visible;
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity .55s var(--ease-out);
+}
+/* a year exists once the light has reached it, and not before */
+.c.is-in { opacity: 1; }
+.c.is-live { z-index: 3; }
+
+/* the short tick from the card's foot down to its node on the arc */
+.c::after {
+  content: ''; position: absolute; left: 50%; top: 100%;
+  width: 1px; height: 17px;
+  background: linear-gradient(to bottom, var(--dimmer), transparent);
+  transition: background .35s var(--ease-out);
+}
+.c.is-live::after {
+  background: linear-gradient(to bottom, var(--ink-hot), transparent);
+}
+
+.c__year {
+  display: block;
+  font-family: var(--disp);
+  font-size: clamp(21px, 2.25vw, 34px);
+  line-height: 1;
+  letter-spacing: .012em;
+  color: #6d645b;
+  transition: color .38s var(--ease-out), text-shadow .38s var(--ease-out);
+}
+.c:hover .c__year { color: #a49a8f; }
+.c.is-live .c__year {
+  color: var(--ink-hot);
+  text-shadow: 0 0 30px rgba(247,147,30,.55);
+}
+
+.c__tag {
+  display: block; margin-top: 6px;
+  font-size: clamp(7.5px, .60vw, 9.5px);
+  font-style: normal;
+  letter-spacing: .19em; text-transform: uppercase;
+  color: var(--dimmer);
+  white-space: nowrap;
+  transition: color .38s var(--ease-out);
+}
+.c.is-live .c__tag { color: var(--ink); }
+
+/* the hairline that ties the open panel back down to its year */
+.c__stem {
+  position: absolute; left: 50%; bottom: 100%;
+  width: 1px; height: calc(var(--stem) * 1px);
+  background: linear-gradient(to top, rgba(247,147,30,.62), rgba(247,147,30,0));
+  opacity: 0;
+  transition: opacity .45s var(--ease-out);
+}
+.c.is-live .c__stem { opacity: 1; }
+
+/* --------------------------------------------------------------------------
+   The panel
+   -------------------------------------------------------------------------- */
+
+.c__body {
+  position: absolute; left: 0; top: 0;
+  width: calc(var(--bw) * 1px);
+  /* --bx/--by are measured from this button's own corner, and in landscape
+     --by names the panel's BOTTOM edge so that every year's panel hangs on one
+     line no matter how far down the arc its card stands */
+  transform: translate(calc(var(--bx) * 1px), calc(var(--by) * 1px))
+             translateY(-100%);
+  padding: 15px 17px 17px;
+  border: 1px solid rgba(247,147,30,.18);
+  border-top-color: rgba(247,147,30,.50);
+  background: linear-gradient(180deg, rgba(15,10,6,.93), rgba(4,3,2,.95));
+  box-shadow: 0 -18px 54px rgba(0,0,0,.62),
+              inset 0 30px 46px -34px rgba(232,85,0,.55);
+  opacity: 0;
+  pointer-events: none;
+  clip-path: inset(0 0 12% 0);
+  transition: opacity .40s var(--ease-out), clip-path .55s var(--ease-out);
+}
+/* where it is supported the panel is only mostly opaque, so the beam standing
+   behind it shows through as a warm bloom instead of being cut off dead */
+@supports (backdrop-filter: blur(2px)) {
+  .c__body {
+    background: linear-gradient(180deg, rgba(15,10,6,.80), rgba(4,3,2,.86));
+    backdrop-filter: blur(13px) saturate(1.15);
+  }
+}
+.c.is-live .c__body {
+  opacity: 1;
+  pointer-events: auto;
+  clip-path: inset(0 0 0 0);
+}
+
+.c__title {
+  display: block;
+  font-family: var(--disp);
+  font-size: clamp(15px, 1.32vw, 21px);
+  line-height: 1.10;
+  letter-spacing: .012em;
+  color: var(--paper);
+}
+.c__copy {
+  display: block; margin-top: 9px;
+  font-size: clamp(10.5px, .84vw, 12.5px);
+  font-weight: 300;
+  line-height: 1.72;
+  color: #c6c0b9;
+  user-select: text;
+}
+.c__marks {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 13px;
+}
+.c__marks i {
+  font-style: normal;
+  font-size: 8.5px;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid #56381a;
+  padding: 3px 7px 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Portrait — a different composition, not a scaled one.
+   The timeline stands up: the years become a rail of tap targets down the left
+   and one card at a time holds the stage beside them. The class is set from
+   layout3's own portrait test rather than from a media query, so the CSS and
+   the geometry can never disagree about which composition is running.
+   -------------------------------------------------------------------------- */
+
+.chrono__deck.is-tall .c {
+  display: flex; flex-direction: column; justify-content: center;
+  padding-left: 10px;
+  border-left: 1px solid #2e241b;
+  transition: opacity .55s var(--ease-out), border-color .38s var(--ease-out);
+}
+.chrono__deck.is-tall .c.is-live { border-left-color: var(--ink); }
+.chrono__deck.is-tall .c::after,
+.chrono__deck.is-tall .c__stem { display: none; }
+.chrono__deck.is-tall .c__year { font-size: clamp(19px, 5.4vw, 26px); }
+.chrono__deck.is-tall .c__tag {
+  margin-top: 4px;
+  font-size: 7.5px; letter-spacing: .14em;
+  overflow: hidden; text-overflow: ellipsis;
+}
+/* the stage is beside the rail, so the panel is anchored by its TOP and holds
+   one position while the rail scrolls the years past it */
+.chrono__deck.is-tall .c__body {
+  transform: translate(calc(var(--bx) * 1px), calc(var(--by) * 1px));
+  padding: 15px 16px 17px;
+}
+
+@media (max-aspect-ratio: 100/106) {
+  .chrono { height: 200svh; }
+  .chrono__title {
+    top: clamp(56px, 7.4vh, 88px);
+    font-size: clamp(26px, 8.2vw, 46px);
+  }
+  /* "Move to travel through time" is the wrong instruction for a thumb, and
+     the tap targets say it better than a caption would */
+  .chrono__hint { display: none; }
+  .chrono__note--bl { display: none; }
+  .chrono__note--br { bottom: clamp(46px, 6vh, 74px); font-size: 8px; }
+  .chrono__rail { gap: 8px; font-size: 7.5px; letter-spacing: .16em; }
+  .chrono__rail i { width: 12px; }
+  .chrono__rail span:nth-child(4),
+  .chrono__rail span:nth-child(5) { display: none; }
+  .c__title { font-size: clamp(15px, 4.4vw, 19px); }
+  .c__copy { font-size: clamp(11px, 3.1vw, 12.5px); line-height: 1.68; }
+}
+
+@media (max-width: 380px) {
+  .chrono__rail { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chrono__title, .chrono__rail, .chrono__hint, .chrono__note,
+  .c, .c__body, .c__year, .c__tag, .c__stem, .c::after {
+    transition: none;
+  }
+}

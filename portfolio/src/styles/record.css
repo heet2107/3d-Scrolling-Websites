@@ -17,9 +17,14 @@
   --rule: #241a12;
   --rec-top: clamp(76px, 12vh, 148px);
   --xp-pad-t: clamp(24px, 3.6vh, 44px);
-  /* the space above the head is the HEAD's margin, not the section's padding,
-     so the plate below can start at the true top edge of the act */
-  padding: 0 var(--edge) clamp(96px, 15vh, 180px);
+  /* Neither the space above the head nor the space below the deck is section
+     PADDING: both are margins on the content itself. A sticky box is bounded
+     by its containing block's CONTENT box, so padding here would stop the
+     plate short of the act's own edges and leave a visible horizontal seam
+     across the frame. flow-root is what keeps the trailing margin inside the
+     section instead of letting it collapse out and take the height with it. */
+  display: flow-root;
+  padding: 0 var(--edge);
 }
 
 #recordStage {
@@ -319,7 +324,7 @@
 
 .record__creds {
   list-style: none;
-  margin: 0;
+  margin: 0 auto clamp(96px, 15vh, 180px);
   padding: 0;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
