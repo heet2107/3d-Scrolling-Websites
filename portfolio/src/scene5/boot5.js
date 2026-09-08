@@ -73,41 +73,68 @@ export async function initRecord() {
 
 function reveal(section, reduced) {
   const stats = document.getElementById('recordStats');
-  const rows = [...section.querySelectorAll('.xp')];
   const deck = document.getElementById('credDeck');
+  // [element, how far into the frame it has to come (% of viewport), what to
+  //  run the first time it resolves]
+  const beats = [
+    // rows resolve one at a time, because the rail is read one job at a time
+    ...section.querySelectorAll('.xp'),
+  ].map((row) => [row, 12, null]);
+  // the deck is watched as ONE element, so the five cards arrive as a single
+  // event with a stagger rather than as five unrelated fades
+  if (deck) beats.push([deck, 10, null]);
+  if (stats) beats.push([stats, 6, () => count(stats)]);
 
   // Reduced motion, or a browser with no IntersectionObserver: land on the
   // finished page. A résumé that only appears if you happen to scroll it into
   // view at the right speed is worse than one that never animates at all.
   if (reduced || !('IntersectionObserver' in window)) {
-    stats?.classList.add('is-lit');
-    rows.forEach((row) => row.classList.add('is-lit'));
-    deck?.classList.add('is-lit');
+    for (const [el] of beats) el.classList.add('is-lit');
     return;
   }
 
-  const once = (el, bottom, then) => {
-    const io = new IntersectionObserver(([e]) => {
-      // Anything already ABOVE the viewport is lit without ceremony. A visitor
-      // who followed #record, or came back to a restored scroll position, is
-      // standing in the middle of the act — and a row that only ever resolves
-      // on the way down would simply never appear for them.
-      const passed = e.boundingClientRect.bottom <= 0;
-      if (!e.isIntersecting && !passed) return;
-      io.disconnect();
-      el.classList.add('is-lit');
-      if (!passed) then?.();
-    }, { rootMargin: `0px 0px -${bottom}% 0px` });
-    io.observe(el);
+  const pending = new Map(beats.map(([el, , then]) => [el, then]));
+
+  /** @param {boolean} arriving false when the element was already scrolled
+   *  past, in which case it appears finished rather than replaying. */
+  const light = (el, arriving) => {
+    if (!pending.has(el)) return;
+    const then = pending.get(el);
+    pending.delete(el);
+    el.classList.add('is-lit');
+    if (arriving) then?.();
+    if (!pending.size) removeEventListener('scroll', sweep);
   };
 
-  // rows resolve one at a time as they arrive, because the rail is read one
-  // job at a time
-  rows.forEach((row) => once(row, 12));
-  // the deck is watched as ONE element so the five cards arrive as a single
-  // event with a stagger, rather than as five unrelated fades
-  if (deck) once(deck, 10);
-  if (stats) once(stats, 6, () => count(stats));
+  for (const [el, bottom] of beats) {
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      light(el, true);
+    }, { rootMargin: `0px 0px -${bottom}% 0px` });
+    io.observe(el);
+  }
+
+  // An IntersectionObserver only reports a threshold being CROSSED. Something
+  // that goes from below the viewport to above it inside one frame — a hard
+  // flick, a scripted jump, or simply this act finishing its lazy import while
+  // the visitor is already halfway down it — crosses nothing, is never
+  // reported, and would sit at opacity 0 for good. This is the backstop: it
+  // lights whatever is already behind the reader, and unhooks itself the
+  // moment there is nothing left to light.
+  let queued = false;
+  const sweep = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      for (const el of [...pending.keys()]) {
+        if (el.getBoundingClientRect().bottom <= 0) light(el, false);
+      }
+    });
+  };
+  addEventListener('scroll', sweep, { passive: true });
+  sweep();
 }
 
 /**

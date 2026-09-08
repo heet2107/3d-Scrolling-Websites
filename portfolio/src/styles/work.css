@@ -1,2 +1,269 @@
-/* Act stylesheet — work. Written with its act; this placeholder exists so the
-   stylesheet index.html links is never a 404 while the act is being built. */
+/* ==========================================================================
+   Act IV — the work.
+   The deck of screens, the room and the wet floor under them are all canvas.
+   This is the copy standing in front of them, and the controls that drive them.
+   ========================================================================== */
+
+.work {
+  position: relative;
+  /* the height past one viewport IS the deck: seven projects at roughly
+     three-fifths of a screen each, which is enough travel to stop on one
+     without a flick throwing you two projects past it */
+  height: 470svh;
+  --tint: var(--ink);
+}
+
+.work__pin {
+  position: sticky; top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+#workStage {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+
+/* the deck is bright and it moves; every block of copy carries its own scrim
+   or a plate slides under a paragraph and takes it with it */
+.work__pin::before,
+.work__pin::after {
+  content: ''; position: absolute; z-index: 1; pointer-events: none;
+}
+.work__pin::before {
+  top: 0; left: 0; right: 0; height: 30%;
+  background: linear-gradient(to bottom, rgba(0,0,0,.86), rgba(0,0,0,0));
+}
+.work__pin::after {
+  top: 0; bottom: 0; right: 0; width: min(46%, 620px);
+  background: linear-gradient(255deg, rgba(0,0,0,.93) 0%,
+              rgba(0,0,0,.72) 40%, rgba(0,0,0,0) 88%);
+}
+
+.w-label {
+  position: absolute; z-index: 3; margin: 0;
+  pointer-events: none;
+  text-shadow: 0 0 30px rgba(0,0,0,.92);
+}
+
+.w-label--title {
+  top: clamp(74px, 12vh, 132px);
+  left: var(--edge);
+  font-family: var(--disp);
+  font-size: clamp(40px, 7.2vw, 112px);
+  line-height: .86;
+  letter-spacing: .01em;
+  color: var(--paper);
+}
+/* the act's own index, set the way the other acts set theirs */
+.w-label--title::before {
+  content: 'Act 04';
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--ui);
+  font-size: clamp(9px, .72vw, 11px);
+  font-weight: 500;
+  letter-spacing: .34em; text-transform: uppercase;
+  color: var(--tint);
+  transition: color .5s var(--ease-out);
+}
+
+.w-label--ideas {
+  right: var(--edge);
+  top: clamp(74px, 12vh, 132px);
+  text-align: right;
+  font-size: clamp(9px, .74vw, 11.5px);
+  letter-spacing: .22em; text-transform: uppercase;
+  line-height: 2.2;
+  color: var(--dim);
+}
+.w-label--ideas b { color: var(--tint); font-weight: 500;
+                    transition: color .5s var(--ease-out); }
+
+.w-label--scroll {
+  left: var(--edge);
+  bottom: clamp(96px, 16vh, 150px);
+  font-size: clamp(9px, .70vw, 11px);
+  letter-spacing: .24em; text-transform: uppercase;
+  line-height: 2.2;
+  color: var(--dimmer);
+}
+.w-label--scroll::after {
+  content: ''; display: block;
+  width: 1px; height: 46px; margin-top: 14px;
+  background: linear-gradient(to bottom, var(--tint), transparent);
+  transition: background .5s var(--ease-out);
+}
+
+/* the running index — a ghost numeral the deck travels past */
+.w-label--num {
+  right: var(--edge);
+  bottom: clamp(88px, 14vh, 130px);
+  font-family: var(--disp);
+  font-size: clamp(64px, 13vw, 190px);
+  line-height: .72;
+  letter-spacing: -.02em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(247,147,30,.42);
+  text-shadow: none;
+  opacity: .9;
+}
+
+/* --------------------------------------------------------------------------
+   The active project. DOM, not canvas: it has to stay selectable and sharp.
+   -------------------------------------------------------------------------- */
+
+.work__card {
+  position: absolute; z-index: 4;
+  right: var(--edge);
+  top: 50%;
+  transform: translateY(-46%);
+  width: min(38ch, 33vw);
+  pointer-events: auto;
+}
+
+.work__cardIn > * { margin: 0; }
+.work__cardIn.is-in > * {
+  animation: workIn .62s var(--ease-out) both;
+}
+.work__cardIn.is-in > *:nth-child(2) { animation-delay: .05s; }
+.work__cardIn.is-in > *:nth-child(3) { animation-delay: .09s; }
+.work__cardIn.is-in > *:nth-child(4) { animation-delay: .13s; }
+.work__cardIn.is-in > *:nth-child(5) { animation-delay: .17s; }
+@keyframes workIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.work__kind {
+  font-size: clamp(9px, .70vw, 11px);
+  font-weight: 500;
+  letter-spacing: .30em; text-transform: uppercase;
+  color: var(--tint);
+  transition: color .5s var(--ease-out);
+}
+.work__name {
+  margin-top: 10px !important;
+  font-family: var(--disp);
+  font-size: clamp(30px, 3.5vw, 58px);
+  line-height: .94;
+  letter-spacing: .005em;
+  color: var(--paper);
+}
+.work__sub {
+  margin-top: 10px !important;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.12);
+  font-size: clamp(11px, .90vw, 14px);
+  font-weight: 300;
+  letter-spacing: .06em;
+  color: #d9d3cc;
+}
+.work__body {
+  margin-top: 14px !important;
+  font-size: clamp(11px, .84vw, 13px);
+  font-weight: 300;
+  line-height: 1.85;
+  color: #a9a29b;
+}
+.work__tags {
+  margin-top: 20px !important;
+  padding: 0; list-style: none;
+  display: flex; flex-wrap: wrap; gap: 7px;
+}
+.work__tags li {
+  padding: .40em .78em .32em;
+  border: 1px solid rgba(255,255,255,.14);
+  font-size: clamp(8.5px, .66vw, 10.5px);
+  letter-spacing: .16em; text-transform: uppercase;
+  color: #b7b0a9;
+}
+.work__tags li:first-child {
+  border-color: color-mix(in srgb, var(--tint) 55%, transparent);
+  color: var(--tint);
+}
+
+/* --------------------------------------------------------------------------
+   The pips. Real buttons — the deck is reachable without a scroll wheel.
+   -------------------------------------------------------------------------- */
+
+.work__pips {
+  position: absolute; z-index: 5;
+  left: 50%; bottom: clamp(22px, 4vh, 44px);
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: clamp(8px, 1.1vw, 16px);
+  margin: 0; padding: 0; list-style: none;
+}
+.work__pip {
+  display: block;
+  width: clamp(24px, 3.2vw, 44px);
+  padding: 12px 0;
+  background: none; border: 0;
+  cursor: pointer;
+}
+.work__pip i {
+  display: block; height: 2px;
+  background: rgba(255,255,255,.20);
+  transition: background .4s var(--ease-out), transform .4s var(--ease-out);
+  transform-origin: center;
+}
+.work__pip:hover i { background: rgba(255,255,255,.55); }
+.work__pip.is-on i {
+  background: var(--tint);
+  transform: scaleY(2.5);
+}
+
+/* --------------------------------------------------------------------------
+   Portrait: fewer plates, and the copy goes UNDER the stage rather than
+   beside it — a 33vw column on a handset is four words a line.
+   -------------------------------------------------------------------------- */
+
+@media (max-aspect-ratio: 1/1) {
+  .work { height: 430svh; }
+
+  .work__pin::after {
+    top: auto; bottom: 0; left: 0; right: 0;
+    width: auto; height: 58%;
+    background: linear-gradient(to top, rgba(0,0,0,.96) 0%,
+                rgba(0,0,0,.88) 34%, rgba(0,0,0,0) 100%);
+  }
+
+  .w-label--title { top: clamp(62px, 9vh, 92px); font-size: clamp(34px, 11vw, 62px); }
+  .w-label--ideas { display: none; }
+  .w-label--scroll { display: none; }
+  .w-label--num {
+    top: clamp(62px, 9vh, 92px);
+    bottom: auto;
+    font-size: clamp(46px, 16vw, 92px);
+    opacity: .75;
+  }
+
+  .work__card {
+    left: var(--edge); right: var(--edge);
+    top: auto; bottom: clamp(66px, 11vh, 96px);
+    width: auto;
+    transform: none;
+  }
+  .work__name { font-size: clamp(28px, 8.6vw, 46px); }
+  .work__sub { font-size: 12px; }
+  .work__body {
+    font-size: 11.5px; line-height: 1.72;
+    /* the plate above needs the room more than the fourth line of prose does */
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+  .work__tags { margin-top: 14px !important; }
+  .work__tags li:nth-child(n+4) { display: none; }
+  .work__pips { bottom: clamp(16px, 3vh, 28px); gap: 10px; }
+  .work__pip { width: clamp(20px, 6vw, 34px); }
+}
+
+@media (max-width: 520px) {
+  .work__body { font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work__cardIn.is-in > * { animation: none; }
+  .work__pip i { transition: none; }
+}
