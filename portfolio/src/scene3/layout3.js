@@ -137,7 +137,7 @@ function landscape(w, h) {
     // twitch
     pivot: { x: 0.545 * w, y: 0.145 * h, r: px(0.032 * h, 26, 48) },
     horizon: Math.max(...nodes.map((n) => n.y)) + 0.030 * h,
-    panelAnchor: 'bottom',
+    spread: 1.0,
   };
 }
 
@@ -151,7 +151,10 @@ function landscape(w, h) {
  */
 function portraitLayout(w, h) {
   const edge = px(0.045 * w, 16, 26);
-  const headW = px(0.185 * w, 68, 92);
+  // wide enough for the longest tag ('Shipping AI products') to sit under the
+  // year without being clipped; a rail of years ending in ellipses reads as a
+  // layout that ran out of room rather than as an index
+  const headW = px(0.255 * w, 94, 124);
   const headH = px(0.056 * h, 46, 58);
 
   const top = { x: 0.185 * w, y: 0.300 * h };
@@ -193,7 +196,9 @@ function portraitLayout(w, h) {
     mode: 'tall', edge, headW, headH, arc, a0, a1, nodes, cards,
     pivot: { x: 0.780 * w, y: 0.185 * h, r: px(0.030 * w, 22, 34) },
     horizon: Math.max(...nodes.map((n) => n.y)) + 0.045 * h,
-    panelAnchor: 'top',
+    // a tall frame has far more height than width, so light measured in
+    // frame-heights has to be pulled in or one flood covers three years
+    spread: 0.55,
   };
 }
 

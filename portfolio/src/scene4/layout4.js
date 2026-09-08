@@ -1,10 +1,10 @@
 // Act IV — the deck's geometry.
 //
-// The deck is a corridor, not a scatter: one slot per project, threaded along
-// a shallow S so the plate you are reading is dead centre and the rest step
-// away behind it. Everything below is a function of ONE number — d, how many
-// slots this plate is from the one holding the frame — which is what lets the
-// scroll scrub the whole thing by moving a single scalar.
+// The deck is a corridor, not a scatter: one slot per project, the plate you
+// are reading dead centre and the rest stepping away across the frame behind
+// it. Everything below is a function of ONE number — d, how many slots this
+// plate is from the one holding the frame — which is what lets the scroll
+// scrub the whole thing by moving a single scalar.
 //
 // The plate's world size is fixed and the CAMERA moves to frame it. Fitting by
 // resizing the plate instead would change the deck's proportions with every

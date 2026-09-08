@@ -17,6 +17,11 @@ export async function initWork() {
   const canvas = document.getElementById('workStage');
   if (!section || !canvas) throw new Error('no work section');
 
+  // the plates are TYPE, drawn into a canvas: building the atlas before Anton
+  // and Oswald are usable bakes the fallback face into the texture for good,
+  // and nothing later can repaint it
+  if (document.fonts) await document.fonts.ready.catch(() => {});
+
   const scene = new Gallery(canvas);
   if (!scene.ok) throw new Error('WebGL unavailable');
 
@@ -129,7 +134,7 @@ function buildDOM(section) {
   // the deck is canvas, so the full run of projects lives here for anyone
   // reading with a screen reader or a search engine
   if (list) {
-    list.innerHTML = PROJECTS.map((p) => `<li></li>`).join('');
+    list.innerHTML = PROJECTS.map(() => '<li></li>').join('');
     [...list.children].forEach((li, i) => {
       const p = PROJECTS[i];
       // A name, not a heading. The visible card already publishes the active

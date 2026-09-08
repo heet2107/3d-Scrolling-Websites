@@ -106,16 +106,24 @@ export class Chrono {
     this.ballR = L.pivot.r / h;
     this.horizon = 1 - L.horizon / h;
     this.sweep = new Float32Array([L.a0, L.a1]);
+    // the shaders measure every radius in frame-heights, which a standing
+    // composition has far too many of; layout3 says how far the light may run
+    this.spread = L.spread;
   }
 
   /** A pointer sample, in the pin's own pixels. */
   aimAt(x, y) {
-    this.pointerT = projectToPath(this.L.path, x, y);
-    this.hasPointer = true;
-    // the pointer moving is not by itself a decision, so it does not steal the
-    // hand back from a card the visitor deliberately chose
     this.pointer.tx = (x / this.L.w) * 2 - 1;
     this.pointer.ty = (y / this.L.h) * 2 - 1;
+    // In the standing composition the stage sits beside the rail, so a pointer
+    // resting on the panel to READ it is nearer some other year than the one
+    // it is reading — and hover would swap the card out from under it. There
+    // the chips are the whole interface, exactly as they are for a thumb.
+    if (this.L.portrait) return;
+    this.pointerT = projectToPath(this.L.path, x, y);
+    // the pointer moving is not by itself a decision, so it does not steal the
+    // hand back from a card the visitor deliberately chose
+    this.hasPointer = true;
   }
 
   /** A card was focused or activated: that IS a decision, and it takes over. */
@@ -196,6 +204,7 @@ export class Chrono {
     gl.uniform2fv(u.uLand, qLand);
     gl.uniform1f(u.uLandA, land.a);
     gl.uniform1f(u.uHorizon, this.horizon);
+    gl.uniform1f(u.uSpread, this.spread);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     gl.useProgram(this.clock.p);
@@ -209,6 +218,7 @@ export class Chrono {
     gl.uniform2fv(u.uLand, qLand);
     gl.uniform1f(u.uCore, s.rail);
     gl.uniform1f(u.uHand, s.ball);
+    gl.uniform1f(u.uSpread, this.spread);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     gl.useProgram(this.mote.p);

@@ -43,10 +43,12 @@ export class Gallery {
     this.dust = program(gl, DUST_VERT, DUST_FRAG, 'work dust');
 
     const atlas = buildPlates();
-    this.atlas = atlas;
     this.art = texture(gl);
     upload(gl, this.art, atlas.canvas);
     this.texel = [1 / atlas.canvas.width, 1 / atlas.canvas.height];
+    // the atlas is nine megapixels; once the GPU has it there is no reason to
+    // keep the 2D backing store alive for the life of the page
+    atlas.canvas.width = atlas.canvas.height = 0;
 
     this.proj = new Float32Array(16);
     this.view = identity(new Float32Array(16));
@@ -145,7 +147,7 @@ export class Gallery {
     // the scroll is sampled per frame and can arrive in jumps — a wheel notch,
     // a trackpad fling, a pip that scrolls half the act. Damping the head is
     // what turns those into travel instead of teleporting.
-    this.head = instant ? this.target : damp(this.head, this.target, 7.5, dt);
+    this.head = instant ? this.target : damp(this.head, this.target, 9.0, dt);
 
     const p = this.pointer;
     p.x = instant ? p.tx : damp(p.x, p.tx, 3.0, dt);
@@ -185,7 +187,12 @@ export class Gallery {
     gl.uniform1f(this.plate.u.uMat, this.mat);
     gl.uniform1f(this.plate.u.uFogNear, cfg.z0 + cfg.step * 1.1);
     gl.uniform1f(this.plate.u.uFogFar, cfg.z0 + cfg.step * (cfg.vis + 1.4));
-    for (const i of seq) this.drawPlate(i, true);
+    // only the plates near the front are reflected: at three slots back the
+    // return is a few dim pixels behind the haze, and a blurred second draw of
+    // a full-size quad is the most expensive thing in the frame
+    for (const i of seq) {
+      if (Math.abs(i - this.head) < 2.4) this.drawPlate(i, true);
+    }
 
     gl.bindVertexArray(this.quad);
     this.screenPass(this.haze);

@@ -291,12 +291,18 @@
 .chrono__deck.is-tall .c.is-live { border-left-color: var(--ink); }
 .chrono__deck.is-tall .c::after,
 .chrono__deck.is-tall .c__stem { display: none; }
-.chrono__deck.is-tall .c__year { font-size: clamp(19px, 5.4vw, 26px); }
+.chrono__deck.is-tall .c__year { font-size: clamp(20px, 5.8vw, 28px); }
+/* on the rail the tag is a caption for the year the stage is holding, not a
+   label on all seven at once — seven of them stacked reads as a list of
+   subtitles competing with the panel that is already saying it louder */
 .chrono__deck.is-tall .c__tag {
   margin-top: 4px;
-  font-size: 7.5px; letter-spacing: .14em;
+  font-size: 7.5px; letter-spacing: .11em;
   overflow: hidden; text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity .35s var(--ease-out), color .38s var(--ease-out);
 }
+.chrono__deck.is-tall .c.is-live .c__tag { opacity: 1; }
 /* the stage is beside the rail, so the panel is anchored by its TOP and holds
    one position while the rail scrolls the years past it */
 .chrono__deck.is-tall .c__body {
@@ -315,15 +321,15 @@
   .chrono__hint { display: none; }
   .chrono__note--bl { display: none; }
   .chrono__note--br { bottom: clamp(46px, 6vh, 74px); font-size: 8px; }
-  .chrono__rail { gap: 8px; font-size: 7.5px; letter-spacing: .16em; }
-  .chrono__rail i { width: 12px; }
-  .chrono__rail span:nth-child(4),
-  .chrono__rail span:nth-child(5) { display: none; }
+  /* all five themes still fit at this size once the tracking comes in, and
+     the legend only means anything as a whole run */
+  .chrono__rail { gap: 7px; font-size: 7.5px; letter-spacing: .11em; }
+  .chrono__rail i { width: 11px; }
   .c__title { font-size: clamp(15px, 4.4vw, 19px); }
   .c__copy { font-size: clamp(11px, 3.1vw, 12.5px); line-height: 1.68; }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 340px) {
   .chrono__rail { display: none; }
 }
 
