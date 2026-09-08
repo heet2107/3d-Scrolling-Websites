@@ -123,10 +123,19 @@ export class Finale {
     // to a caption
     let markW = w * (portrait ? MARK_W.portrait : MARK_W.landscape);
     let capH = markW / r;
-    const maxCap = h * (portrait ? 0.150 : 0.270);
+    const foot = h * (portrait ? MARK_FOOT.portrait : MARK_FOOT.landscape);
+    let maxCap = h * (portrait ? 0.150 : 0.270);
+
+    // In landscape the quote and the card hang off the top of the frame and
+    // cost a roughly FIXED number of pixels, so a short window leaves less for
+    // the mark than a fraction of its height suggests. Without this the letters
+    // rise into the contact card on a 720-tall laptop and it clips the name.
+    if (!portrait) {
+      const copy = Math.min(420, h * 0.62);
+      maxCap = Math.min(maxCap, Math.max(foot - copy, h * 0.16));
+    }
     if (capH > maxCap) { capH = maxCap; markW = capH * r; }
 
-    const foot = h * (portrait ? MARK_FOOT.portrait : MARK_FOOT.landscape);
     this.markRect = { x: (w - markW) * 0.5, y: foot - capH, w: markW, h: capH };
     this.capH = capH;
 

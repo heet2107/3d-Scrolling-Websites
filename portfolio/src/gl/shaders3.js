@@ -89,47 +89,59 @@ float arcAngle(vec2 p) {
  * reflection of a timeline and becomes a fog bank across the floor.
  */
 vec3 timeline(vec2 p, float soft) {
-  float a = arcAngle(p);
+  vec3 col = vec3(0.0);
   float d = abs(length(p - uArc.xy) - uArc.z);
 
-  // the rail draws itself from the first year outward, so the reveal has a
-  // direction even when the arc runs right to left
-  float front = mix(uSweep.x, uSweep.y, uRail);
-  float dir = sign(uSweep.y - uSweep.x);
-  float drawn = smoothstep(0.008, -0.002, (a - front) * dir);
-  float lo = min(uSweep.x, uSweep.y);
-  float hi = max(uSweep.x, uSweep.y);
-  float band = smoothstep(lo - 0.028, lo - 0.004, a)
-             * smoothstep(hi + 0.028, hi + 0.004, a) * drawn;
+  // Every term below falls off as a Gaussian around the circle, so past this
+  // radius the whole block contributes less than a thousandth of a level. The
+  // room is mostly empty space and this function is evaluated twice per pixel;
+  // without the bound the floor's reflection alone costs more than the rest of
+  // the act put together.
+  if (d < 0.17) {
+    float a = arcAngle(p);
 
-  vec3 col = vec3(0.0);
-  // the rail: a hairline with a narrow, dim bed under it
-  col += AMBER * smoothstep(0.0026 + soft * 0.0055, 0.0, d) * band * 0.62;
-  col += EMBER * exp(-d * d * (1400.0 / (1.0 + soft * 2.4))) * band * 0.13;
+    // the rail draws itself from the first year outward, so the reveal has a
+    // direction even when the arc runs right to left
+    float front = mix(uSweep.x, uSweep.y, uRail);
+    float dir = sign(uSweep.y - uSweep.x);
+    float drawn = smoothstep(0.008, -0.002, (a - front) * dir);
+    float lo = min(uSweep.x, uSweep.y);
+    float hi = max(uSweep.x, uSweep.y);
+    float band = smoothstep(lo - 0.028, lo - 0.004, a)
+               * smoothstep(hi + 0.028, hi + 0.004, a) * drawn;
 
-  // the years
-  for (int i = 0; i < ${N}; i++) {
-    float lit = clamp(uLit - float(i), 0.0, 1.0);
-    if (lit <= 0.0) continue;
-    vec2 v = p - uNode[i];
-    float r2 = dot(v, v);
-    float heat = uHeat[i];
-    col += HOT * exp(-r2 * (26000.0 / (1.0 + soft * 5.0)))
-               * (0.55 + 1.6 * heat) * lit;
-    col += AMBER * exp(-r2 * 1400.0) * (0.09 + 0.50 * heat) * lit;
-    col += EMBER * exp(-r2 * 220.0) * (0.03 + 0.26 * heat) * lit;
+    // the rail: a hairline with a narrow, dim bed under it
+    col += AMBER * smoothstep(0.0026 + soft * 0.0055, 0.0, d) * band * 0.62;
+    col += EMBER * exp(-d * d * (1400.0 / (1.0 + soft * 2.4))) * band * 0.13;
+
+    // the light spilling ALONG the rail either side of where the beam lands
+    float da = a - uLandA;
+    col += AMBER * exp(-da * da * 260.0) * exp(-d * d * 2600.0) * 0.50;
+
+    // the years. They sit ON the circle, so a point this far off it is at
+    // least this far from every one of them.
+    if (d < 0.11) {
+      for (int i = 0; i < ${N}; i++) {
+        float lit = clamp(uLit - float(i), 0.0, 1.0);
+        if (lit <= 0.0) continue;
+        vec2 v = p - uNode[i];
+        float r2 = dot(v, v);
+        float heat = uHeat[i];
+        col += HOT * exp(-r2 * (26000.0 / (1.0 + soft * 5.0)))
+                   * (0.55 + 1.6 * heat) * lit;
+        col += AMBER * exp(-r2 * 1400.0) * (0.09 + 0.50 * heat) * lit;
+      }
+    }
   }
 
-  // the flood: the clock does not point at a year, it lights one. A round
-  // pool, plus a smear that hugs the rail either side of the landing point so
-  // the light reads as spilling ALONG the timeline.
+  // the flood: the clock does not point at a year, it lights one
   vec2 lv = p - uLand;
   float lr2 = dot(lv, lv);
-  float da = a - uLandA;
-  col += AMBER * exp(-lr2 * 700.0) * 0.60;
-  col += HOT * exp(-lr2 * 4200.0) * 0.75;
-  col += EMBER * exp(-lr2 * 90.0) * 0.16;
-  col += AMBER * exp(-da * da * 260.0) * exp(-d * d * 2600.0) * 0.50;
+  if (lr2 < 0.12) {
+    col += AMBER * exp(-lr2 * 700.0) * 0.60;
+    col += HOT * exp(-lr2 * 4200.0) * 0.75;
+    col += EMBER * exp(-lr2 * 90.0) * 0.18;
+  }
   return col;
 }
 
@@ -147,51 +159,57 @@ void main() {
   vec3 col = vec3(0.0105, 0.0082, 0.0072);
 
   // ---- the far wall ------------------------------------------------------
-  float wall = fbm3(q * 2.2 + vec2(uTime * 0.016, 0.0));
-  col += vec3(0.030, 0.020, 0.013) * wall * (1.0 - floorMask) * 0.85;
-  // a single cold shaft down the left, so the room has a source it is not
-  // getting all its light from
-  col += vec3(0.020, 0.021, 0.026) * exp(-abs(q.x + aspect * 0.42) * 3.4)
-       * (1.0 - floorMask) * 0.5;
+  // the two halves of the room are exclusive, so each one's noise is only
+  // walked where it can actually be seen
+  if (below < 0.055) {
+    float wall = fbm3(q * 2.2 + vec2(uTime * 0.016, 0.0));
+    col += vec3(0.030, 0.020, 0.013) * wall * (1.0 - floorMask) * 0.85;
+    // a single cold shaft down the left, so the room has a source it is not
+    // getting all its light from
+    col += vec3(0.020, 0.021, 0.026) * exp(-abs(q.x + aspect * 0.42) * 3.4)
+         * (1.0 - floorMask) * 0.5;
+  }
 
   // ---- the floor ---------------------------------------------------------
-  // a plane in perspective: depth is 1/(distance below the horizon), which is
-  // what makes the ring's concentric circles come back as ellipses that
-  // compress correctly toward the horizon
-  float depth = 0.26 / max(below, 0.0035);
-  vec2 fw = vec2(q.x * depth, depth);
+  if (below > -0.022) {
+    // a plane in perspective: depth is 1/(distance below the horizon), which
+    // is what makes the ring's concentric circles come back as ellipses that
+    // compress correctly toward the horizon
+    float depth = 0.26 / max(below, 0.0035);
+    vec2 fw = vec2(q.x * depth, depth);
 
-  float grain = fbm3(fw * vec2(1.6, 0.9) + vec2(0.0, uTime * 0.05));
-  col += vec3(0.016, 0.011, 0.008) * grain * floorMask * exp(-below * 3.4);
+    float grain = fbm3(fw * vec2(1.6, 0.9) + vec2(0.0, uTime * 0.05));
+    col += vec3(0.016, 0.011, 0.008) * grain * floorMask * exp(-below * 3.4);
 
-  // the mechanism: three rings and a ring of teeth, turning once every ~70s
-  vec2 rp = fw - vec2(0.0, 1.55);
-  float rr = length(rp);
-  float ra = atan(rp.y, rp.x) + uTime * 0.088 + uDrift * 0.10;
-  float ring = 0.0;
-  for (int i = 0; i < 3; i++) {
-    float R = 0.46 + float(i) * 0.30;
-    ring += smoothstep(0.020, 0.0, abs(rr - R)) * (0.9 - float(i) * 0.18);
+    // the mechanism: three rings and a ring of teeth, turning once every ~70s
+    vec2 rp = fw - vec2(0.0, 1.55);
+    float rr = length(rp);
+    float ra = atan(rp.y, rp.x) + uTime * 0.088 + uDrift * 0.10;
+    float ring = 0.0;
+    for (int i = 0; i < 3; i++) {
+      float R = 0.46 + float(i) * 0.30;
+      ring += smoothstep(0.020, 0.0, abs(rr - R)) * (0.9 - float(i) * 0.18);
+    }
+    float teeth = smoothstep(0.45, 0.92, sin(ra * 54.0))
+                * smoothstep(0.045, 0.0, abs(rr - 1.13));
+    float spoke = smoothstep(0.80, 0.995, abs(sin(ra * 3.0)))
+                * smoothstep(1.10, 0.0, rr) * step(0.20, rr);
+    float mech = (ring * 0.55 + teeth * 0.85 + spoke * 0.30)
+               * floorMask * exp(-below * 3.1);
+    col += mix(EMBER, AMBER, 0.35) * mech * 0.28;
+
+    // the mirror is compressed toward the horizon and rippled, so the floor
+    // reads as wet rather than as a second, upside-down room
+    vec2 mir = vec2(s.x, uHorizon + below * 0.78);
+    vec2 qm = (mir - 0.5) * vec2(aspect, 1.0) - par;
+    qm.x += (fbm3(vec2(qm.x * 7.0, uTime * 0.30 + below * 26.0)) - 0.5)
+          * below * 0.085;
+    col += timeline(qm, clamp(below * 5.0, 0.0, 1.0))
+         * floorMask * exp(-below * 7.0) * 0.40;
   }
-  float teeth = smoothstep(0.45, 0.92, sin(ra * 54.0))
-              * smoothstep(0.045, 0.0, abs(rr - 1.13));
-  float spoke = smoothstep(0.80, 0.995, abs(sin(ra * 3.0)))
-              * smoothstep(1.10, 0.0, rr) * step(0.20, rr);
-  float mech = (ring * 0.55 + teeth * 0.85 + spoke * 0.30)
-             * floorMask * exp(-below * 3.1);
-  col += mix(EMBER, AMBER, 0.35) * mech * 0.28;
 
-  // ---- the timeline, and the floor's reflection of it --------------------
+  // ---- the timeline itself -----------------------------------------------
   col += timeline(q, 0.0);
-
-  // the mirror is compressed toward the horizon and rippled, so the floor
-  // reads as wet rather than as a second, upside-down room
-  vec2 mir = vec2(s.x, uHorizon + below * 0.78);
-  vec2 qm = (mir - 0.5) * vec2(aspect, 1.0) - par;
-  qm.x += (fbm3(vec2(qm.x * 7.0, uTime * 0.30 + below * 26.0)) - 0.5)
-        * below * 0.085;
-  col += timeline(qm, clamp(below * 5.0, 0.0, 1.0))
-       * floorMask * exp(-below * 7.0) * 0.40;
 
   // ---- finish ------------------------------------------------------------
   vec2 dv = (s - 0.5) * vec2(1.04, 1.0);
@@ -241,6 +259,15 @@ void main() {
   float along = dot(rel, dir);
   float across = dot(rel, nrm);
   float run = clamp(along / L, 0.0, 1.0);
+
+  // The clock occupies one narrow wedge of the frame, and the ball, the hand,
+  // the cone and the landing core all lie inside it. Everywhere else this pass
+  // is a full-screen quad computing a dozen exponentials to output zero, which
+  // on a software renderer costs more than the room it is drawn over.
+  if (abs(across) > uBallR * 5.0 || along < -uBallR * 2.4 || along > L * 1.5) {
+    oCol = vec4(0.0);
+    return;
+  }
 
   // ---- the bracket the clock hangs from ---------------------------------
   float mount = smoothstep(0.0016, 0.0, abs(abs(p.x - uPivot.x) - uBallR * 0.42))

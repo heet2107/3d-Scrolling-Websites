@@ -171,7 +171,16 @@
 .c:hover .c__year { color: #a49a8f; }
 .c.is-live .c__year {
   color: var(--ink-hot);
-  text-shadow: 0 0 30px rgba(247,147,30,.55);
+  /* The clock's beam floods this exact node, so the active year is the one
+     label on screen sitting on near-white. Amber on that has almost no
+     contrast and the year blew out at every width — which is perverse, since
+     it is the one the beam is pointing at. A dark halo under the amber glow
+     keeps the letterforms readable without giving up the colour. */
+  text-shadow:
+    0 0 2px rgba(0, 0, 0, .95),
+    0 0 6px rgba(0, 0, 0, .85),
+    0 0 15px rgba(0, 0, 0, .60),
+    0 0 30px rgba(247, 147, 30, .55);
 }
 
 .c__tag {
@@ -183,7 +192,11 @@
   white-space: nowrap;
   transition: color .38s var(--ease-out);
 }
-.c.is-live .c__tag { color: var(--ink); }
+.c.is-live .c__tag {
+  color: var(--ink);
+  /* same flood, same problem, one line further down */
+  text-shadow: 0 0 3px rgba(0, 0, 0, .95), 0 0 9px rgba(0, 0, 0, .80);
+}
 
 /* the hairline that ties the open panel back down to its year */
 .c__stem {

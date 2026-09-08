@@ -48,6 +48,22 @@
 
 .fin__pin > *:not(#finStage) { position: relative; z-index: 2; }
 
+/* The ember bed burns brightest along the bottom of the frame, which is
+   exactly where the social bar sits. The foot carries its own ground so the
+   last line of the page is not spent inside a fire — and on a tall portrait
+   window, where the mark is largest, this is the difference between a
+   copyright line and a smudge. */
+.fin__pin::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: clamp(80px, 12vh, 160px);
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(0, 0, 0, .93) 0%, rgba(0, 0, 0, .60) 44%, rgba(0, 0, 0, 0) 100%);
+}
+
 /* --------------------------------------------------------------------------
    The four corners.
 
@@ -207,7 +223,14 @@
   letter-spacing: .05em;
   text-decoration: none;
   -webkit-tap-highlight-color: rgba(247, 147, 30, .22);
-  transition: color .35s var(--ease-out);
+  transition: color .35s var(--ease-out), border-color .6s linear,
+              box-shadow .6s linear;
+}
+/* past the halfway point of the gather the visitor has arrived, and the one
+   thing left to do on this page should start looking like it */
+.fin.is-home .fin__mail {
+  border-color: var(--ink-hot);
+  box-shadow: 0 0 34px rgba(232, 85, 0, .22);
 }
 .fin__mail span { position: relative; z-index: 1; overflow-wrap: anywhere; }
 .fin__mail::after {
@@ -355,6 +378,15 @@
 @media (max-aspect-ratio: 1/1) and (max-height: 720px) {
   .f-cap--quote { font-size: clamp(28px, 9.5vw, 46px); }
   .f-cap--blw, .f-cap--br { display: none; }
+}
+/* short landscape: the card is what pushes the wordmark's band down, so it is
+   the card that gives ground rather than the letters */
+@media (min-aspect-ratio: 1/1) and (max-height: 800px) {
+  .fin__card { padding: clamp(16px, 1.9vw, 26px) clamp(18px, 2vw, 28px)
+                        clamp(15px, 1.7vw, 22px); }
+  .fin__title { font-size: clamp(26px, 2.6vw, 40px); }
+  .fin__lede { margin-top: 10px; line-height: 1.65; }
+  .fin__mail { min-height: 54px; margin: 15px 0 12px; }
 }
 @media (min-aspect-ratio: 1/1) and (max-height: 640px) {
   .f-cap--quote { font-size: clamp(30px, 4.4vw, 58px); }

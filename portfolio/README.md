@@ -124,6 +124,80 @@ from the visitor.
 Every draw pass binds the vertex array it needs. The ember and ribbon passes
 leave none bound, and a card drawn without one silently produces nothing.
 
+### Act III — a journey through time
+
+2020 to 2026, one card per year, carrying the real milestone behind each: the
+MiHIN internship and healthcare IT, Restoration Partner and full-stack, the
+years of OWASP hardening and AWS monitoring, ContextQA and the turn to models,
+MCP and ReAct agents in production, BiznezzAI and CaseGenius, and Vanikaar now.
+
+**The timeline is a fitted arc**, not a spline through eyeballed points. A ball
+pivot hangs a beam hand over it whose hot core lands as an amber flood exactly
+on the active year's node, so the clock reads as *projecting light into* the
+timeline rather than merely pointing at it.
+
+**The year cards are DOM.** Each carries prose that has to stay crisp,
+selectable and reachable, and each is a real `<button>`, so keyboard and touch
+support come almost free. They are positioned by JS from the same fitted
+geometry the canvas draws with, so the two layers cannot drift.
+
+**Portrait is a different composition, not a scaled one.** Mapped straight onto
+a tall screen the arc collapses into a narrow band with seven cards on top of
+each other, so on a phone the timeline stands up: the years become a vertical
+rail of tap targets and one card at a time holds the stage beside it.
+
+The active year needed a dark halo. The beam floods that exact node, so the one
+label the visitor most wants to read was the only one sitting on near-white,
+and amber on near-white is nothing. The halo keeps the colour and returns the
+contrast.
+
+### Act IV — the projects
+
+The seven real projects as a deck travelling through a dark room over a floor
+that reflects them, scrubbed by scroll so the visitor drives it. The active
+project's copy is DOM so it stays crisp and selectable; the pips are real
+buttons that jump the deck.
+
+**Every screen is generated.** There are no screenshots of this work and none
+could be redistributed, so each plate is drawn to a canvas atlas at runtime and
+each had to read as a different piece of software rather than seven tinted
+rectangles: a live transcription view for Vanikaar, a security console for
+CaseGenius, a reasoning graph for BiznezzAI, an analytics dashboard for
+InboundCMS, a cinematic hero for Victory Lane, a document layout for D Barot
+Law, nutrition rings for FoodLab AI. They are drawn deterministically, so they
+do not reshuffle between reloads.
+
+### Act V — the record
+
+Built the opposite way round from every other act: a normal-flow document with
+the canvas demoted to quiet decoration behind it, because this is the act where
+somebody actually reads, and reading beats spectacle here.
+
+The three roles hang off a hairline spine as an ordered list, each with a large
+index numeral, the company, the role, the dates and place, the achievement
+bullets and the stack as chips. The five credentials follow as a card deck. The
+three headline numbers count up once, the first time they are seen.
+
+The whole record is written into the page *before* anything that could throw,
+so a WebGL failure costs a decoration and never the content.
+
+### Act VI — the finale
+
+The bookend to the opening: the same amber on black, the same ember and grain,
+but warmer and calmer — the film ending rather than beginning. The ember field
+GATHERS as the visitor reaches the bottom, driven by the section's own scroll
+progress rather than a timer, so arriving at the contact card feels like
+arriving somewhere the visitor took themselves.
+
+The wordmark is built from the same coverage atlas the opening uses but treated
+as a backlit slab, so the closing frame rhymes with the opening without
+repeating it shot for shot. The quote sets as four stacked lines. The contact
+card carries the statement, the email as a target sized to be hit on a phone,
+and the availability line with a live dot.
+
+Its DOM text is also set before anything that can throw, so even a WebGL
+failure leaves a reachable email address — which is the point of the page.
+
 ## Layout
 
 ```
@@ -137,7 +211,13 @@ src/gl/renderer.js      WebGL2 helpers: programs, uniforms, textures, a quad
 src/gl/shadersN.js      one shader module per act
 src/scene1/             the opening: type, layout, timeline, furniture
 src/scene2/             the stack: universe, cards, timeline
+src/scene3/             the journey: chrono, layout, timeline
+src/scene4/             the work: gallery, plates, layout, timeline
+src/scene5/             the record: sheet (typesetting), plate (ambient)
+src/scene6/             the finale
 src/styles/             app.css plus one stylesheet per act
+favicon.svg             drawn as geometry, not set in a webfont that a
+                        16px favicon would never get to load
 ```
 
 `src/data/content.js` is the only file that knows what the site is *about*.
@@ -158,6 +238,11 @@ leaves its section as readable markup instead of taking the page down.
 - **Off screen** → each act gates its own `requestAnimationFrame` loop with an
   `IntersectionObserver`, and the opening stops rendering once the flow covers
   it, rather than burning battery on frames nobody is looking at.
+- **Acts are independent.** Each is imported on its own and allowed to fail;
+  `window.__actsSettled` goes true once every act has either started or failed,
+  which is what review tooling waits on. Settled deliberately does not mean all
+  succeeded: an act that cannot start is a legitimate final state, and a
+  success-only signal would hang forever on a broken one.
 - **Hidden tab** → the loop stops entirely.
 
 `overflow-x` on the document is `clip`, not `hidden`: `hidden` promotes `body`

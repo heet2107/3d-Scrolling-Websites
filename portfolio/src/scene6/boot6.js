@@ -17,7 +17,7 @@ export async function initFinale() {
   const canvas = document.getElementById('finStage');
   if (!section || !canvas) throw new Error('no finale section');
 
-  buildDOM();
+  buildDOM(section);
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -27,6 +27,9 @@ export async function initFinale() {
 
   const scene = new Finale(canvas);
   if (!scene.ok) throw new Error('WebGL unavailable');
+
+  /** The settled frame, drawn once — what reduced motion is held on. */
+  const still = () => scene.render({ t: 2.4, gather: 1, lit: 1, grain: 0.030 });
 
   const fit = () => {
     const w = canvas.clientWidth;
@@ -72,9 +75,11 @@ export async function initFinale() {
     draw((now - t0) / 1000);
   };
 
+  // a running act redraws itself on the next frame, but a still one has no
+  // loop to notice that resizing the canvas just threw its backing store away
   window.addEventListener('resize', debounce(() => {
     fit();
-    if (!live || reduced) draw(2.4);
+    if (reduced) still();
   }, 150));
 
   // the copy is lit the moment the act takes the frame, and stays lit. Only
@@ -97,7 +102,7 @@ export async function initFinale() {
     // — no gather, no drifting grain, no loop at all
     section.classList.add('is-lit', 'is-home');
     section.style.setProperty('--g', '1');
-    scene.render({ t: 2.4, gather: 1, lit: 1, grain: 0.030 });
+    still();
   }
 
   return scene;
@@ -108,10 +113,11 @@ export async function initFinale() {
 /**
  * Every string on this frame comes from content.js, including the ones the
  * markup already carries, so the résumé can never end up disagreeing with the
- * footer of its own site.
+ * footer of its own site. Scoped to the footer rather than the document: no
+ * act should be able to rewrite another act's copy by sharing a class name.
  */
-function buildDOM() {
-  const quote = document.getElementById('finQuote');
+function buildDOM(root) {
+  const quote = root.querySelector('#finQuote');
   if (quote) {
     // four words, four lines: stacking them is the point, and a single text
     // node would let the browser reflow them into three lines on a phone
@@ -123,17 +129,17 @@ function buildDOM() {
     }));
   }
 
-  const lede = document.getElementById('finLede');
+  const lede = root.querySelector('#finLede');
   if (lede) lede.textContent = ME.statement;
 
-  const mail = document.getElementById('finMail');
+  const mail = root.querySelector('#finMail');
   if (mail) {
     mail.href = `mailto:${ME.email}`;
     const span = mail.querySelector('span') || mail;
     span.textContent = ME.email;
   }
 
-  const status = document.querySelector('.fin__status');
+  const status = root.querySelector('.fin__status');
   if (status) {
     const dot = status.querySelector('i');
     status.textContent = '';
@@ -141,15 +147,15 @@ function buildDOM() {
     status.append(`${ME.availability} — ${ME.location}`);
   }
 
-  const mark = document.querySelector('.fin__mark');
+  const mark = root.querySelector('.fin__mark');
   if (mark) mark.textContent = ME.name;
 
-  const copy = document.querySelector('.fin__c');
+  const copy = root.querySelector('.fin__c');
   if (copy) copy.textContent = `© ${ME.year} ${ME.name} — All rights reserved`;
 
   // matched on what each link already points AT rather than on its position,
   // so reordering the social bar in the markup cannot silently swap two hrefs
-  for (const a of document.querySelectorAll('.fin__soc a')) {
+  for (const a of root.querySelectorAll('.fin__soc a')) {
     const href = a.getAttribute('href') || '';
     if (href.startsWith('mailto:')) a.href = `mailto:${ME.email}`;
     else if (href.includes('github')) a.href = ME.github;

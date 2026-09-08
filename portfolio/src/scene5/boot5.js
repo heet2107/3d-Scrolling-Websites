@@ -76,11 +76,10 @@ function reveal(section, reduced) {
   const deck = document.getElementById('credDeck');
   // [element, how far into the frame it has to come (% of viewport), what to
   //  run the first time it resolves]
-  const beats = [
-    // rows resolve one at a time, because the rail is read one job at a time
-    ...section.querySelectorAll('.xp'),
-  ].map((row) => [row, 12, null]);
-  // the deck is watched as ONE element, so the five cards arrive as a single
+  const beats = [];
+  // rows resolve one at a time, because the rail is read one job at a time
+  for (const row of section.querySelectorAll('.xp')) beats.push([row, 12, null]);
+  // the deck is watched as ONE element, so its five cards arrive as a single
   // event with a stagger rather than as five unrelated fades
   if (deck) beats.push([deck, 10, null]);
   if (stats) beats.push([stats, 6, () => count(stats)]);

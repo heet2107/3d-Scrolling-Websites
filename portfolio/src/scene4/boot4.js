@@ -132,7 +132,12 @@ function buildDOM(section) {
     list.innerHTML = PROJECTS.map((p) => `<li></li>`).join('');
     [...list.children].forEach((li, i) => {
       const p = PROJECTS[i];
-      const h = document.createElement('h3');
+      // A name, not a heading. The visible card already publishes the active
+      // project as an h3, so emitting one per project here put eight h3s under
+      // "Projects" and listed the active one twice — a screen reader user
+      // would walk seven headings that are really just list items, and hear
+      // whichever project is on stage announced two ways.
+      const h = document.createElement('strong');
       h.textContent = `${p.name} — ${p.kind}`;
       const b = document.createElement('p');
       b.textContent = p.body;

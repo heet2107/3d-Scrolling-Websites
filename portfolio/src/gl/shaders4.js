@@ -92,8 +92,8 @@ void main() {
   // the pool of light the active plate throws on the ground beneath it
   vec2 pd = (s - uPool.xy) * vec2(aspect, 1.0);
   float pool = exp(-pd.x * pd.x * 2.2) * exp(-abs(pd.y) * 4.6);
-  col += uTint * pool * uPool.z * 0.16 * ground;
-  col += AMBER * exp(-dot(pd, pd) * 5.0) * uPool.z * 0.05;
+  col += uTint * pool * uPool.z * 0.22 * ground;
+  col += AMBER * exp(-dot(pd, pd) * 4.0) * uPool.z * 0.075;
 
   oCol = vec4(max(col, 0.0) * uMat, 1.0);
 }`;
@@ -200,6 +200,10 @@ vec4 tapArt(vec2 uv) {
 
 vec4 sampleArt(vec2 uv, float rad) {
   vec4 s = tapArt(uv);
+  // the defocus is also the deck's antialiasing: the far plates are minified
+  // four or five to one, and an atlas cannot carry mipmaps without bleeding
+  // one project's pixels into the next, so the blur is what stops them
+  // shimmering as the deck travels
   if (rad < 0.4) return s;
   // taps on a golden-angle spiral: a fixed cross or box kernel leaves a
   // directional smear that reads as motion blur rather than as depth of field
@@ -234,7 +238,7 @@ void main() {
   vec2 e = min(vLocal, 1.0 - vLocal);
   float edge = min(e.x, e.y);
   float rim = 1.0 - smoothstep(0.0, 0.009, edge);
-  col += uTint * rim * (0.30 + 0.80 * uFocus);
+  col += uTint * rim * (0.22 + 0.62 * uFocus) * (1.0 - mir * 0.85);
 
   // a sheen across the glass, brightest where the overhead light would fall
   col += HOT * 0.030 * uFocus
@@ -242,18 +246,22 @@ void main() {
 
   // the deck falls away in brightness as well as in focus — a defocused plate
   // that stayed at full brightness competes with the one in front of it
-  col *= mix(0.30, 1.0, uFocus);
+  col *= mix(0.38, 1.0, uFocus);
 
   float fog = 1.0 - smoothstep(uFogNear, uFogFar, vDepth);
   col *= mix(0.30, 1.0, fog);
 
   float a = art.a * uAlpha * uMat * mix(0.16, 1.0, fog);
   if (mir > 0.5) {
-    // the floor keeps very little, and keeps less the further down it goes
-    float fade = pow(clamp(1.0 - below, 0.0, 1.0), 1.5);
-    float broken = 0.72 + 0.28 * fbm3(vec2(vWorld.x * 3.0, below * 9.0 - uTime * 0.4));
-    col = mix(col, uTint * 0.5, 0.30) * 0.62;
-    a *= fade * broken * 0.52;
+    // the floor keeps very little, and keeps less the further down it goes.
+    // The plates are nearly black, so a straight dimmed copy reflects almost
+    // nothing — what a wet floor actually returns is the BRIGHT parts, so the
+    // image is lifted and washed with the plate's own colour before it is cut.
+    float fade = pow(clamp(1.0 - below, 0.0, 1.0), 2.6);
+    float broken = 0.62 + 0.38 * fbm3(vec2(vWorld.x * 3.0, below * 9.0 - uTime * 0.4));
+    float lum = dot(col, vec3(0.34, 0.5, 0.16));
+    col = col * 0.85 + uTint * (0.02 + lum * 0.30);
+    a *= fade * broken * 0.40;
   }
 
   oCol = vec4(col * a, a);

@@ -38,8 +38,8 @@ export function sample6(t, scroll) {
     lit: smoothstep(0, 1, span(p, T6.gatherIn, 1)),
     // the grain calms as the frame settles, the way a projector steadies
     grain: lerp(0.062, 0.030, gather),
-    // for the DOM: the card warms as the field arrives
-    progress: p,
+    // a DOM cue rather than a scalar: past this point the visitor has arrived,
+    // and the mail target starts carrying the light
     home: p >= T6.rake,
   };
 }

@@ -23,10 +23,12 @@ float vnoise(vec2 p) {
   return mix(mix(hash21(i), hash21(i + vec2(1, 0)), u.x),
              mix(hash21(i + vec2(0, 1)), hash21(i + vec2(1, 1)), u.x), u.y);
 }
-float fbm3(vec2 p) {
-  float s = 0.0, a = 0.5;
-  for (int i = 0; i < 3; i++) { s += a * vnoise(p); p *= 2.03; a *= 0.5; }
-  return s;
+/* Two octaves, not the three the other acts use. Nothing in this plate has
+   detail worth resolving — it is a lighting gradient — and the third octave
+   costs four more hashes on every pixel of a full-screen quad that is going to
+   sit there for as long as somebody is reading. */
+float fbm2(vec2 p) {
+  return 0.62 * vnoise(p) + 0.31 * vnoise(p * 2.03 + 5.1);
 }
 `;
 
@@ -74,7 +76,7 @@ void main() {
 
   // the plate breathes on a very long period, so a reader who stops scrolling
   // to actually read is not sitting in front of a still image
-  float wash = fbm3(q * 1.6 + vec2(uTime * 0.013, uScroll * 0.55));
+  float wash = fbm2(q * 1.6 + vec2(uTime * 0.013, uScroll * 0.55));
   col += vec3(0.030, 0.019, 0.012) * wash;
 
   // The grid is pulled OUT of the middle of the frame, because that is exactly
