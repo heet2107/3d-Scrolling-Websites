@@ -35,9 +35,13 @@
   transition: opacity .9s var(--ease-out), transform 1s var(--ease-out);
 }
 .chrono.is-on .chrono__title,
-.chrono.is-on .chrono__rail,
 .chrono.is-on .chrono__hint,
 .chrono.is-on .chrono__note { opacity: 1; transform: none; }
+/* the legend is centred WITH a transform, so its reveal has to carry the
+   centring through both states — `transform: none` would drop it and slide the
+   whole strip half a screen to the right */
+.chrono__rail { transform: translate(-50%, 8px); }
+.chrono.is-on .chrono__rail { opacity: 1; transform: translate(-50%, 0); }
 .chrono.is-on .chrono__rail { transition-delay: .30s; }
 .chrono.is-on .chrono__hint { transition-delay: .18s; }
 .chrono.is-on .chrono__note { transition-delay: .42s; }
@@ -99,7 +103,7 @@
 
 .chrono__rail {
   position: absolute; z-index: 4; margin: 0;
-  left: 50%; transform: translateX(-50%);
+  left: 50%;
   bottom: clamp(16px, 3vh, 32px);
   display: flex; align-items: center;
   gap: clamp(9px, 1.4vw, 24px);
@@ -284,13 +288,20 @@
 
 .chrono__deck.is-tall .c {
   display: flex; flex-direction: column; justify-content: center;
-  padding-left: 10px;
-  border-left: 1px solid #2e241b;
-  transition: opacity .55s var(--ease-out), border-color .38s var(--ease-out);
+  padding-left: 12px;
 }
-.chrono__deck.is-tall .c.is-live { border-left-color: var(--ink); }
-.chrono__deck.is-tall .c::after,
 .chrono__deck.is-tall .c__stem { display: none; }
+/* the same tick that pointed down at the node in landscape becomes the notch
+   on the rail here — a full-height border would build a ladder of bars heavy
+   enough to compete with the rail the canvas is already drawing */
+.chrono__deck.is-tall .c::after {
+  left: 0; top: 50%;
+  width: 1px; height: 56%;
+  transform: translateY(-50%);
+  background: #33271c;
+  transition: background .35s var(--ease-out), height .35s var(--ease-out);
+}
+.chrono__deck.is-tall .c.is-live::after { background: var(--ink); height: 84%; }
 .chrono__deck.is-tall .c__year { font-size: clamp(20px, 5.8vw, 28px); }
 /* on the rail the tag is a caption for the year the stage is holding, not a
    label on all seven at once — seven of them stacked reads as a list of
@@ -303,10 +314,11 @@
   transition: opacity .35s var(--ease-out), color .38s var(--ease-out);
 }
 .chrono__deck.is-tall .c.is-live .c__tag { opacity: 1; }
-/* the stage is beside the rail, so the panel is anchored by its TOP and holds
-   one position while the rail scrolls the years past it */
+/* the stage is beside the rail, so the panel is anchored by its MIDDLE and
+   holds one position while the rail scrolls the years past it */
 .chrono__deck.is-tall .c__body {
-  transform: translate(calc(var(--bx) * 1px), calc(var(--by) * 1px));
+  transform: translate(calc(var(--bx) * 1px), calc(var(--by) * 1px))
+             translateY(-50%);
   padding: 15px 16px 17px;
 }
 
@@ -325,8 +337,11 @@
      the legend only means anything as a whole run */
   .chrono__rail { gap: 7px; font-size: 7.5px; letter-spacing: .11em; }
   .chrono__rail i { width: 11px; }
-  .c__title { font-size: clamp(15px, 4.4vw, 19px); }
-  .c__copy { font-size: clamp(11px, 3.1vw, 12.5px); line-height: 1.68; }
+  /* sized against BOTH axes: a tablet held upright has phone-like vw and
+     desktop-like area, and copy set from vw alone comes out microscopic on it */
+  .c__title { font-size: clamp(16px, min(4.5vw, 2.1vh), 24px); }
+  .c__copy { font-size: clamp(11.5px, min(3.2vw, 1.42vh), 15px); line-height: 1.70; }
+  .c__marks i { font-size: clamp(8.5px, 1.05vh, 10px); }
 }
 
 @media (max-width: 340px) {

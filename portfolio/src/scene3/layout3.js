@@ -178,15 +178,23 @@ function portraitLayout(w, h) {
 
   // the stage: everything right of the widest point of the rail
   const railRight = Math.max(...nodes.map((n) => n.x)) + headW * 0.5;
-  const panelLeft = Math.round(railRight + px(0.040 * w, 14, 24));
-  const panelW = Math.round(w - edge - panelLeft);
-  const panelTop = Math.round(0.315 * h);
+  const stageLeft = Math.round(railRight + px(0.040 * w, 14, 24));
+  const stageW = w - edge - stageLeft;
+  // A tablet held upright hands the stage 550px of width, and body copy set to
+  // that measure runs ninety characters to the line and collapses to two lines
+  // with a hole under it. The panel takes a readable measure and sits in the
+  // middle of the stage instead of being stretched across it.
+  const panelW = Math.round(Math.min(stageW, px(0.62 * w, 240, 430)));
+  const panelLeft = Math.round(stageLeft + (stageW - panelW) * 0.5);
+  // anchored by its CENTRE, so a short card and a long one both sit balanced
+  // in the stage rather than hanging from a line at the top of it
+  const panelMid = Math.round(0.545 * h);
 
   const cards = nodes.map((n) => ({
     x: n.x,
     y: n.y + headH * 0.5,                   // the chip is centred on its node
     bx: Math.round(panelLeft - (n.x - headW * 0.5)),
-    by: Math.round(panelTop - (n.y - headH * 0.5)),
+    by: Math.round(panelMid - (n.y - headH * 0.5)),
     bw: panelW,
     stem: 0,                                 // the stage is beside, not above
     hit: { x: n.x, y: n.y },
