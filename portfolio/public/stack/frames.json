@@ -1,0 +1,8 @@
+{
+ "count": 120,
+ "width": 1280,
+ "height": 720,
+ "fps": 12,
+ "pattern": "public/stack/%03d.webp",
+ "source": "section 2 reference film, supplied by the site owner"
+}

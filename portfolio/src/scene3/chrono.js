@@ -1,316 +1,333 @@
-// Act III — the room, the clock, and the seven years.
+// Scene three: the time machine.
 //
-// Two layers over one geometry. The canvas draws the fitted arc, the light the
-// clock throws down it and the floor that catches the spill; the seven cards
-// are DOM, because each carries real body copy that has to stay crisp,
-// selectable and reachable by a screen reader, and each has to be a real
-// <button> so a keyboard or a thumb can drive the act. Both layers are placed
-// from layout3.js, so they cannot drift apart.
+// Draw order, back to front:
+//   1  room      warm black, reflective floor, the rotating ring mechanism
+//   2  track     the timeline rail, its six nodes, the energy running along it
+//   3  figure    silhouette from the artwork, lit by this room
+//   4  clock     the dial, its ticks, the hand, and the beam it throws
+//   5  post      grain and vignette
 //
-// The one thing this file really does is decide WHICH YEAR the visitor means.
-// That answer is a continuous position along the timeline, not an index: the
-// hand can sit between two years and drift, while the cards read its rounded
-// value. See projectToPath() in layout3.js for why the cursor's x alone is not
-// an answer to that question.
+// The clock is drawn LAST and additively, so its beam falls over the rail
+// rather than sitting behind it — the light has to touch the things it is
+// pointing at or the connection reads as decoration.
+//
+// The figure is the exception to the single canvas: on a desktop frame he and
+// the near ring arcs render on a SECOND, transparent canvas stacked over the
+// DOM card deck, so he stands in front of the timeline — cards behind his
+// shoulders — while staying lit by this room's shaders. Portrait (and any
+// browser that refuses a second context) keeps him on the main canvas.
+//
+// The six cards themselves are DOM, not canvas: each carries real text that has
+// to stay crisp, selectable and reachable by a screen reader. They are placed
+// from the same fitted geometry this file draws with, so the two layers cannot
+// drift apart.
 
-import { createGL, program, unitQuad } from '../gl/renderer.js';
+import { program, unitQuad, texture, upload, bind, loadImage } from '../gl/renderer.js';
 import {
-  FULL_VERT, ROOM_FRAG, CLOCK_FRAG, MOTE_VERT, MOTE_FRAG,
+  V3, F3_ROOM, F3_CLOCK, F3_TRACK, V3_QUAD, F3_FIGURE, F3_RINGS_FRONT,
+  F3_POST,
 } from '../gl/shaders3.js';
-import {
-  computeChrono, projectToPath, arcPointAt, toQ, N,
-} from './layout3.js';
-import { YEARS } from '../data/content.js';
-import { clamp, damp, lerp } from '../lib/ease.js';
-
-const MOTES = 300;
-const HAND_LAMBDA = 4.6;     // the hand has weight; it arrives, it does not cut
-const HEAT_LAMBDA = 7.0;
+import { fitScene, angleAt, YEARS } from './layout3.js';
+import { sample3 } from './timeline3.js';
+import { damp, clamp, lerp } from '../lib/ease.js';
 
 export class Chrono {
-  constructor(canvas, deckEl) {
+  constructor(canvas, gl, front = null) {
     this.canvas = canvas;
-    this.gl = createGL(canvas);
-    this.ok = !!this.gl;
-    if (!this.ok) return;
-
-    const gl = this.gl;
+    this.gl = gl;
+    this.progs = {
+      room: program(gl, V3, F3_ROOM, 'room'),
+      track: program(gl, V3, F3_TRACK, 'track'),
+      clock: program(gl, V3, F3_CLOCK, 'clock'),
+      figure: program(gl, V3_QUAD, F3_FIGURE, 'figure'),
+      ringsFront: program(gl, V3, F3_RINGS_FRONT, 'ringsFront'),
+      post: program(gl, V3, F3_POST, 'post'),
+    };
     this.quad = unitQuad(gl);
-    this.room = program(gl, FULL_VERT, ROOM_FRAG, 'chrono room');
-    this.clock = program(gl, FULL_VERT, CLOCK_FRAG, 'chrono clock');
-    this.mote = program(gl, MOTE_VERT, MOTE_FRAG, 'chrono mote');
-    this.buildMotes();
+    this.tex = { grain: texture(gl, { wrap: 'repeat' }), figure: texture(gl) };
+    // the front layer: its own context on the canvas above the card deck,
+    // with its own copies of the two programs and textures it draws with
+    this.front = front ? {
+      canvas: front.canvas,
+      gl: front.gl,
+      progs: {
+        figure: program(front.gl, V3_QUAD, F3_FIGURE, 'figure/front'),
+        ringsFront: program(front.gl, V3, F3_RINGS_FRONT, 'ringsFront/front'),
+      },
+      quad: unitQuad(front.gl),
+      tex: {
+        grain: texture(front.gl, { wrap: 'repeat' }),
+        figure: texture(front.gl),
+      },
+    } : null;
+    this.layout = null;
+    this.res = [1, 1];
 
-    this.deck = new Deck(deckEl);
-
-    this.time = 0;
-    this.pos = 0;                    // the hand, continuous 0..N-1
-    this.pointerT = 0;               // where the pointer says the hand belongs
-    this.hasPointer = false;
-    this.command = null;             // a card was activated, by key or by thumb
-    this.take = 0;                   // how far that activation has taken over
-    this.pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-    this.heat = new Float32Array(N);
-    this.qNode = new Float32Array(N * 2);
-    this.state = null;
+    // continuous position along the timeline, 0..5. Damped rather than set, so
+    // the hand has weight and never snaps between years.
+    this.u = YEARS.length - 1;
+    this.targetU = YEARS.length - 1;
+    this.heat = 0;
+    this.pointer = { x: 0, y: 0, tx: 0, ty: 0, inside: false };
+    this.active = YEARS.length - 1;
   }
 
-  buildMotes() {
-    const gl = this.gl;
-    this.moteVAO = gl.createVertexArray();
-    gl.bindVertexArray(this.moteVAO);
-    const buf = gl.createBuffer();
-    const data = new Float32Array(MOTES * 4);
-    for (let i = 0; i < MOTES; i++) {
-      const r = Math.random();
-      data[i * 4 + 0] = Math.random();
-      data[i * 4 + 1] = Math.random();
-      data[i * 4 + 2] = r;
-      // a few large, soft motes and many small ones reads as depth; a uniform
-      // size reads as a texture laid over the frame
-      data[i * 4 + 3] = lerp(1.1, 4.6, r * r);
+  async load() {
+    const [grain, fig] = await Promise.all([
+      loadImage('public/tex/grain.png'),
+      loadImage('public/years/figure.png'),
+    ]);
+    upload(this.gl, this.tex.grain, grain);
+    upload(this.gl, this.tex.figure, fig);
+    if (this.front) {
+      upload(this.front.gl, this.front.tex.grain, grain);
+      upload(this.front.gl, this.front.tex.figure, fig);
     }
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 16, 0);
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 16, 8);
-    gl.bindVertexArray(null);
+    this.figAspect = fig.width / fig.height;
   }
 
   resize(w, h, dpr) {
-    const gl = this.gl;
-    const cw = Math.round(w * dpr);
-    const ch = Math.round(h * dpr);
-    if (this.canvas.width !== cw || this.canvas.height !== ch) {
-      this.canvas.width = cw;
-      this.canvas.height = ch;
+    const W = Math.round(w * dpr);
+    const H = Math.round(h * dpr);
+    if (this.canvas.width !== W || this.canvas.height !== H) {
+      this.canvas.width = W;
+      this.canvas.height = H;
     }
-    gl.viewport(0, 0, cw, ch);
+    this.res = [W, H];
+    this.cssW = w;
+    this.cssH = h;
     this.dpr = dpr;
-
-    const L = computeChrono(w, h);
-    this.L = L;
-    this.deck.place(L);
-
-    // everything the shaders read is pre-converted once per resize; the frame
-    // loop only ever moves the landing point
-    this.qArc = new Float32Array([...toQ(L, L.arc.cx, L.arc.cy), L.arc.r / h]);
-    for (let i = 0; i < N; i++) {
-      const [qx, qy] = toQ(L, L.nodes[i].x, L.nodes[i].y);
-      this.qNode[i * 2] = qx;
-      this.qNode[i * 2 + 1] = qy;
+    this.layout = fitScene(w, h);
+    this.gl.viewport(0, 0, W, H);
+    if (this.front) {
+      const fc = this.front.canvas;
+      if (fc.width !== W || fc.height !== H) {
+        fc.width = W;
+        fc.height = H;
+      }
+      this.front.gl.viewport(0, 0, W, H);
     }
-    this.qPivot = new Float32Array(toQ(L, L.pivot.x, L.pivot.y));
-    this.ballR = L.pivot.r / h;
-    this.qDial = new Float32Array([...toQ(L, L.dial.x, L.dial.y), L.dial.r / h]);
-    this.horizon = 1 - L.horizon / h;
-    this.sweep = new Float32Array([L.a0, L.a1]);
-    // the shaders measure every radius in frame-heights, which a standing
-    // composition has far too many of; layout3 says how far the light may run
-    this.spread = L.spread;
+    return this.layout;
   }
 
-  /** A pointer sample, in the pin's own pixels. */
-  aimAt(x, y) {
-    this.pointer.tx = (x / this.L.w) * 2 - 1;
-    this.pointer.ty = (y / this.L.h) * 2 - 1;
-    // In the standing composition the stage sits beside the rail, so a pointer
-    // resting on the panel to READ it is nearer some other year than the one
-    // it is reading — and hover would swap the card out from under it. There
-    // the chips are the whole interface, exactly as they are for a thumb.
-    if (this.L.portrait) return;
-    this.pointerT = projectToPath(this.L.path, x, y);
-    // the pointer moving is not by itself a decision, so it does not steal the
-    // hand back from a card the visitor deliberately chose
-    this.hasPointer = true;
+  /** Normalised (0..1) screen position, from CSS pixels. */
+  _n(x, y) {
+    return [x / this.cssW, y / this.cssH];
   }
 
-  /** A card was focused or activated: that IS a decision, and it takes over. */
-  commandTo(i) {
-    this.command = clamp(i, 0, N - 1);
-  }
+  render(t, dt) {
+    const gl = this.gl;
+    const L = this.layout;
+    if (!L) return null;
+    const [W, H] = this.res;
+    const aspect = W / H;
+    const s = sample3(t, YEARS.length);
 
-  update(dt, state) {
-    this.time += dt;
-    this.state = state;
+    // ---- time position ----------------------------------------------------
+    // During the intro the sequence owns the hand; afterwards the pointer does.
+    // Blending on `handAuthority` means control is handed over rather than
+    // switched, so the hand never jumps at the moment the scene goes live.
+    const wanted = lerp(this.targetU, s.introU, s.handAuthority);
+    // clamped as well as damped: u indexes the years, and a stalled tab can
+    // hand the loop a wild dt, which would otherwise let the spring overshoot
+    // out of range and swing the hand somewhere meaningless
+    this.u = clamp(damp(this.u, wanted, 4.2, dt), 0, YEARS.length - 1);
+    this.active = Math.max(0, Math.min(YEARS.length - 1, Math.round(this.u)));
+    this.heat = damp(this.heat, s.energy, 3.0, dt);
 
     const p = this.pointer;
-    p.x = damp(p.x, p.tx, 3.0, dt);
-    p.y = damp(p.y, p.ty, 3.0, dt);
+    p.x = damp(p.x, p.inside ? p.tx : 0, 2.6, dt);
+    p.y = damp(p.y, p.inside ? p.ty : 0, 2.6, dt);
+    const par = s.live ? 1 : 0;
+    // the camera drifts a hair against the pointer; enough for depth, not
+    // enough to notice as an effect
+    const camX = -p.x * 0.010 * par;
+    const camY = -p.y * 0.006 * par;
 
-    // Before the pointer has ever been seen its target IS the sequence's, so
-    // the authority ramp has nothing to blend toward and the hand cannot jump
-    // at the moment the act goes live.
-    const live = this.command !== null
-      ? this.command
-      : (this.hasPointer ? this.pointerT : state.scripted);
-    this.take = damp(this.take, this.command !== null ? 1 : 0, 6.0, dt);
-    const authority = Math.max(state.authority, this.take);
+    const hand = angleAt(L.handAngles, this.u);
+    // index defensively: NaN or an out-of-range u would otherwise dereference
+    // undefined here and take the whole scene down mid-frame
+    const last = YEARS.length - 1;
+    const i0 = Math.max(0, Math.min(last, Math.floor(this.u) || 0));
+    const i1 = Math.min(last, i0 + 1);
+    const activePos = this._n(
+      lerp(L.cards[i0].x, L.cards[i1].x, clamp(this.u - i0, 0, 1)),
+      L.cards[this.active].y,
+    );
+    const fu = clamp(this.u - i0, 0, 1);
+    const nodeScr = this._n(
+      lerp(L.nodes[i0][0], L.nodes[i1][0], fu),
+      lerp(L.nodes[i0][1], L.nodes[i1][1], fu),
+    );
 
-    const target = lerp(state.scripted, live, authority);
-    this.pos = damp(this.pos, target, HAND_LAMBDA, dt);
-
-    for (let i = 0; i < N; i++) {
-      const want = Math.max(0, 1 - Math.abs(i - this.pos));
-      this.heat[i] = damp(this.heat[i], want, HEAT_LAMBDA, dt);
-    }
-    this.deck.apply(this.pos, state.lit);
-  }
-
-  /**
-   * Land on the finished composition and hold it there, with no loop and no
-   * drift. The damping in update() would take a second of frames to arrive, so
-   * everything it would have converged on is written straight in.
-   */
-  settle(state, i) {
-    this.state = state;
-    this.pos = clamp(i, 0, N - 1);
-    this.command = this.pos;
-    this.take = 1;
-    for (let k = 0; k < N; k++) {
-      this.heat[k] = Math.max(0, 1 - Math.abs(k - this.pos));
-    }
-    this.deck.apply(this.pos, state.lit);
-    this.render();
-  }
-
-  render() {
-    if (!this.ok || !this.L) return;
-    const gl = this.gl;
-    const s = this.state;
-    if (!s) return;
-
-    const land = arcPointAt(this.L, this.pos);
-    const qLand = toQ(this.L, land.x, land.y);
-
+    gl.disable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.bindVertexArray(this.quad);
 
-    gl.useProgram(this.room.p);
-    let u = this.room.u;
-    gl.uniform2f(u.uRes, this.canvas.width, this.canvas.height);
-    gl.uniform1f(u.uTime, this.time);
-    gl.uniform1f(u.uIn, s.room);
-    gl.uniform1f(u.uDrift, s.drift);
-    gl.uniform2f(u.uPar, this.pointer.x, this.pointer.y);
-    gl.uniform3fv(u.uArc, this.qArc);
-    gl.uniform2fv(u.uSweep, this.sweep);
-    gl.uniform1f(u.uRail, s.rail);
-    gl.uniform2fv(u.uNode, this.qNode);
-    gl.uniform1fv(u.uHeat, this.heat);
-    gl.uniform1f(u.uLit, s.lit);
-    gl.uniform2fv(u.uLand, qLand);
-    gl.uniform1f(u.uLandA, land.a);
-    gl.uniform1f(u.uHorizon, this.horizon);
-    gl.uniform1f(u.uSpread, this.spread);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    const pivotN = this._n(L.pivot[0], L.pivot[1]);
+    const floorN = this._n(L.floor[0], L.floor[1]);
 
-    gl.useProgram(this.clock.p);
-    u = this.clock.u;
-    gl.uniform2f(u.uRes, this.canvas.width, this.canvas.height);
-    gl.uniform1f(u.uTime, this.time);
-    gl.uniform1f(u.uIn, s.ball);
-    gl.uniform2f(u.uPar, this.pointer.x, this.pointer.y);
-    gl.uniform2fv(u.uPivot, this.qPivot);
-    gl.uniform1f(u.uBallR, this.ballR);
-    gl.uniform2fv(u.uLand, qLand);
-    gl.uniform1f(u.uCore, s.rail);
-    gl.uniform1f(u.uHand, s.ball);
-    gl.uniform1f(u.uSpread, this.spread);
-    gl.uniform3fv(u.uDial, this.qDial);
-    // the dial draws in with the room rather than with the hand, so the face
-    // is already there for the hand to sweep against
-    gl.uniform1f(u.uFace, s.room);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    // ---- 1 room -----------------------------------------------------------
+    {
+      const pr = this.progs.room;
+      gl.useProgram(pr.p);
+      gl.uniform1i(pr.u.uGrain, bind(gl, this.tex.grain, 0));
+      gl.uniform2f(pr.u.uRes, W, H);
+      gl.uniform1f(pr.u.uTime, t);
+      gl.uniform1f(pr.u.uAspect, aspect);
+      gl.uniform1f(pr.u.uWake, s.wake);
+      gl.uniform1f(pr.u.uRings, s.rings);
+      gl.uniform2f(pr.u.uFloor, floorN[0] + camX, floorN[1] + camY);
+      gl.uniform2f(pr.u.uPivot, pivotN[0] + camX, pivotN[1] + camY);
+      gl.uniform1f(pr.u.uHeat, this.heat);
+      gl.uniform2f(pr.u.uActive, activePos[0], activePos[1]);
+      gl.uniform2f(pr.u.uFig, L.figure.cx / this.cssW, L.figure.feet / this.cssH);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
 
-    gl.useProgram(this.mote.p);
-    u = this.mote.u;
-    gl.uniform2f(u.uRes, this.canvas.width, this.canvas.height);
-    gl.uniform1f(u.uTime, this.time);
-    gl.uniform2fv(u.uPivot, this.qPivot);
-    gl.uniform2fv(u.uLand, qLand);
-    gl.uniform1f(u.uDpr, this.dpr);
-    gl.uniform1f(u.uIn, s.room);
-    gl.bindVertexArray(this.moteVAO);
-    gl.drawArrays(gl.POINTS, 0, MOTES);
+    // ---- 2 track (additive) ----------------------------------------------
+    gl.blendFunc(gl.ONE, gl.ONE);
+    {
+      const pr = this.progs.track;
+      gl.useProgram(pr.p);
+      gl.uniform2f(pr.u.uRes, W, H);
+      gl.uniform1f(pr.u.uTime, t);
+      gl.uniform1f(pr.u.uAspect, aspect);
+      const cN = this._n(L.arc.cx, L.arc.cy);
+      gl.uniform3f(pr.u.uArc, cN[0] + camX * 0.6, cN[1] + camY * 0.6,
+        L.arc.r / this.cssH);
+      gl.uniform2f(pr.u.uSpan, L.angles[0], L.angles[L.angles.length - 1]);
+      gl.uniform1f(pr.u.uReveal, s.rail);
+      gl.uniform1f(pr.u.uActiveU, this.u);
+      gl.uniform1f(pr.u.uHeat, this.heat);
+      // the shader's node arrays are fixed length; never write past them
+      for (let i = 0; i < Math.min(L.nodes.length, 7); i++) {
+        const n = this._n(L.nodes[i][0], L.nodes[i][1]);
+        gl.uniform2f(pr.u[`uNodes[${i}]`], n[0] + camX * 0.6, n[1] + camY * 0.6);
+        gl.uniform1f(pr.u[`uNodeIn[${i}]`], s.nodes[i]);
+      }
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    // ---- 3 figure + the near floor arcs -----------------------------------
+    // Desktop: on the front canvas, over the deck. Portrait or no second
+    // context: here on the main canvas, behind the cards, as before.
+    this._drawFigure(t, s, W, H, aspect, camX, camY, activePos, floorN);
+
+    // ---- 4 clock (additive, over everything it lights) --------------------
+    gl.blendFunc(gl.ONE, gl.ONE);
+    {
+      const pr = this.progs.clock;
+      gl.useProgram(pr.p);
+      gl.uniform2f(pr.u.uRes, W, H);
+      gl.uniform1f(pr.u.uTime, t);
+      gl.uniform1f(pr.u.uAspect, aspect);
+      gl.uniform2f(pr.u.uPivot, pivotN[0] + camX, pivotN[1] + camY);
+      const dc = this._n(L.dial.cx, L.dial.cy);
+      gl.uniform2f(pr.u.uDialC, dc[0] + camX, dc[1] + camY);
+      gl.uniform1f(pr.u.uDial, L.dial.r / this.cssH);
+      gl.uniform1f(pr.u.uReveal, s.clock);
+      gl.uniform1f(pr.u.uHand, hand);
+      // the ornate second hand rides 150 degrees round from the pointer,
+      // exactly the pairing the reference frame shows
+      // the ornate companion hand rides 74deg ahead of the beam, so the pair
+      // hangs from the pivot like a set of dividers -- the reference pose
+      gl.uniform1f(pr.u.uHand2, hand + 1.29);
+      gl.uniform2f(pr.u.uTarget, nodeScr[0], nodeScr[1]);
+      gl.uniform1f(pr.u.uBeam, s.energy);
+      gl.uniform1f(pr.u.uHeat, this.heat);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    // ---- 5 post -----------------------------------------------------------
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    {
+      const pr = this.progs.post;
+      gl.useProgram(pr.p);
+      gl.uniform1i(pr.u.uGrain, bind(gl, this.tex.grain, 0));
+      gl.uniform2f(pr.u.uRes, W, H);
+      gl.uniform1f(pr.u.uTime, t);
+      gl.uniform1f(pr.u.uAmount, s.grain);
+      gl.uniform1f(pr.u.uAspect, aspect);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
     gl.bindVertexArray(null);
-  }
-}
 
-// --------------------------------------------------------------------------
-
-/**
- * The seven year cards.
- *
- * Every measurement written here comes from layout3, as a custom property, so
- * the stylesheet describes how a card LOOKS and never where it is. The panel
- * is a child of its own button and is placed by an offset from that button's
- * corner, which is what lets the same markup be a card standing on an arc in
- * landscape and a chip on a rail with a stage beside it in portrait.
- */
-class Deck {
-  constructor(el) {
-    this.el = el;
-    this.cards = [];
-    this.live = -1;
-    this.shown = -1;
-    if (!el) return;
-
-    el.setAttribute('role', 'group');
-    el.setAttribute('aria-label', 'A journey through time — seven years');
-    el.innerHTML = YEARS.map((y, i) => `
-      <button class="c" type="button" data-i="${i}" aria-pressed="false">
-        <i class="c__stem" aria-hidden="true"></i>
-        <b class="c__year">${y.year}</b>
-        <i class="c__tag">${y.tag}</i>
-        <span class="c__body">
-          <img class="c__shot" src="public/years/${y.year}.jpg" alt=""
-               width="560" height="364" loading="lazy" decoding="async">
-          <strong class="c__title">${y.title}</strong>
-          <span class="c__copy">${y.body}</span>
-          <span class="c__marks">${y.marks.map((m) => `<i>${m}</i>`).join('')}</span>
-        </span>
-      </button>`).join('');
-    this.cards = [...el.querySelectorAll('.c')];
+    return s;
   }
 
-  place(L) {
-    if (!this.el) return;
-    // the stylesheet is told which composition is running rather than deciding
-    // for itself: a media query and layout3's own portrait test would disagree
-    // for one hairline band of aspect ratios, and in that band the cards would
-    // be positioned for one composition and styled for the other
-    this.el.classList.toggle('is-tall', L.portrait);
-    this.el.style.setProperty('--hw', L.headW);
-    this.el.style.setProperty('--hh', L.headH);
-    this.cards.forEach((el, i) => {
-      const c = L.cards[i];
-      el.style.setProperty('--x', Math.round(c.x));
-      el.style.setProperty('--y', Math.round(c.y));
-      el.style.setProperty('--bx', c.bx);
-      el.style.setProperty('--by', c.by);
-      el.style.setProperty('--bw', c.bw);
-      el.style.setProperty('--stem', Math.max(0, c.stem));
-    });
-  }
+  /**
+   * The figure and the near ring arcs. On a desktop frame these draw on the
+   * front context — the transparent canvas stacked over the card deck — so he
+   * stands IN FRONT of the timeline, cards passing behind his shoulders, the
+   * mechanism's near side still crossing in front of his shoes. In portrait
+   * the single staged card is the content and he belongs behind it, so the
+   * passes fall back to the main canvas (as they do when the browser refuses
+   * a second context).
+   */
+  _drawFigure(t, s, W, H, aspect, camX, camY, activePos, floorN) {
+    const front = this.front && !this.layout.portrait ? this.front : null;
+    const g = front ? front.gl : this.gl;
+    const progs = front ? front.progs : this.progs;
+    const tex = front ? front.tex : this.tex;
+    const L = this.layout;
 
-  /** @param {number} pos the hand, continuous  @param {number} lit years reached */
-  apply(pos, lit) {
-    const live = Math.round(clamp(pos, 0, N - 1));
-    const shown = Math.floor(clamp(lit, 0, N));
-    if (live === this.live && shown === this.shown) return;
-    this.live = live;
-    this.shown = shown;
-    this.cards.forEach((el, i) => {
-      const on = i === live;
-      el.classList.toggle('is-live', on);
-      el.classList.toggle('is-in', i < shown);
-      // aria-pressed is what tells a screen reader which year is currently
-      // held; without it the deck is seven buttons with no state at all
-      el.setAttribute('aria-pressed', String(on));
-    });
+    if (front) {
+      g.clearColor(0, 0, 0, 0);
+      g.clear(g.COLOR_BUFFER_BIT);
+      g.bindVertexArray(front.quad);
+    } else if (this.front) {
+      // portrait with a front canvas present: keep it empty, or the last
+      // landscape frame would sit frozen over the deck
+      const fg = this.front.gl;
+      fg.clearColor(0, 0, 0, 0);
+      fg.clear(fg.COLOR_BUFFER_BIT);
+    }
+
+    g.blendFunc(g.ONE, g.ONE_MINUS_SRC_ALPHA);
+    {
+      const pr = progs.figure;
+      g.useProgram(pr.p);
+      const fh = L.figure.h * this.dpr;
+      const fw = fh * this.figAspect;
+      const fx = L.figure.cx * this.dpr - fw * 0.5 + camX * W * 0.35;
+      const fy = L.figure.feet * this.dpr - fh + camY * H * 0.35;
+      g.uniform4f(pr.u.uRect, fx, fy, fw, fh);
+      g.uniform2f(pr.u.uRes, W, H);
+      g.uniform1i(pr.u.uFig, bind(g, tex.figure, 0));
+      g.uniform1i(pr.u.uGrain, bind(g, tex.grain, 1));
+      g.uniform1f(pr.u.uOpacity, s.figure);
+      g.uniform1f(pr.u.uRim, 0.5 + 0.7 * s.rings);
+      g.uniform1f(pr.u.uHeat, this.heat);
+      // he is lit from wherever the active year currently is
+      const lx = activePos[0] - L.figure.cx / this.cssW;
+      g.uniform2f(pr.u.uLightDir, lx * aspect, -0.42);
+      g.drawArrays(g.TRIANGLE_STRIP, 0, 4);
+    }
+
+    // the near arcs of the floor, over his feet — he stands INSIDE the
+    // mechanism: far side behind him, near side in front
+    g.blendFunc(g.ONE, g.ONE);
+    {
+      const pr = progs.ringsFront;
+      g.useProgram(pr.p);
+      g.uniform1f(pr.u.uTime, t);
+      g.uniform1f(pr.u.uAspect, aspect);
+      g.uniform1f(pr.u.uRings, s.rings);
+      g.uniform2f(pr.u.uFloor, floorN[0] + camX, floorN[1] + camY);
+      g.uniform1f(pr.u.uCut, L.figure.feet / this.cssH - 0.055);
+      g.drawArrays(g.TRIANGLE_STRIP, 0, 4);
+    }
+
+    if (front) {
+      g.bindVertexArray(null);
+    } else {
+      // on the main canvas the quad VAO must STAY bound and the blend mode
+      // restored — the clock and post passes draw right after this
+      g.blendFunc(g.ONE, g.ONE_MINUS_SRC_ALPHA);
+    }
   }
 }

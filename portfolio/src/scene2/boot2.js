@@ -1,13 +1,21 @@
-// Act II: mount, gate, run.
+// Act II: the film, under the visitor's hand.
 //
-// The scene renders only while its section is on screen. Everything else — the
-// marquee, the bio, the screen-reader list — is DOM, built from the same data
-// the cards are drawn from so the two can never disagree.
+// The section IS the supplied reference film. It is not re-created here and it
+// is not played: it is taken apart into stills and handed to the scroll, so the
+// push through the room, the neon stroke drawing itself and the embers rising
+// all happen at exactly the rate the visitor scrolls them, forwards or back.
+//
+// The section is 320svh of scroll wrapped around a sticky 100svh pin, and the
+// pin's travel maps linearly onto the strip: at the top of the travel the first
+// frame, at the bottom the last. Everything else — the act title, the stack
+// list, the marquee — is DOM layered over the canvas, built from the same data
+// the rest of the site reads.
 
-import { Universe } from './universe.js';
-import { sample2 } from './timeline2.js';
+import { Film, loadManifest } from './film.js';
 import { ME, STACK, TOOLS } from '../data/content.js';
 import { clamp } from '../lib/ease.js';
+
+const MANIFEST = 'public/stack/frames.json';
 
 export async function initStack() {
   const section = document.getElementById('stack');
@@ -16,36 +24,34 @@ export async function initStack() {
 
   buildDOM();
 
-  const scene = new Universe(canvas);
-  if (!scene.ok) throw new Error('WebGL unavailable');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  if (!ctx) throw new Error('no 2d context');
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const coarse = matchMedia('(pointer: coarse)').matches;
+  // Half the strip on a phone: half the bytes over the network and half the
+  // decoded pixels held live. Scrubbed, six frames a second still reads as
+  // continuous, because the visitor is setting the rate rather than watching.
+  const stride = window.innerWidth < 760 ? 2 : 1;
 
-  const resize = () => scene.resize(
-    canvas.clientWidth, canvas.clientHeight,
-    Math.min(window.devicePixelRatio || 1, 2));
+  const man = await loadManifest(MANIFEST);
+  const film = new Film(man, { stride });
+
+  const view = { w: 0, h: 0, dpr: 1 };
+  const resize = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.round(canvas.clientWidth * dpr);
+    const h = Math.round(canvas.clientHeight * dpr);
+    if (canvas.width === w && canvas.height === h) return false;
+    canvas.width = w;
+    canvas.height = h;
+    view.w = w;
+    view.h = h;
+    view.dpr = dpr;
+    return true;
+  };
   resize();
-  window.addEventListener('resize', debounce(resize, 150));
 
-  if (!coarse && !reduced) {
-    section.addEventListener('pointermove', (e) => {
-      const r = canvas.getBoundingClientRect();
-      scene.pointer.tx = ((e.clientX - r.left) / r.width) * 2 - 1;
-      scene.pointer.ty = ((e.clientY - r.top) / r.height) * 2 - 1;
-    }, { passive: true });
-    section.addEventListener('pointerleave', () => {
-      scene.pointer.tx = 0;
-      scene.pointer.ty = 0;
-    });
-  }
-
-  let live = false;
-  let t0 = 0;
-  let last = 0;
-  let raf = 0;
-
-  /** 0 at the moment the pin engages, 1 as it releases. */
+  /** 0 as the pin engages, 1 as it releases. */
   const progress = () => {
     const r = section.getBoundingClientRect();
     const travel = r.height - window.innerHeight;
@@ -53,37 +59,69 @@ export async function initStack() {
     return clamp(-r.top / travel);
   };
 
-  const frame = (now) => {
+  let shown = -1;
+  const paint = (force = false) => {
+    const p = reduced ? 0.5 : progress();
+    const i = Math.round(p * (film.length - 1));
+    if (i === shown && !force) return;
+    const img = film.nearest(i);
+    if (!img) return;
+    shown = i;
+    cover(ctx, img, view.w, view.h);
+    section.style.setProperty('--p', p.toFixed(4));
+  };
+
+  // Frames arrive over several seconds; each one that lands may be a better
+  // match for where the visitor already is, so repaint on arrival rather than
+  // waiting for the next scroll.
+  film.load({
+    onFirst: () => { section.classList.add('is-live'); paint(true); },
+    onFrame: (i) => { if (Math.abs(i - shown) <= 1) paint(true); },
+  });
+
+  let live = false;
+  let raf = 0;
+  const frame = () => {
     if (!live) return;
     raf = requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (now - last) / 1000 || 0.016);
-    last = now;
-    const state = sample2((now - t0) / 1000, progress());
-    scene.update(dt, state);
-    scene.render();
+    if (resize()) paint(true);
+    else paint();
   };
 
   new IntersectionObserver(([e]) => {
     if (e.isIntersecting === live) return;
     live = e.isIntersecting;
-    if (live) {
-      // the arrival plays once, the first time the act takes the frame
-      if (!t0) t0 = performance.now();
-      last = performance.now();
-      raf = requestAnimationFrame(frame);
-    } else {
+    if (live) raf = requestAnimationFrame(frame);
+    else cancelAnimationFrame(raf);
+  }, { rootMargin: '25% 0px' }).observe(section);
+
+  window.addEventListener('resize', debounce(() => {
+    if (resize()) paint(true);
+  }, 150));
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && live) {
       cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(frame);
     }
-  }, { rootMargin: '10% 0px' }).observe(section);
+  });
 
-  if (reduced) {
-    // land on the settled composition and hold it still
-    t0 = performance.now() - 4000;
-    scene.update(0.016, sample2(4, 0.5));
-    scene.render();
-  }
+  return { film, section, paint, progress };
+}
 
-  return scene;
+/**
+ * Draw the frame as `object-fit: cover` would.
+ *
+ * The film is 16:9 and the pin is whatever shape the visitor's window is, so
+ * one axis always overflows. Cropping rather than letterboxing keeps the room
+ * filling the frame, which is the whole point of a pinned act; centring the
+ * crop keeps the figure — who stands dead centre — on screen at every aspect.
+ */
+function cover(ctx, img, w, h) {
+  const scale = Math.max(w / img.width, h / img.height);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  ctx.drawImage(img, (w - dw) * 0.5, (h - dh) * 0.5, dw, dh);
 }
 
 function buildDOM() {
@@ -97,8 +135,8 @@ function buildDOM() {
     marquee.innerHTML = `${run}<i>·</i>${run}<i>·</i>`;
   }
 
-  // the cards are canvas, so the list of what they say lives here for anyone
-  // reading with a screen reader or a search engine
+  // the act is a canvas, so what it is about lives here for anyone reading
+  // with a screen reader or a search engine
   const list = document.getElementById('stackList');
   if (list) {
     list.innerHTML = TOOLS.map((t) => `<li>${t.label}</li>`).join('');

@@ -41,14 +41,18 @@ So every asset is *generated*, at runtime, in the browser:
 | Reference | Here |
 | --- | --- |
 | Matted video of the subject, clipped inside the wordmark | A procedural **signal field** — streams, filaments and pulsing nodes — clipped inside the wordmark |
-| A supplied film for the tools scene | A **projected room**: cards solved to real world positions, lit by a light-painting ribbon |
-| Photographs behind the year cards | A drawn **clock and timeline** shaded in GLSL, with generated artwork on each year card |
+| A supplied film for the tools scene | The **same film**, taken apart into 120 stills and scrubbed by the scroll |
+| Photographs behind the year cards | The reference's own **clock, dial and fitted arc** in GLSL, with generated artwork on each year card |
 | Screenshots of each project | **Procedural interface plates**, one per project, drawn to a canvas atlas |
 
-Binary files in the repository: two open-licensed typefaces, one supplied
-brand mark (Claude), and seven generated year images. Everything else —
-including ten of the eleven tool logos on the stack deck — is drawn from
-geometry at runtime.
+Binary files in the repository: two open-licensed typefaces, the 120 frames of
+Act II's film, seven generated year images, and two textures the reference
+project draws its rooms with — a grain tile and a figure silhouette.
+
+Act II is the film supplied for this site, unaltered: the frames are the
+reference footage at its own resolution, and its cards therefore carry the
+toolset that footage was made with rather than Heet's. What the act *says* —
+the lede, the marquee, the list a screen reader reads — is Heet's own.
 
 The year images are generated artwork, not photographs. They show no real
 person, workplace or document.
@@ -93,53 +97,41 @@ on a phone is either three storeys of empty screen or a strip of hairlines.
 
 ### Act II — the stack
 
-A room you fly through, holding the fourteen things Heet actually builds with.
+The supplied film, under the visitor's hand. The section is 320svh of scroll
+wrapped around a sticky pin, and the pin's travel maps straight onto the strip:
+at the top of the travel the first frame, at the bottom the last. The push
+through the room, the neon stroke drawing itself and the embers rising all
+happen at exactly the rate they are scrolled, forwards or back.
 
-**The cards carry real marks.** Ten are drawn from geometry at runtime in
-`scene2/logos/marks.js`, so the deck gains no weight per logo and the project
-keeps its rule of no dependency and no CDN. Claude is the one supplied image,
-decoded off the critical path and repainted onto its own tile when it arrives,
-so the deck is complete from its first frame either way.
+**Frames, not a `<video>`.** Scrubbing a video by `currentTime` is at the mercy
+of the decoder's keyframe spacing, and seeking *backwards* in particular can
+stall for hundreds of milliseconds, which reads as the room sticking. A decoded
+still is instant in both directions. 120 WebP frames at 12fps, 3.5MB for the
+strip — about what the 10-second mp4 itself weighs.
 
-**Three tools get a monogram instead.** MCP, RAG and LangGraph are techniques
-and protocols with no mark to draw. A monogram set in the deck's own typeface
-reads as "a tool without a logo", which is true; an invented mark would put a
-false thing on the page.
+**A coarse pass lands first.** Every eighth frame is fetched before the gaps, so
+the strip is scrubbable end to end after roughly a tenth of the bytes. Nothing
+ever waits on a frame: asking for one that has not arrived returns the nearest
+that has, searching outwards rather than clamping forwards, so early scrolling
+steps through the coarse pass instead of stalling on black.
 
-**Depth is chosen; position is solved.** A card's depth is authored, and its
-world position is then solved so the projection lands it exactly where the
-composition wants it on screen. That is why the parallax, the scroll dolly and
-the hover tilt all behave correctly, and why the layout re-fits at any viewport
-aspect instead of cropping.
+**Every frame is `decode()`d before it is stored.** Without that the first
+`drawImage` of a fresh image decodes synchronously on the main thread, and 120
+of those land as 120 dropped frames spread through the scroll.
 
-**A card's size comes from how much of the frame it should fill**, not from a
-fixed world width. Apparent size goes as 1/aspect, so a deck fixed in world
-units reads as a room on a laptop and as four overlapping billboards on a
-handset. Portrait also pulls the spread in and lifts the deck clear of the copy.
+**A phone loads half the strip.** Half the bytes over the network and half the
+decoded pixels held live. Scrubbed, six frames a second still reads as
+continuous, because the visitor is setting the rate rather than watching.
 
-**The outer cards are pulled in with `tanh`**, so the middle of the deck keeps
-the spacing it was authored with while the extremes stop being sliced in half by
-a wide viewport.
+**The frame is drawn as `cover` would**, cropping rather than letterboxing, and
+centred — the figure stands dead centre, so centring the crop keeps him on
+screen at every aspect. The act needs no WebGL, so it survives the fallback
+path that takes Act III down.
 
-**The ribbon is a light-painting, not a shape.** A parametric head travels the
-room on an orbit with slower incommensurate drifts layered on, so its path never
-visibly repeats, and the strip is rebuilt every frame from the last 6.5 seconds
-of where the head has been. Sampling the path *backwards* rather than pushing
-history means the trail is exact at any frame rate and survives a throttled tab.
-The strip is split at the deck's mid depth and drawn in two passes, so it weaves
-behind the far cards and in front of the near ones. The head also lights the
-room it passes through, and the embers near it flare.
-
-**The materialisation is one event.** There is deliberately no per-card stagger:
-`mat` is a single scalar every card reads. The only per-card variation is in
-*how* each one travels once it exists, which reads as choreography rather than
-as a queue. It is time-based and triggered on entry, while the camera dolly is
-scroll-based — tying the arrival to scroll would let a fast flick skip the
-moment the act is built around, and tying the camera to time would take it away
-from the visitor.
-
-Every draw pass binds the vertex array it needs. The ember and ribbon passes
-leave none bound, and a card drawn without one silently produces nothing.
+Two scrims do the presentational work: a floor in the lower left for the lede to
+sit on, and a fade at the right edge, because the footage carries its own set
+corner text and this act should not look like it is quoting someone else's
+caption. Neither is a crop — the room still runs edge to edge behind them.
 
 ### Act III — a journey through time
 
@@ -148,10 +140,23 @@ MiHIN internship and healthcare IT, Restoration Partner and full-stack, the
 years of OWASP hardening and AWS monitoring, ContextQA and the turn to models,
 MCP and ReAct agents in production, BiznezzAI and CaseGenius, and Vanikaar now.
 
-**The timeline is a fitted arc**, not a spline through eyeballed points. A ball
-pivot hangs a beam hand over it whose hot core lands as an amber flood exactly
-on the active year's node, so the clock reads as *projecting light into* the
-timeline rather than merely pointing at it.
+This act is the reference project's own time machine — its shaders, its fitted
+geometry, its clock — carrying Heet's years instead of its author's.
+
+**The timeline is a fitted arc**, not a spline through eyeballed points. Its six
+nodes were located in the reference by detecting their glow, and a least-squares
+circle through them closes to within ±3px. A ball pivot hangs a beam hand over
+it whose hot core lands as an amber flood exactly on the active year's node, so
+the clock reads as *projecting light into* the timeline rather than merely
+pointing at it.
+
+**Seven years on a six-stop arc.** Heet's story is one year longer than the
+reference's. Rather than extrapolate an extra stop — which lands above the frame
+and collides with the act title — the measured node and card sequences are
+*resampled* at seven evenly spaced parametric positions. Both endpoints keep
+their measured values, every stop still sits on the fitted circle, and the
+uneven spacing the reference has (the years crowd together as the arc flattens)
+is preserved rather than averaged away.
 
 **The dial is a second circle, and an enormous one.** Its centre sits far above
 the frame, so only a shallow sweep of its lower rim is ever on screen. That is
@@ -237,13 +242,16 @@ failure leaves a reachable email address — which is the point of the page.
 index.html              the whole page; every act's markup lives here
 vercel.json             static headers; fonts immutable, source revalidated
 public/fonts/           Anton and Oswald, subset to woff2
+public/stack/           Act II's film, 120 frames plus a manifest
+public/years/           Act III's year artwork, and the figure silhouette
+public/tex/             the grain tile both rooms are dusted with
 src/main.js             boot, the opening's frame loop, nav, menu, act loading
 src/data/content.js     every word on the site, in one place
 src/lib/                ease.js, mat4.js
 src/gl/renderer.js      WebGL2 helpers: programs, uniforms, textures, a quad
 src/gl/shadersN.js      one shader module per act
 src/scene1/             the opening: type, layout, timeline, furniture
-src/scene2/             the stack: universe, cards, timeline
+src/scene2/             the stack: the film strip and its scrubber
 src/scene3/             the journey: chrono, layout, timeline
 src/scene4/             the work: gallery, plates, layout, timeline
 src/scene5/             the record: sheet (typesetting), plate (ambient)

@@ -14,7 +14,7 @@
       ]
     },
     {
-      "source": "/public/(years|tools)/(.*)",
+      "source": "/public/(years|stack|tex)/(.*)",
       "headers": [
         {
           "key": "Cache-Control",

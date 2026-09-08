@@ -1,59 +1,69 @@
-// Act III's beats.
+// The time machine's opening.
 //
-// The act plays the journey once, then hands it over. The hand starts parked
-// on 2020, walks the whole timeline to 2026 while the rail draws itself and
-// each year lights as the light reaches it, and only then does the pointer get
-// the hand.
+//   0.0  dark
+//   0.3  the room warms — ambient light finds the floor
+//   1.0  the timeline rail draws itself, 2020 forward
+//   1.9  the clock dial resolves and the hand sweeps in from the far side
+//   2.6  the year cards arrive
+//   3.5  the figure appears
+//   4.0  the floor mechanism engages and begins turning
+//   4.5  energy starts running along the rail
+//   5.4  settled — the visitor takes control of time
 //
-//   0.0  black
-//   0.15 the room resolves — floor, horizon, the ring turning below
-//   0.45 the rail draws itself from the first year outward
-//   0.80 the clock's pivot fades up and the hand drops out of it
-//   1.20 the hand walks 2020 → 2026; nodes and cards light as it passes
-//   4.30 authority begins crossing from the sequence to the pointer
-//   5.65 live
-//
-// The reveal is TIME-based, started when the section takes the frame, and the
-// room's drift is SCROLL-based. Tying the walk to scroll would let a flick skip
-// the one moment the act exists to show, and a slow drag would smear it into
-// seven separate fades.
+// The cards DO stagger here, left to right, unlike scene two where they were
+// required to land as one event. A timeline is a sequence by nature, and letting
+// 2020 exist a beat before 2026 is the cheapest way to say so.
 
-import { clamp, span, lerp, smoothstep, easeOutQuint, easeInOutCubic }
-  from '../lib/ease.js';
+import { clamp, span, lerp, smoothstep, easeOutCubic, easeOutExpo } from '../lib/ease.js';
 
 export const T3 = {
-  room: 0.15, roomDur: 1.30,
-  rail: 0.45, railDur: 1.70,
-  ball: 0.80, ballDur: 0.80,
-  walk: 1.20, walkDur: 3.10,
-  hand: 4.30, handDur: 1.35,
+  warm: 0.25,
+  rail: 0.80,
+  railDur: 1.30,
+  clock: 1.50,
+  clockDur: 1.15,
+  cards: 2.05,
+  cardStagger: 0.11,
+  cardDur: 0.75,
+  figure: 2.75,
+  rings: 3.15,
+  energy: 3.50,
+  live: 4.20,
 };
 
-export function sample3(t, scroll, last) {
-  const walk = easeInOutCubic(span(t, T3.walk, T3.walk + T3.walkDur));
+export function sample3(t, n = 7) {
+  const wake = smoothstep(0, 1, span(t, T3.warm, T3.warm + 1.8));
+  const rail = easeOutCubic(span(t, T3.rail, T3.rail + T3.railDur));
+  const clock = easeOutExpo(span(t, T3.clock, T3.clock + T3.clockDur));
 
-  // The sequence's own idea of where the hand belongs. It is monotone, which
-  // is what lets the reveal ride on it: a node that has been passed stays lit
-  // even after the pointer drags the hand back over it.
-  const scripted = walk * last;
+  const cards = [];
+  const nodes = [];
+  for (let i = 0; i < n; i++) {
+    const t0 = T3.cards + i * T3.cardStagger;
+    cards.push(easeOutCubic(span(t, t0, t0 + T3.cardDur)));
+    // a node lights just before its card lands, so the card feels hung on it
+    nodes.push(easeOutCubic(span(t, t0 - 0.22, t0 + 0.35)));
+  }
+
+  const figure = smoothstep(0, 1, span(t, T3.figure, T3.figure + 1.3));
+  const rings = smoothstep(0, 1, span(t, T3.rings, T3.rings + 1.6));
+  const energy = smoothstep(0, 1, span(t, T3.energy, T3.energy + 1.4));
 
   return {
-    room: smoothstep(0, 1, span(t, T3.room, T3.room + T3.roomDur)),
-    rail: easeOutQuint(span(t, T3.rail, T3.rail + T3.railDur)),
-    ball: smoothstep(0, 1, span(t, T3.ball, T3.ball + T3.ballDur)),
-
-    // how many years have been reached, fractional — the light runs slightly
-    // ahead of the hand so a year is already glowing as the beam arrives
-    // rather than switching on underneath it
-    lit: Math.max(span(t, T3.rail, T3.rail + 0.55), clamp(scripted + 1.15, 0, last + 1)),
-
-    scripted,
-    // Control is handed over, not switched. Both sides are blended as TARGETS
-    // and the hand damps toward the blend, so at the instant the pointer takes
-    // over there is nothing to jump from.
-    authority: smoothstep(0, 1, span(t, T3.hand, T3.hand + T3.handDur)),
-
-    // the room breathes with the scroll while the act holds the frame
-    drift: lerp(-1, 1, clamp(scroll)),
+    wake,
+    rail,
+    clock,
+    cards,
+    nodes,
+    figure,
+    rings,
+    energy,
+    // during the intro the hand sweeps to 2026 and settles there; afterwards
+    // the pointer owns it
+    introU: lerp(0, n - 1, easeOutExpo(span(t, T3.clock + 0.3, T3.clock + 2.4))),
+    handAuthority: 1 - smoothstep(0, 1, span(t, T3.live - 0.6, T3.live + 0.4)),
+    grain: lerp(0.075, 0.036, smoothstep(0, 1, span(t, 0.4, T3.rings))),
+    live: t >= T3.live,
+    progress: clamp(t / T3.live),
   };
 }

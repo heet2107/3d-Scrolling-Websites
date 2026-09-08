@@ -1,136 +1,222 @@
-// Act III: mount, gate, run, and hand over control.
+// Scene three's lifecycle: build the cards, place them from the fitted
+// geometry, map the pointer onto the timeline, and run only while on screen.
 //
-// The scene renders only while its section is on screen. Three different
-// things can drive the hand — the opening sequence, the pointer, and a card
-// that was focused or tapped — and this file is where they are wired to the
-// one continuous position the scene reads. The cards themselves are buttons,
-// so the act is playable with a keyboard and with a thumb, not only with a
-// mouse that happens to be hovering the right part of an arc.
+// The pointer mapping is the heart of this section. Cursor-x alone would be
+// wrong: the timeline descends across the frame, so the same x means different
+// years depending on how high the pointer is. Instead the cursor is projected
+// onto the polyline through the card centres, giving a continuous position
+// along the timeline that the clock hand reads directly.
 
+import { createGL } from '../gl/renderer.js';
 import { Chrono } from './chrono.js';
-import { sample3 } from './timeline3.js';
-import { N } from './layout3.js';
-import { clamp } from '../lib/ease.js';
-
-const LAST = N - 1;
+import { YEARS, timeAt } from './layout3.js';
+import { T3 } from './timeline3.js';
 
 export async function initChrono() {
   const section = document.getElementById('chrono');
   const canvas = document.getElementById('chronoStage');
-  const deckEl = document.getElementById('chronoDeck');
-  if (!section || !canvas || !deckEl) throw new Error('no chrono section');
+  const deck = document.getElementById('chronoDeck');
+  if (!section || !canvas || !deck) return null;
 
-  const scene = new Chrono(canvas, deckEl);
-  if (!scene.ok) throw new Error('WebGL unavailable');
+  const gl = createGL(canvas);
+  if (!gl) {
+    section.classList.add('is-fallback');
+    return null;
+  }
+
+  // The figure's layer: a second, transparent context on the canvas stacked
+  // over the card deck, so he stands in front of the timeline. Optional — if
+  // the browser refuses another context he simply draws behind, as before.
+  const frontCanvas = document.getElementById('chronoFront');
+  const glFront = frontCanvas ? createGL(frontCanvas, { alpha: true }) : null;
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine = matchMedia('(pointer: fine)').matches;
+  // read LIVE, not captured at boot: a convertible flips this when it folds,
+  // and a page restored under touch emulation would otherwise stay locked out
+  const coarseMQ = matchMedia('(pointer: coarse)');
+  const chrono = new Chrono(canvas, gl,
+    glFront ? { canvas: frontCanvas, gl: glFront } : null);
+  await chrono.load();
 
-  const resize = () => scene.resize(
-    canvas.clientWidth || section.clientWidth || window.innerWidth,
-    canvas.clientHeight || window.innerHeight,
-    Math.min(window.devicePixelRatio || 1, 2));
-  resize();
-
-  // ---- the pointer -------------------------------------------------------
-  if (fine && !reduced) {
-    section.addEventListener('pointermove', (e) => {
-      const r = canvas.getBoundingClientRect();
-      scene.aimAt(e.clientX - r.left, e.clientY - r.top);
-    }, { passive: true });
+  function setTarget(u) {
+    chrono.targetU = Math.max(0, Math.min(YEARS.length - 1, u));
   }
 
-  // ---- keyboard and touch ------------------------------------------------
-  // focusin rather than focus, because focus does not bubble and the cards are
-  // rebuilt from data; a tab into any of them has to drive the hand
-  const drive = (e) => {
-    const btn = e.target.closest?.('.c');
-    if (!btn) return;
-    scene.commandTo(+btn.dataset.i);
-    if (reduced) still();
-  };
-  deckEl.addEventListener('focusin', drive);
-  deckEl.addEventListener('click', drive);
-
-  // arrow keys walk the timeline rather than making the visitor tab through it
-  deckEl.addEventListener('keydown', (e) => {
-    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-    if (!step) return;
-    const from = +(e.target.closest?.('.c')?.dataset.i ?? 0);
-    const to = clamp(from + step, 0, LAST);
-    if (to === from) return;
-    e.preventDefault();
-    deckEl.querySelector(`.c[data-i="${to}"]`)?.focus();
+  // ---- cards -------------------------------------------------------------
+  const cards = YEARS.map((y, i) => {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'yr';
+    el.dataset.i = String(i);
+    el.setAttribute('aria-label', `${y.year} — ${y.key}`);
+    el.innerHTML =
+      `<span class="yr__frame">`
+      + `<img class="yr__img" src="public/years/${y.year}.jpg" alt="" `
+      + `loading="lazy" decoding="async">`
+      + `<span class="yr__body">`
+      + `<span class="yr__year">${y.year}</span>`
+      + `<span class="yr__key">${y.key}</span>`
+      + `<span class="yr__lines">${y.lines.map((l) => `<i>${l}</i>`).join('')}</span>`
+      + `</span>`
+      + `<svg class="yr__go" viewBox="0 0 16 16" aria-hidden="true">`
+      + `<path d="M4 12 L12 4 M6 4 H12 V10" fill="none" stroke="currentColor" `
+      + `stroke-width="1.4"/></svg>`
+      + `</span>`;
+    deck.appendChild(el);
+    return el;
   });
 
-  // ---- the loop ----------------------------------------------------------
-  let live = false;
-  let started = false;
-  let t0 = 0;
-  let last = 0;
-  let raf = 0;
+  // The year numerals are the tap targets on a phone, where only one card is
+  // on stage at a time — so they are real buttons rather than decorative text.
+  const labels = YEARS.map((y, i) => {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'yr-tag';
+    el.textContent = String(y.year);
+    el.tabIndex = -1;                 // the cards already carry the tab order
+    el.setAttribute('aria-label', `Show ${y.year}`);
+    el.addEventListener('click', () => setTarget(i));
+    el.addEventListener('pointerenter', () => { if (!coarseMQ.matches) setTarget(i); });
+    deck.appendChild(el);
+    return el;
+  });
 
-  /** 0 as the pin engages, 1 as it releases. */
-  const progress = () => {
-    const r = section.getBoundingClientRect();
-    const travel = r.height - window.innerHeight;
-    if (travel <= 0) return 0;
-    return clamp(-r.top / travel);
-  };
+  const state = { started: 0, running: false, visible: false, raf: 0, last: 0 };
 
-  const frame = (now) => {
-    if (!live) return;
-    raf = requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (now - last) / 1000 || 0.016);
-    last = now;
-    const state = sample3((now - t0) / 1000, progress(), LAST);
-    if (!started && state.rail > 0.01) {
-      started = true;
-      section.classList.add('is-on');
+  // ---- placement ---------------------------------------------------------
+  function place() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const L = chrono.resize(window.innerWidth, window.innerHeight, dpr);
+    const portrait = L.portrait;
+
+    for (let i = 0; i < cards.length; i++) {
+      const c = L.cards[i];
+      const el = cards[i];
+      // The reference's cards are ~8-12% of frame width — faithful, but at
+      // that size the body copy is unreadable on a real screen (it needed a 3x
+      // zoom to read in the poster itself). They are scaled up just enough to
+      // be legible while keeping the measured progression and spacing, so the
+      // composition still reads as the reference.
+      const w = portrait ? c.w : c.w * 1.62;
+      el.style.width = `${w}px`;
+      el.style.left = `${c.x}px`;
+      el.style.top = `${c.y}px`;
+      // cards lean with the rail; the tangent at 2021 is steep and at 2026
+      // almost flat, which is exactly the lean the reference has
+      const tilt = portrait ? 0 : (L.angles[i] - L.angles[L.angles.length - 1]) * 14;
+      el.style.setProperty('--tilt', `${tilt.toFixed(2)}deg`);
+      el.style.setProperty('--depth', String(i));
+
+      const n = L.nodes[i];
+      labels[i].style.left = `${n[0]}px`;
+      labels[i].style.top = `${n[1]}px`;
+      // Landscape sizes the numeral off its own card. Portrait cannot: the
+      // card there is 62% of the screen, and 30% of that is a numeral wider
+      // than the phone. It is sized off the rail's own step instead, so seven
+      // years fit the descent without touching.
+      labels[i].style.fontSize = portrait
+        ? `${Math.max(20, Math.min(L.h * 0.050, 44))}px`
+        : `${Math.max(19, c.w * 0.30)}px`;
     }
-    scene.update(dt, state);
-    scene.render();
-  };
-
-  /** One frame of the finished composition, for prefers-reduced-motion. */
-  const still = () => {
-    section.classList.add('is-on');
-    scene.settle(sample3(30, 0.4, LAST), scene.command ?? LAST);
-  };
-
-  const relayout = debounce(() => {
-    resize();
-    if (reduced) still();
-  }, 150);
-  window.addEventListener('resize', relayout);
-  // turning a phone here does not just change the numbers, it changes which
-  // composition is running, and some mobile browsers report the new size late
-  window.addEventListener('orientationchange', () => setTimeout(relayout, 220));
-
-  if (reduced) {
-    // Honour the preference fully: land on the settled composition and hold it
-    // with no loop. The observer is not registered at all rather than gated —
-    // its callback fires asynchronously, so a guard placed after it here would
-    // run first and the loop would start anyway.
-    still();
-    return scene;
+    section.classList.toggle('is-portrait', portrait);
   }
+  place();
 
-  new IntersectionObserver(([e]) => {
-    if (e.isIntersecting === live) return;
-    live = e.isIntersecting;
-    if (!live) { cancelAnimationFrame(raf); return; }
-    // the walk down the timeline plays once, the first time the act takes the
-    // frame — scrolling back up should not restart it
-    if (!t0) t0 = performance.now();
-    last = performance.now();
-    raf = requestAnimationFrame(frame);
-  }, { rootMargin: '12% 0px' }).observe(section);
+  let resizeId;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeId);
+    resizeId = setTimeout(place, 140);
+  });
 
-  return scene;
-}
+  // ---- pointer -> time ---------------------------------------------------
+  section.addEventListener('pointermove', (e) => {
+    if (coarseMQ.matches) return;
+    const r = canvas.getBoundingClientRect();
+    const px = e.clientX - r.left;
+    const py = e.clientY - r.top;
+    chrono.pointer.tx = (px / r.width) * 2 - 1;
+    chrono.pointer.ty = (py / r.height) * 2 - 1;
+    chrono.pointer.inside = true;
+    const { u, dist } = timeAt(chrono.layout, px, py);
+    // far from the rail the visitor is not aiming at anything; hold the last
+    // year rather than swinging the hand at stray movement
+    if (dist < r.height * 0.55) setTarget(u);
+  }, { passive: true });
 
-function debounce(fn, ms) {
-  let id;
-  return (...a) => { clearTimeout(id); id = setTimeout(() => fn(...a), ms); };
+  section.addEventListener('pointerleave', () => { chrono.pointer.inside = false; });
+
+  // touch and keyboard: a card is a real button, so both come almost free
+  cards.forEach((el, i) => {
+    el.addEventListener('pointerenter', () => { if (!coarseMQ.matches) setTarget(i); });
+    el.addEventListener('click', () => setTarget(i));
+    el.addEventListener('focus', () => setTarget(i));
+  });
+
+  // ---- frame -------------------------------------------------------------
+  let lastActive = -1;
+  const frame = (now) => {
+    if (!state.running) return;
+    const dt = Math.min(0.05, (now - state.last) / 1000 || 0.016);
+    state.last = now;
+    const t = reduced ? T3.live + 2 : (now - state.started) / 1000;
+    const s = chrono.render(t, dt);
+
+    if (s) {
+      if (s.live) section.classList.add('is-live');
+      for (let i = 0; i < cards.length; i++) {
+        const near = 1 - Math.min(1, Math.abs(i - chrono.u));
+        cards[i].style.setProperty('--in', s.cards[i].toFixed(3));
+        cards[i].style.setProperty('--near', near.toFixed(3));
+        labels[i].style.setProperty('--in', s.nodes[i].toFixed(3));
+        labels[i].style.setProperty('--near', near.toFixed(3));
+      }
+      if (chrono.active !== lastActive) {
+        lastActive = chrono.active;
+        cards.forEach((el, i) => el.classList.toggle('is-active', i === chrono.active));
+        labels.forEach((el, i) => el.classList.toggle('is-active', i === chrono.active));
+        section.dataset.year = String(YEARS[chrono.active].year);
+      }
+    }
+    state.raf = requestAnimationFrame(frame);
+  };
+
+  const start = () => {
+    if (state.running) return;
+    state.running = true;
+    state.last = performance.now();
+    if (!state.started) state.started = performance.now();
+    state.raf = requestAnimationFrame(frame);
+  };
+  const stop = () => { state.running = false; cancelAnimationFrame(state.raf); };
+
+  new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      state.visible = e.isIntersecting;
+      if (e.isIntersecting) start(); else stop();
+    }
+  }, { threshold: 0.22 }).observe(section);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') stop();
+    else if (state.visible) start();
+  });
+
+  // Review hook, the same contract as the rest of the site: draw one frame on
+  // demand and read it back in the SAME task, because the contexts are created
+  // without preserveDrawingBuffer. Both layers are flattened in stacking order,
+  // or a screenshot would lose the figure entirely.
+  window.__shot3 = (at = null) => {
+    const t = at !== null ? at : (performance.now() - state.started) / 1000;
+    chrono.render(t, 0.016);
+    const flat = document.createElement('canvas');
+    flat.width = canvas.width;
+    flat.height = canvas.height;
+    const c2 = flat.getContext('2d');
+    c2.drawImage(canvas, 0, 0);
+    if (chrono.front) c2.drawImage(chrono.front.canvas, 0, 0);
+    return flat.toDataURL('image/png');
+  };
+  window.__chrono = chrono;
+
+  return { chrono, section, setTarget };
 }

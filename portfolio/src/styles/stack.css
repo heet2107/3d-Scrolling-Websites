@@ -1,13 +1,14 @@
 /* ==========================================================================
    Act II — the stack.
-   The room, the deck, the ribbon and the embers are all canvas. Everything
-   here is the copy layered over them.
+   The room is the supplied film, drawn one still at a time into the canvas and
+   scrubbed by the pin's travel. Everything here is the copy layered over it.
    ========================================================================== */
 
 .stack {
   position: relative;
-  /* the extra height past one viewport is the camera's dolly travel */
-  height: 260svh;
+  /* the height past one viewport IS the film: the pin's travel is the strip,
+     so this number sets how much scrolling one pass through the room costs */
+  height: 320svh;
 }
 
 .stack__pin {
@@ -20,7 +21,13 @@
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   display: block;
+  background: #000;
+  /* held back until a frame has actually landed, so the act never shows a
+     flash of empty canvas over the black the page is already sitting on */
+  opacity: 0;
+  transition: opacity .55s ease;
 }
+.stack.is-live #stackStage { opacity: 1; }
 
 /* the deck is drawn behind the copy, so each block of copy carries its own
    scrim — without it a card can drift under a paragraph and take it with it */
@@ -34,10 +41,19 @@
   background: linear-gradient(105deg, rgba(0,0,0,.94) 0%,
               rgba(0,0,0,.80) 34%, rgba(0,0,0,0) 82%);
 }
+/* One layer doing two jobs. The bottom left corner is a floor for the lede to
+   sit on. The right edge is a fade, because the film carries its own set
+   corner text and this act should not look like it is quoting someone else's
+   caption. Neither is a crop: the room still runs edge to edge behind them. */
 .stack__pin::after {
-  bottom: 0; height: 46%;
-  background: linear-gradient(75deg, rgba(0,0,0,.94) 0%,
-              rgba(0,0,0,.78) 32%, rgba(0,0,0,0) 80%);
+  inset: 0; width: auto; height: auto;
+  background:
+    linear-gradient(75deg, rgba(0,0,0,.97) 0%, rgba(0,0,0,.88) 26%,
+                    rgba(0,0,0,0) 78%)
+      left bottom / min(52%, 640px) 52% no-repeat,
+    linear-gradient(270deg, rgba(0,0,0,.94) 0%, rgba(0,0,0,.55) 42%,
+                    rgba(0,0,0,0) 100%)
+      right center / clamp(90px, 13vw, 210px) 100% no-repeat;
 }
 
 .stack__head {
@@ -114,6 +130,14 @@
    The marquee at the foot of the act
    -------------------------------------------------------------------------- */
 
+.s-label--who,
+.s-label--bio,
+.s-label--hint {
+  /* --p is the pin's travel, 0..1, set every frame by boot2. Opacity clamps
+     itself, so this reads as "hold, then fade out over the last eighth". */
+  opacity: calc((0.88 - var(--p, 0)) * 8);
+}
+
 .stack__marquee {
   position: absolute; left: 0; right: 0; bottom: 0;
   z-index: 4;
@@ -149,17 +173,23 @@
    -------------------------------------------------------------------------- */
 
 @media (max-aspect-ratio: 1/1) {
-  .stack { height: 230svh; }
-  /* portrait sets the bio full width, so the scrim behind it has to be full
-     width too or a card drifts under the last two lines and eats them */
-  .stack__pin::before, .stack__pin::after { width: 100%; }
+  .stack { height: 280svh; }
+  /* Portrait sets the bio full width, so the scrim behind it has to be full
+     width too or the film drifts under the last two lines and eats them.
+     The inset must be undone explicitly: ::after is anchored to all four edges
+     landscape, and top:0 plus bottom:0 plus a height is over-constrained, so
+     the browser drops `bottom` and the FOOT scrim silently becomes a head one
+     with a hard edge across the middle of the frame. */
+  .stack__pin::before, .stack__pin::after {
+    inset: auto; left: 0; width: 100%;
+  }
   .stack__pin::before {
-    height: 38%;
+    top: 0; height: 38%;
     background: linear-gradient(to bottom, rgba(0,0,0,.95) 0%,
                 rgba(0,0,0,.72) 52%, rgba(0,0,0,0) 100%);
   }
   .stack__pin::after {
-    height: 42%;
+    bottom: 0; height: 42%;
     background: linear-gradient(to top, rgba(0,0,0,.96) 0%,
                 rgba(0,0,0,.80) 46%, rgba(0,0,0,0) 100%);
   }
