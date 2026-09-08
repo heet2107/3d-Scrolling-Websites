@@ -93,9 +93,12 @@ function disc(g, x, y, r, col) {
  *  would be a paragraph of unreadable grey mush pretending to be information. */
 function words(g, x, y, w, h, r, col, gap = 7, min = 16) {
   g.fillStyle = col;
+  // a word bar is capped independently of the row width: scaling it with the
+  // row turns a wide column into three long rules that read as a table
+  const max = Math.min(w * 0.30, 96);
   let cx = x;
   while (cx < x + w - min) {
-    const wd = Math.min(min + r() * (w * 0.28), x + w - cx);
+    const wd = Math.min(min + r() * (max - min), x + w - cx);
     g.fillRect(cx, y, wd, h);
     cx += wd + gap;
   }
@@ -389,7 +392,7 @@ function artWaveform(g, R, p, tint, r) {
   stroke(g, px, ty, pw, th, 'rgba(255,255,255,0.055)', 4);
   heading(g, px + 18, ty + 30, pw - 36, 'extracted', tint, 12);
   for (let i = 0; i < 4; i++) {
-    const y = ty + 56 + i * 34;
+    const y = ty + 52 + i * 28;
     tick(g, px + 18, y, 12, rgba(tint, i === 3 ? 0.35 : 0.85), 1.8);
     words(g, px + 40, y + 4, pw - 76, 6, r, ink(i === 3 ? 0.16 : 0.34), 6, 14);
   }
@@ -416,6 +419,15 @@ function artWaveform(g, R, p, tint, r) {
     words(g, x0 + 88, y, wide, 9, r, ink(a), 8, 22);
     if (live) fill(g, x0 + 88 + wide + 8, y - 2, 8, 13, rgba(tint, 0.9));
   }
+
+  const fy = R.y + R.h - 42;
+  fill(g, x0, fy - 14, W, 1, 'rgba(255,255,255,0.07)');
+  for (let i = 0; i < 3; i++) {
+    disc(g, x0 + 5 + i * 116, fy + 6, 4, rgba(tint, 0.55 - i * 0.14));
+    fill(g, x0 + 16 + i * 116, fy + 3, 78 - i * 14, 5, ink(0.22 - i * 0.05));
+  }
+  fill(g, x0 + W - 128, fy - 2, 128, 12, 'rgba(255,255,255,0.04)', 6);
+  fill(g, x0 + W - 128, fy - 2, 92, 12, rgba(tint, 0.45), 6);
 }
 
 // --------------------------------------------------------------------------
@@ -434,15 +446,16 @@ function artShield(g, R, p, tint, r) {
   const passes = COLS_N * ROWS_N - 1;
   const pill = `${passes}/${COLS_N * ROWS_N - 1}`;
   const pw = 86;
-  fill(g, R.x + R.w - 26 - pw, R.y + 20, pw, 28, rgba(tint, 0.14), 14);
-  stroke(g, R.x + R.w - 26 - pw, R.y + 20, pw, 28, rgba(tint, 0.5), 14, 1.2);
-  tick(g, R.x + R.w - 26 - pw + 14, R.y + 27, 13, rgba(tint, 0.95), 2);
+  const mw = 428;
+  const pillX = x0 + mw - pw;
+  fill(g, pillX, R.y + 20, pw, 28, rgba(tint, 0.14), 14);
+  stroke(g, pillX, R.y + 20, pw, 28, rgba(tint, 0.5), 14, 1.2);
+  tick(g, pillX + 14, R.y + 27, 13, rgba(tint, 0.95), 2);
   g.fillStyle = rgba(tint, 0.95);
   g.font = OSW(600, 14);
-  g.fillText(pill, R.x + R.w - 26 - pw + 36, R.y + 39);
+  g.fillText(pill, pillX + 36, R.y + 39);
 
   // ---- the matrix of checks ---------------------------------------------
-  const mw = 428;
   const cw = (mw - 3 * 10) / COLS_N;
   const ch = 62;
   const my = R.y + 66;
@@ -463,7 +476,10 @@ function artShield(g, R, p, tint, r) {
     } else {
       tick(g, cx + 11, cyy + 14, 14, rgba(tint, 0.9), 2);
     }
-    fill(g, cx + 11, cyy + 40, cw - 22 - r() * 18, 5, ink(pending ? 0.12 : 0.30));
+    fill(g, cx + 11, cyy + 38, cw - 22 - r() * 22, 5, ink(pending ? 0.12 : 0.30));
+    fill(g, cx + 11, cyy + 48, (cw - 22) * (0.3 + r() * 0.34), 3,
+         ink(pending ? 0.07 : 0.14));
+    if (i % 3 === 0) disc(g, cx + cw - 14, cyy + 16, 3, rgba(tint, 0.55));
   }
 
   // ---- the org boundary --------------------------------------------------
@@ -533,6 +549,13 @@ function artShield(g, R, p, tint, r) {
   fill(g, rx + 14, cy - 26, 96, 18, rgba(tint, 0.16), 9);
   page(g, rx + 22, cy - 22, 9, 11, rgba(tint, 0.8));
   fill(g, rx + 36, cy - 18, 62, 3, rgba(tint, 0.6));
+
+  for (let i = 0; i < 2; i++) {
+    const sw = (rw - 12) / 2;
+    fill(g, rx + i * (sw + 12), R.y + R.h - 112, sw, 30, 'rgba(255,255,255,0.03)', 15);
+    stroke(g, rx + i * (sw + 12), R.y + R.h - 112, sw, 30, ink(0.10), 15, 1);
+    fill(g, rx + 18 + i * (sw + 12), R.y + R.h - 99, sw - 36, 4, ink(0.22));
+  }
 
   const iy = R.y + R.h - 56;
   fill(g, rx, iy, rw, 40, 'rgba(255,255,255,0.03)', 20);
@@ -613,6 +636,12 @@ function artGraph(g, R, p, tint, r) {
     const y = cy + (i - 1) * hgt * 0.30;
     fill(g, nx3, y - 13, 66, 26, i === 1 ? rgba(tint, 0.85) : 'rgba(255,255,255,0.05)', 13);
     fill(g, nx3 + 14, y - 2, 38, 4, i === 1 ? '#160b02' : ink(0.24));
+  }
+
+  for (let i = 0; i < 2; i++) {
+    const ly = top + hgt - 22 + i * 20;
+    seg(g, x0 + 6, ly, x0 + 30, ly, rgba(tint, i ? 0.17 : 0.9), i ? 1.2 : 2.4);
+    fill(g, x0 + 40, ly - 2, 74 - i * 22, 4, ink(i ? 0.14 : 0.34));
   }
 
   // ---- retrieval ---------------------------------------------------------
@@ -711,6 +740,17 @@ function artBars(g, R, p, tint, r) {
     g.fillText(`${Math.round(v * 100)}`, x0 + bw - 12, y + 13);
   }
 
+  const fy = R.y + 184 + rows * 52 + 14;
+  fill(g, x0, fy, bw, 1, 'rgba(255,255,255,0.07)');
+  for (let i = 0; i < 4; i++) {
+    const fx = x0 + i * (bw / 4);
+    fill(g, fx, fy + 20, 52, 4, ink(0.16));
+    g.fillStyle = ink(i ? 0.42 : 0.72);
+    g.font = OSW(500, 17);
+    g.fillText(['62', '48', '31', '17'][i], fx, fy + 48);
+    fill(g, fx, fy + 58, 30 + r() * 22, 3, rgba(tint, 0.5 - i * 0.1));
+  }
+
   // ---- the trend ---------------------------------------------------------
   const cx = x0 + bw + 30;
   const cw = x0 + W - cx;
@@ -760,11 +800,8 @@ function artBars(g, R, p, tint, r) {
     g.stroke();
     a0 += shares[i] * TAU;
   }
-  g.fillStyle = PAPER;
-  g.font = OSW(600, 22);
-  g.textAlign = 'center';
-  g.fillText('3', dcx, dcy + 8);
-  g.textAlign = 'left';
+  fill(g, dcx - 20, dcy - 5, 40, 5, ink(0.45));
+  fill(g, dcx - 12, dcy + 6, 24, 4, ink(0.20));
   for (let i = 0; i < shares.length; i++) {
     const ly = dy + 42 + i * 34;
     fill(g, dcx + 84, ly, 10, 10, rgba(tint, [0.95, 0.55, 0.26][i]), 2);
@@ -813,24 +850,19 @@ function artSweep(g, R, p, tint, r) {
   }
   g.restore();
 
-  // the same light again on the floor of the plate, squashed and dimmed
+  // the stage under it is wet: the same light again, flattened into the floor
   g.save();
-  g.beginPath();
-  g.rect(R.x, R.y + R.h * 0.72, R.w, R.h * 0.28);
-  g.clip();
   g.globalCompositeOperation = 'lighter';
-  g.globalAlpha = 0.22;
-  g.translate(cx, R.y + R.h * 1.44 - cy * 0.02);
-  g.scale(1, -0.46);
-  g.translate(-cx, -cy);
-  g.translate(cx, cy);
-  g.rotate(-0.30);
-  const grd = g.createLinearGradient(-760, 0, 760, 0);
-  grd.addColorStop(0, 'rgba(255,255,255,0)');
-  grd.addColorStop(0.5, rgba(tint, 0.9));
-  grd.addColorStop(1, 'rgba(255,255,255,0)');
-  g.fillStyle = grd;
-  g.fillRect(-760, -46, 1520, 92);
+  g.translate(R.x + R.w * 0.46, R.y + R.h * 0.94);
+  g.scale(1, 0.13);
+  const pool = g.createRadialGradient(0, 0, 0, 0, 0, R.w * 0.52);
+  pool.addColorStop(0, rgba(tint, 0.45));
+  pool.addColorStop(0.4, rgba(tint, 0.13));
+  pool.addColorStop(1, rgba(tint, 0));
+  g.fillStyle = pool;
+  g.beginPath();
+  g.arc(0, 0, R.w * 0.52, 0, TAU);
+  g.fill();
   g.restore();
 
   // ---- the site on top of it --------------------------------------------
@@ -846,8 +878,9 @@ function artSweep(g, R, p, tint, r) {
 
   const hy = R.y + R.h * 0.52;
   g.fillStyle = PAPER;
-  const size = fitFont(g, p.sub, W * 0.56, 58, ANT, 26);
-  g.fillText(p.sub, x0, hy);
+  const head = p.sub.toUpperCase();
+  fitFont(g, head, W * 0.60, 58, ANT, 26);
+  g.fillText(head, x0, hy);
   fill(g, x0, hy + 22, 118, 3, rgba(tint, 0.95));
   g.fillStyle = ink(0.46);
   g.font = OSW(400, 13);
@@ -872,12 +905,13 @@ function artSweep(g, R, p, tint, r) {
   cue.addColorStop(1, rgba(tint, 0));
   g.fillStyle = cue;
   g.fillRect(x0, R.y + R.h - 70, 2, 44);
-  g.fillStyle = ink(0.32);
+  fill(g, x0 + 12, R.y + R.h - 66, 40, 4, ink(0.28));
+  g.fillStyle = ink(0.40);
   g.font = OSW(400, 11);
-  tracked(g, '01', x0 + R.w - 126, R.y + R.h - 34, 2);
-  fill(g, R.x + R.w - 92, R.y + R.h - 39, 44, 1, ink(0.20));
+  tracked(g, '01', R.x + R.w - 128, R.y + R.h - 34, 2);
+  fill(g, R.x + R.w - 100, R.y + R.h - 39, 34, 1, ink(0.20));
   g.fillStyle = ink(0.18);
-  tracked(g, '04', R.x + R.w - 78, R.y + R.h - 34, 2);
+  tracked(g, '04', R.x + R.w - 58, R.y + R.h - 34, 2);
 }
 
 // --------------------------------------------------------------------------
@@ -901,19 +935,28 @@ function artColumns(g, R, p, tint, r) {
   // one thing to actually do on it
   const cardW = 292;
   const colW = (W - cardW - 76) / 2;
+  // the panel gets the tag that names what you DO on the page; the reading
+  // columns take the ones either side of it
+  const cardTag = p.tags[1] || p.tags[0] || p.kind;
+  const colTags = [p.tags[0], p.tags[2] || p.tags[p.tags.length - 1]];
   for (let i = 0; i < 2; i++) {
     const cx = x0 + i * (colW + 38);
-    const label = p.tags[i];
+    const label = colTags[i];
     if (label) {
       g.fillStyle = rgba(tint, 0.85);
       g.font = OSW(600, 11);
       tracked(g, label.toUpperCase(), cx, R.y + 168, 2.2);
     }
     fill(g, cx, R.y + 180, 34, 2, rgba(tint, 0.6));
-    para(g, cx, R.y + 204, colW, 12, 21, r, ink(0.26), 6);
-    g.fillStyle = rgba(tint, 0.7);
-    g.font = SERIF(400, 15);
-    g.fillText('—', cx, R.y + 480);
+    para(g, cx, R.y + 204, colW, 10, 21, r, ink(0.26), 6);
+    // the people behind it — a firm's page always ends in faces
+    for (let k = 0; k < 2; k++) {
+      const py = R.y + 430 + k * 38;
+      disc(g, cx + 13, py + 13, 13, 'rgba(255,255,255,0.06)');
+      disc(g, cx + 13, py + 13, 13.5, rgba(tint, 0.16));
+      fill(g, cx + 36, py + 7, colW * (0.42 + r() * 0.2), 5, ink(0.30));
+      fill(g, cx + 36, py + 18, colW * 0.30, 4, ink(0.13));
+    }
   }
 
   const bx = x0 + W - cardW;
@@ -923,7 +966,7 @@ function artColumns(g, R, p, tint, r) {
   stroke(g, bx, by, cardW, bh, rgba(tint, 0.28), 6, 1.2);
   g.fillStyle = ink(0.72);
   g.font = OSW(500, 14);
-  g.fillText(p.tags[2] || p.kind, bx + 22, by + 34);
+  g.fillText(cardTag, bx + 22, by + 34);
   fill(g, bx + 22, by + 48, cardW - 44, 1, 'rgba(255,255,255,0.08)');
 
   const cell = 30;
@@ -988,10 +1031,11 @@ function artRings(g, R, p, tint, r) {
   g.fillStyle = PAPER;
   g.font = OSW(600, 34);
   g.fillText('78', ccx, ccy + 6);
+  g.textAlign = 'left';
   g.fillStyle = ink(0.30);
   g.font = OSW(400, 11);
-  tracked(g, 'OF GOAL', ccx - 26, ccy + 26, 1.6);
-  g.textAlign = 'left';
+  const gw2 = g.measureText('OF GOAL').width + 7 * 1.6;
+  tracked(g, 'OF GOAL', ccx - gw2 * 0.5, ccy + 26, 1.6);
 
   for (let i = 0; i < 3; i++) {
     const ly = R.y + 336 + i * 22;
@@ -1053,14 +1097,28 @@ function artRings(g, R, p, tint, r) {
       g.stroke();
     }
   }
+  const ay = R.y + 66 + 4 * 82;
   g.save();
   g.setLineDash([6, 5]);
-  stroke(g, dx, R.y + 66 + 4 * 82, dw, 44, ink(0.14), 5, 1.2);
+  stroke(g, dx, ay, dw, 40, ink(0.14), 5, 1.2);
   g.restore();
-  seg(g, dx + dw * 0.5 - 8, R.y + 66 + 4 * 82 + 22, dx + dw * 0.5 + 8,
-      R.y + 66 + 4 * 82 + 22, ink(0.30), 1.6);
-  seg(g, dx + dw * 0.5, R.y + 66 + 4 * 82 + 14, dx + dw * 0.5,
-      R.y + 66 + 4 * 82 + 30, ink(0.30), 1.6);
+  seg(g, dx + dw * 0.5 - 8, ay + 20, dx + dw * 0.5 + 8, ay + 20, ink(0.30), 1.6);
+  seg(g, dx + dw * 0.5, ay + 12, dx + dw * 0.5, ay + 28, ink(0.30), 1.6);
+
+  // the week under it, so the plate is a tracker and not one day's snapshot
+  const wy = R.y + R.h - 88;
+  fill(g, x0, wy - 22, R.w - 60, 1, 'rgba(255,255,255,0.07)');
+  const cellW = (R.w - 60) / 7;
+  const barW = Math.min(64, cellW - 22);
+  for (let i = 0; i < 7; i++) {
+    const bx2 = x0 + i * cellW + (cellW - barW) * 0.5;
+    const v = [0.62, 0.81, 0.44, 0.93, 0.70, 0.36, 0.78][i];
+    fill(g, bx2, wy + 4, barW, 52, 'rgba(255,255,255,0.045)', 3);
+    fill(g, bx2, wy + 56 - 52 * v, barW, 52 * v, rgba(tint, i === 3 ? 0.9 : 0.34), 3);
+    g.fillStyle = ink(i === 3 ? 0.6 : 0.26);
+    g.font = OSW(400, 11);
+    g.fillText('MTWTFSS'[i], bx2 + barW * 0.5 - 3, wy + 74);
+  }
 }
 
 // --------------------------------------------------------------------------

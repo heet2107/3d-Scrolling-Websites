@@ -88,10 +88,15 @@ function reveal(section, reduced) {
 
   const once = (el, bottom, then) => {
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      // Anything already ABOVE the viewport is lit without ceremony. A visitor
+      // who followed #record, or came back to a restored scroll position, is
+      // standing in the middle of the act — and a row that only ever resolves
+      // on the way down would simply never appear for them.
+      const passed = e.boundingClientRect.bottom <= 0;
+      if (!e.isIntersecting && !passed) return;
       io.disconnect();
       el.classList.add('is-lit');
-      then?.();
+      if (!passed) then?.();
     }, { rootMargin: `0px 0px -${bottom}% 0px` });
     io.observe(el);
   };

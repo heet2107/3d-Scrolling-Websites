@@ -84,12 +84,14 @@ function bootActs() {
     ['record', () => import('./scene5/boot5.js'), 'initRecord'],
     ['finale', () => import('./scene6/boot6.js'), 'initFinale'],
   ];
-  for (const [name, load, fn] of acts) {
-    load()
-      .then((m) => m[fn]())
-      .then((inst) => { app[name] = inst; })
-      .catch((e) => console.warn(`[hb] ${name} unavailable:`, e.message));
-  }
+  // Settled means every act has either started or failed — not that all of
+  // them succeeded. Review tooling needs a signal it can wait on, because a
+  // fixed timeout races the lazy imports and photographs half-built sections.
+  Promise.allSettled(acts.map(([name, load, fn]) => load()
+    .then((m) => m[fn]())
+    .then((inst) => { app[name] = inst; })
+    .catch((e) => { console.warn(`[hb] ${name} unavailable:`, e.message); })))
+    .then(() => { window.__actsSettled = true; });
 }
 
 function begin() {
