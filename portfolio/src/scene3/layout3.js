@@ -86,7 +86,9 @@ function landscape(w, h) {
   const edge = px(0.019 * w, 18, 30);
   const headW = px(0.088 * w, 104, 140);
   const headH = tight ? 52 : 62;
-  const gap = tight ? 20 : 26;              // head's foot to its node
+  // the head's foot stands clear of its node, so the flood the clock throws
+  // pools UNDER the card instead of behind its tag line
+  const gap = tight ? 24 : 30;
 
   const arc = arcThrough(
     { x: 0.105 * w, y: 0.585 * h },         // 2020 — left, high on the bow
@@ -226,17 +228,20 @@ export function computeChrono(w, h) {
 /**
  * Where the pointer sits along the timeline, as a continuous 0..N-1.
  *
- * Raw cursor-x cannot do this job. The nodes are laid out at equal arc length
- * on a bowed circle, so their horizontal spacing is not uniform — mapping x
- * linearly across the deck puts the hand up to a tenth of a year short of the
- * card it is supposedly aimed at, and the flood then lands beside its node
- * instead of on it. Worse, the arc descends, so a pointer well above the rail
- * has no defined x-to-year answer at all.
+ * Raw cursor-x cannot do this job. The seven years sit at equal ARC LENGTH on
+ * a bowed circle, so their horizontal spacing is not uniform: mapping x
+ * linearly across the deck reads 2.971 with the pointer dead on the 2023 card,
+ * and the flood then lands beside that year's node rather than on it — which
+ * is the one thing the act promises. And because the timeline descends, x says
+ * nothing at all about how far off the rail the pointer is, so a rule built
+ * from it either ignores the vertical or has to guess a band.
  *
- * Projecting onto the polyline through the card centres solves both. Within
+ * Projecting onto the polyline through the card centres answers both. Within
  * segment i the parameter is i plus the fraction along THAT segment, not
  * global arc length, which is what makes the halfway point between two cards
- * read exactly i.5 even though the segments have different lengths.
+ * read exactly i.5 even though the segments have different lengths. And a
+ * pointer 160px ABOVE the rail still picks the right year, because the foot of
+ * the perpendicular stays inside the segment that year belongs to.
  */
 export function projectToPath(path, x, y) {
   let bestT = 0;

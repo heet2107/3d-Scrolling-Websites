@@ -348,10 +348,13 @@ void main() {
   float lr2 = dot(lv, lv);
   light += HOT * exp(-lr2 * k * 5200.0) * 1.15 * uCore * uHand;
   light += AMBER * exp(-lr2 * k * 620.0) * 0.42 * uCore * uHand;
-  // four short spikes, so the landing reads as a hot point and not a blob
-  float sp = max(exp(-lv.x * lv.x * 9000.0 - lv.y * lv.y * k * 55.0),
-                 exp(-lv.y * lv.y * 9000.0 - lv.x * lv.x * k * 55.0));
-  light += HOT * sp * 0.20 * uCore * uHand;
+  // Four short spikes, so the landing reads as a hot point and not a blob.
+  // They are kept SHORT deliberately: the vertical one runs straight up into
+  // the card standing over the node, and a longer one washes out the very tag
+  // the beam is meant to be drawing attention to.
+  float sp = max(exp(-lv.x * lv.x * 9000.0 - lv.y * lv.y * k * 130.0),
+                 exp(-lv.y * lv.y * 9000.0 - lv.x * lv.x * k * 90.0));
+  light += HOT * sp * 0.16 * uCore * uHand;
 
   float a = clamp(bodyA, 0.0, 1.0) * uIn;
   oCol = vec4((light * uIn) + body * a, a);

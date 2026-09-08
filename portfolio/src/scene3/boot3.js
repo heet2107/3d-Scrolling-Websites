@@ -98,10 +98,14 @@ export async function initChrono() {
     scene.settle(sample3(30, 0.4, LAST), scene.command ?? LAST);
   };
 
-  window.addEventListener('resize', debounce(() => {
+  const relayout = debounce(() => {
     resize();
     if (reduced) still();
-  }, 150));
+  }, 150);
+  window.addEventListener('resize', relayout);
+  // turning a phone here does not just change the numbers, it changes which
+  // composition is running, and some mobile browsers report the new size late
+  window.addEventListener('orientationchange', () => setTimeout(relayout, 220));
 
   if (reduced) {
     // Honour the preference fully: land on the settled composition and hold it
