@@ -1,0 +1,429 @@
+/* ==========================================================================
+   HEET BAROT — the opening, and everything global.
+   The artwork itself (the room, the wordmark, the signal field inside it) is
+   drawn on the WebGL canvas. This file is the furniture layered over it.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Anton';
+  src: url('../../public/fonts/anton-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: block;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('../../public/fonts/oswald-300.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('../../public/fonts/oswald-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('../../public/fonts/oswald-500.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('../../public/fonts/oswald-600.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('../../public/fonts/oswald-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* the accent is carried straight over from the live portfolio */
+  --ink:      #f7931e;
+  --ink-hot:  #ffb45c;
+  --ember:    #e85500;
+  --paper:    #f2f0ee;
+  --black:    #000;
+  --dim:      #8f8a85;
+  --dimmer:   #4c4844;
+  --live:     #22c55e;
+
+  --ui:   'Oswald', 'Arial Narrow', system-ui, sans-serif;
+  --disp: 'Anton', 'Arial Narrow', Impact, sans-serif;
+
+  --hdr-h: clamp(56px, 7.4vh, 82px);
+  --edge:  clamp(14px, 1.55vw, 26px);
+
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.76, 0, .24, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #000;
+  color: var(--paper);
+  font-family: var(--ui);
+  /* sideways overflow is CLIPPED, not hidden — overflow-x:hidden promotes body
+     to a scroll container, which silently breaks every position:sticky pin in
+     the acts below (the canvas scrolls away and leaves bare background) */
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* nothing may paint before the sequence is ready to start on true black */
+html.is-booting .furniture,
+html.is-booting .hdr { opacity: 0; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: fixed; left: 50%; top: 10px; z-index: 200;
+  transform: translate(-50%, -180%);
+  padding: 9px 18px; background: var(--ink); color: #150a00;
+  font: 600 13px/1 var(--ui); letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none; border-radius: 2px;
+  transition: transform .25s var(--ease-out);
+}
+.skip:focus-visible { transform: translate(-50%, 0); }
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.stage-wrap {
+  position: fixed; inset: 0;
+  overflow: hidden;
+  background: #000;
+  z-index: 1;
+}
+
+#stage { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.hdr {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: var(--hdr-h);
+  display: flex; align-items: center;
+  gap: clamp(12px, 1.6vw, 26px);
+  padding: 0 var(--edge);
+  z-index: 20;
+  pointer-events: none;
+}
+.hdr > * { pointer-events: auto; }
+
+.hdr__rule {
+  position: absolute; left: 0; right: 0; top: 0;
+  width: 100%; height: 100%;
+  color: #5f5a55;
+  pointer-events: none;
+  overflow: visible;
+}
+.hdr__rule polyline {
+  stroke-dasharray: var(--len, 2000);
+  stroke-dashoffset: var(--len, 2000);
+  opacity: 0;
+}
+html.is-header .hdr__rule polyline {
+  opacity: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.15s var(--ease-out), opacity .3s linear;
+}
+
+.hdr__mark {
+  font-family: var(--disp);
+  font-size: clamp(13px, 1.15vw, 17px);
+  letter-spacing: .10em;
+  color: var(--paper);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.hdr__mark:hover { color: var(--ink); }
+
+.hdr__div {
+  width: 1px; height: 15px; background: #565049;
+}
+
+.hdr__roles {
+  display: flex; gap: clamp(8px, 1vw, 18px);
+  margin: 0;
+  font-size: clamp(9px, .70vw, 11px);
+  letter-spacing: .20em; text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.hdr__roles span + span::before {
+  content: '·'; margin-right: clamp(8px, 1vw, 18px); color: var(--dimmer);
+}
+
+.hdr__nav { margin-left: auto; }
+.hdr__nav ul {
+  display: flex; gap: clamp(12px, 1.5vw, 26px);
+  margin: 0; padding: 0; list-style: none;
+}
+.hdr__nav a {
+  font-size: clamp(10px, .76vw, 12px);
+  letter-spacing: .17em; text-transform: uppercase;
+  color: var(--dim); text-decoration: none;
+  position: relative; padding-bottom: 3px;
+}
+.hdr__nav a::after {
+  content: ''; position: absolute; left: 0; right: 100%; bottom: 0;
+  height: 1px; background: var(--ink);
+  transition: right .35s var(--ease-out);
+}
+.hdr__nav a:hover, .hdr__nav a.is-active { color: var(--paper); }
+.hdr__nav a:hover::after, .hdr__nav a.is-active::after { right: 0; }
+
+.hdr__meta {
+  display: flex; align-items: center; gap: 9px;
+  font-size: clamp(9px, .68vw, 10px);
+  letter-spacing: .19em; text-transform: uppercase;
+  color: var(--dimmer);
+  white-space: nowrap;
+}
+.hdr__pips { display: flex; gap: 3px; }
+.hdr__pips i { width: 3px; height: 3px; background: var(--ink); opacity: .55; }
+.hdr__pips i:nth-child(2) { opacity: .35; }
+.hdr__pips i:nth-child(3) { opacity: .18; }
+
+.hdr__burger {
+  display: none;
+  margin-left: auto;
+  width: 34px; height: 26px;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  position: relative;
+}
+.hdr__burger span {
+  position: absolute; left: 4px; right: 4px; height: 1.5px;
+  background: var(--paper);
+  transition: transform .4s var(--ease-in-out), opacity .2s;
+}
+.hdr__burger span:nth-child(1) { top: 9px; }
+.hdr__burger span:nth-child(2) { top: 16px; }
+html.is-menu .hdr__burger span:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
+html.is-menu .hdr__burger span:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
+
+/* the header pieces draw in on their own cue */
+.hdr__mark, .hdr__div, .hdr__roles, .hdr__nav, .hdr__meta, .hdr__burger {
+  opacity: 0; transform: translateY(-7px);
+}
+html.is-header .hdr__mark, html.is-header .hdr__div, html.is-header .hdr__roles,
+html.is-header .hdr__nav, html.is-header .hdr__meta, html.is-header .hdr__burger {
+  opacity: 1; transform: none;
+  transition: opacity .6s var(--ease-out), transform .7s var(--ease-out);
+}
+html.is-header .hdr__div    { transition-delay: .06s; }
+html.is-header .hdr__roles  { transition-delay: .12s; }
+html.is-header .hdr__nav    { transition-delay: .18s; }
+html.is-header .hdr__meta   { transition-delay: .24s; }
+
+/* ==========================================================================
+   Furniture over the opening
+   ========================================================================== */
+
+.furniture { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+
+.lede {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  margin: 0;
+  display: flex; align-items: center; gap: clamp(10px, 1.3vw, 20px);
+  font-size: clamp(10px, .84vw, 13px);
+  letter-spacing: .34em; text-transform: uppercase;
+  color: var(--paper);
+  white-space: nowrap;
+  opacity: 0;
+}
+.lede__dots { color: var(--ink); letter-spacing: .14em; font-weight: 400; }
+html.is-lede .lede {
+  opacity: 1;
+  animation: ledeDrop .95s var(--ease-out) both;
+}
+@keyframes ledeDrop {
+  0%   { transform: translate(-50%, -180%); opacity: 0; }
+  62%  { transform: translate(-50%, 9%);    opacity: 1; }
+  100% { transform: translate(-50%, 0);     opacity: 1; }
+}
+
+.chip {
+  position: absolute; margin: 0;
+  font-size: clamp(9px, .74vw, 12px);
+  letter-spacing: .22em; text-transform: uppercase;
+  color: #100800;
+  background: var(--ink);
+  padding: .48em .9em .42em;
+  white-space: nowrap;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+.chip--place { background: none; color: var(--ink); border: 1px solid #6a4a1e; }
+html.is-role  .chip--role,
+html.is-place .chip--place {
+  opacity: 1;
+  animation: chipIn .8s var(--ease-out) both;
+}
+html.is-place .chip--place { animation-name: chipInR; }
+@keyframes chipIn  { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes chipInR { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+
+.marks { position: absolute; display: flex; flex-direction: column;
+         justify-content: space-between; }
+.marks i {
+  display: block; height: 1px;
+  width: calc(11px + var(--len, .55) * 24px);
+  background: var(--dimmer);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.marks--r i { transform-origin: right center; margin-left: auto; }
+.marks--r { align-items: flex-end; }
+html.is-marks .marks i {
+  opacity: 1; transform: scaleX(1);
+  transition: transform .5s var(--ease-out) calc(var(--i) * .055s),
+              opacity .3s linear calc(var(--i) * .055s);
+}
+html.is-marks .marks i:nth-child(3) { background: var(--ink); }
+
+.grid-dots {
+  position: absolute;
+  display: grid; grid-template-columns: repeat(4, 5px); gap: 5px;
+  transform: translate(-100%, -100%);
+}
+.grid-dots i {
+  width: 2px; height: 2px; background: var(--dim); border-radius: 50%;
+  opacity: 0; transform: scale(0);
+}
+html.is-dots .grid-dots i {
+  opacity: .75; transform: scale(1);
+  transition: transform .4s var(--ease-out) calc(var(--i) * .022s),
+              opacity .3s linear calc(var(--i) * .022s);
+}
+
+.cue {
+  position: absolute; left: 50%; bottom: clamp(18px, 3.4vh, 40px);
+  transform: translateX(-50%);
+  margin: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  font-size: 9.5px; letter-spacing: .30em; text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0;
+}
+.cue i {
+  width: 1px; height: 34px;
+  background: linear-gradient(to bottom, var(--ink), transparent);
+}
+html.is-settled .cue {
+  opacity: 1; transition: opacity .8s linear;
+  animation: cueBreathe 2.6s ease-in-out 1s infinite;
+}
+@keyframes cueBreathe {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, 7px); }
+}
+/* once the visitor has started scrolling the cue has done its job */
+html.is-moved .cue { opacity: 0; animation: none; }
+
+/* ==========================================================================
+   Mobile menu
+   ========================================================================== */
+
+.menu {
+  position: absolute; inset: 0; z-index: 30;
+  background: rgba(0,0,0,.94);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 30px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s var(--ease-out);
+}
+html.is-menu .menu { opacity: 1; pointer-events: auto; }
+.menu ul { list-style: none; margin: 0; padding: 0; text-align: center; }
+.menu li + li { margin-top: 14px; }
+.menu a {
+  font-family: var(--disp);
+  font-size: clamp(28px, 8vw, 46px);
+  letter-spacing: .04em;
+  color: var(--paper); text-decoration: none;
+  opacity: 0; transform: translateY(16px);
+}
+html.is-menu .menu a {
+  opacity: 1; transform: none;
+  transition: opacity .5s var(--ease-out) calc(var(--i) * .06s + .1s),
+              transform .6s var(--ease-out) calc(var(--i) * .06s + .1s);
+}
+.menu a:hover { color: var(--ink); }
+.menu__tag {
+  margin: 0; font-size: 10px; letter-spacing: .26em; text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   Boot and fallbacks
+   ========================================================================== */
+
+.boot {
+  position: absolute; inset: 0; z-index: 40;
+  display: grid; place-items: center;
+  background: #000;
+  transition: opacity .55s linear, visibility .55s;
+}
+.boot.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+.boot__bar { width: min(180px, 42vw); height: 1px; background: #241a12; }
+.boot__bar i { display: block; height: 100%; width: 0; background: var(--ink);
+               transition: width .35s var(--ease-out); }
+.boot__enter {
+  position: absolute; bottom: 22%;
+  padding: 12px 30px; cursor: pointer;
+  background: none; border: 1px solid var(--ink); color: var(--ink);
+  font: 500 11px/1 var(--ui); letter-spacing: .28em; text-transform: uppercase;
+}
+.boot__enter:hover { background: var(--ink); color: #150a00; }
+
+.fallback {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px;
+  text-align: center; padding: 0 24px;
+}
+.fallback p {
+  margin: 0; font-family: var(--disp);
+  font-size: clamp(38px, 12vw, 140px); letter-spacing: .02em;
+  color: var(--paper);
+}
+.fallback small { color: var(--dim); font-size: 12px; letter-spacing: .14em;
+                  max-width: 46ch; line-height: 1.7; }
+
+/* ==========================================================================
+   The flow below the opening
+   ========================================================================== */
+
+.flow { position: relative; z-index: 2; }
+.hero-spacer { height: 100svh; }
+
+/* every act after the opening sits on its own opaque ground, so the fixed
+   opening behind them is never visible through a gap */
+.stack, .chrono, .work, .record, .fin { background: #000; }
+
+@media (max-width: 860px) {
+  .hdr__roles, .hdr__meta, .hdr__nav, .hdr__div { display: none; }
+  .hdr__burger { display: block; }
+}
+/* portrait stacks the wordmark, which then runs straight through the band the
+   tick marks occupy in landscape — they are a landscape device, so they go */
+@media (max-aspect-ratio: 1/1) {
+  .marks { display: none; }
+}
+@media (max-width: 380px) {
+  .lede { font-size: 9px; letter-spacing: .24em; }
+}
