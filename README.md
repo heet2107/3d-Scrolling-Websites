@@ -1,8 +1,8 @@
 # Heet Barot — Cinematic Portfolio
 
 A cinematic scrolling portfolio for Heet Barot — AI/ML Software Engineer.
-Inspired by [vaibhav-create.vercel.app](https://vaibhav-create.vercel.app/), rebuilt
-from scratch around Heet's resume, live projects, and a dark emerald visual language.
+
+
 
 ## Stack
 
