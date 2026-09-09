@@ -5,12 +5,8 @@ Developer in Austin, TX. Everything is WebGL and vanilla ES modules: **no
 framework, no build step, no dependency and no CDN**. Clone it, serve the
 directory, and it runs.
 
-It is a rebuild of [gireeshkumarreddy/cinematic-portofilo](https://github.com/gireeshkumarreddy/cinematic-portofilo)
-carrying Heet's own information, taken from
-[heet-barot-portfolio.vercel.app](https://heet-barot-portfolio.vercel.app).
-The architecture — one act per scene directory, a canvas pinned inside a tall
-section, DOM layered over it for anything that carries real words — is the
-reference's. Everything visible is new.
+The architecture is one act per scene directory, a canvas pinned inside a tall
+section, with DOM layered over it for anything that carries real words.
 
 ## Run it
 
