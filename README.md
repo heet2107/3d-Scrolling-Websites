@@ -8,13 +8,16 @@ Independent static sites, each deployed as its own Vercel project:
 | [`forge/`](forge/) | FORGE — strength gym, Detroit | `forge-gym` | `/` (root directory `forge`) |
 | [`meridian/`](meridian/) | MERIDIAN — wellness practice, Ojai | `meridian-wellness` | `/` (root directory `meridian`) |
 | [`contextqa/`](contextqa/) | ContextQA — Autonomous Quality Engineering | `contextqa-site` (root directory `contextqa`) | `/` |
+| [`portfolio/`](portfolio/) | HEET BAROT — cinematic portfolio | not yet created (root directory `portfolio`) | `/` |
 
 Each subdirectory carries its own `vercel.json` and is served as a site root, not under
 a subpath. See [`forge/README.md`](forge/README.md) for its build notes — in particular,
 its scroll-scrubbed hero needs a server that honours HTTP Range —
 [`meridian/README.md`](meridian/README.md) for the eight-page generator and the
 procedural artwork, and [`contextqa/README.md`](contextqa/README.md) for the
-Higgsfield film to frame sequence pipeline and the Three.js layers.
+Higgsfield film to frame sequence pipeline and the Three.js layers, and
+[`portfolio/README.md`](portfolio/README.md) for the six act WebGL portfolio,
+which carries no images or video at all: every asset is generated in the browser.
 
 ---
 
